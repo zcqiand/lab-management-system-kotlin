@@ -22,8 +22,14 @@ dependencies {
   implementation("io.ktor:ktor-server-auth")
   implementation("io.ktor:ktor-server-resources")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+  // JWT HS256 签发（jjwt 0.12.x fluent API，saas 同款；lab 自签 access/refresh）
+  implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+  runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
+  runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
   testImplementation(platform("org.junit:junit-bom:6.1.3"))
   testImplementation("org.junit.jupiter:junit-jupiter")
+  // testApplication（ktor-conventions 测试姿态）：版本走上方 ktor-bom，禁裸写（saas 同款）
+  testImplementation("io.ktor:ktor-server-test-host")
   // trace listener 直接 import platform API（TestExecutionListener/TestIdentifier/TestPlan）。
   // JUnit 5.11+/6 起 platform 是 jupiter 的非传递依赖，Gradle 9 也不再自动提供 launcher——
   // 必须显式声明，版本由 junit-bom 管。
