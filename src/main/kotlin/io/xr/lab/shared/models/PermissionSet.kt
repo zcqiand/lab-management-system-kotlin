@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param permissions 
@@ -21,4 +22,11 @@ import kotlinx.serialization.Serializable
 data class PermissionSet(
     val permissions: kotlin.collections.List<kotlin.String>
 )
+{
+        fun validate() {
+            permissions.forEach {
+    }
+    
+        }
+}
 

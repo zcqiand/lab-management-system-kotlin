@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param inspectionObjectCode 
@@ -23,4 +24,10 @@ data class InspectionDictionaryUnlinkObjectParameterRequest(
     val inspectionObjectCode: kotlin.String,
     val inspectionParameterCode: kotlin.String
 )
+{
+        fun validate() {
+            
+            
+        }
+}
 

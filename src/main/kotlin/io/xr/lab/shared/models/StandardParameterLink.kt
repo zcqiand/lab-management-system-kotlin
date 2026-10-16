@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param inspectionStandardCode 
@@ -23,4 +24,10 @@ data class StandardParameterLink(
     val inspectionStandardCode: kotlin.String,
     val inspectionParameterCode: kotlin.String
 )
+{
+        fun validate() {
+            
+            
+        }
+}
 

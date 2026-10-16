@@ -24,6 +24,11 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.head
 import io.ktor.server.resources.patch
 import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
+import io.xr.lab.shared.infrastructure.delegates
+import io.xr.lab.shared.infrastructure.BadParameterException
+import io.xr.lab.shared.infrastructure.APINotImplementedException
 import io.xr.lab.shared.infrastructure.ApiPrincipal
 import io.xr.lab.shared.models.CreateInspectionObjectRequest
 import io.xr.lab.shared.models.CreateInspectionParameterRequest
@@ -58,631 +63,389 @@ import io.xr.lab.shared.models.UpdateInspectionStandardRequest
 
 fun Route.InspectionDictionaryApi() {
     post<Paths.inspectionDictionaryCreateObject> { inspectionDictionaryCreateObject ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "inspectionSpecialtyCode" : "inspectionSpecialtyCode",
-          "sourceProjectNo" : "sourceProjectNo",
-          "sourceProjectName" : "sourceProjectName",
-          "name" : "name",
-          "isOptionalForQualification" : true,
-          "isOfficial" : true,
-          "enabled" : true,
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val createInspectionObjectRequest = call.receive<CreateInspectionObjectRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createInspectionObjectRequest.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryCreateObject has not been implemented yet.")
+        val result = delegate.inspectionDictionaryCreateObject(createInspectionObjectRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.inspectionDictionaryCreateParameter> { inspectionDictionaryCreateParameter ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "name" : "name",
-          "rawName" : "rawName",
-          "canonicalName" : "canonicalName",
-          "methodText" : "methodText",
-          "aliases" : [ "aliases", "aliases" ],
-          "unit" : "unit",
-          "sourceType" : "official",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val createInspectionParameterRequest = call.receive<CreateInspectionParameterRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createInspectionParameterRequest.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryCreateParameter has not been implemented yet.")
+        val result = delegate.inspectionDictionaryCreateParameter(createInspectionParameterRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.inspectionDictionaryCreateSpecialty> { inspectionDictionaryCreateSpecialty ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "officialNo" : "officialNo",
-          "name" : "name",
-          "isOfficial" : true,
-          "enabled" : true,
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val createInspectionSpecialtyRequest = call.receive<CreateInspectionSpecialtyRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createInspectionSpecialtyRequest.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryCreateSpecialty has not been implemented yet.")
+        val result = delegate.inspectionDictionaryCreateSpecialty(createInspectionSpecialtyRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.inspectionDictionaryCreateStandard> { inspectionDictionaryCreateStandard ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "name" : "name",
-          "version" : "version",
-          "status" : "active",
-          "sourceDocumentId" : "sourceDocumentId",
-          "sourceHash" : "sourceHash",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val createInspectionStandardRequest = call.receive<CreateInspectionStandardRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createInspectionStandardRequest.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryCreateStandard has not been implemented yet.")
+        val result = delegate.inspectionDictionaryCreateStandard(createInspectionStandardRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.inspectionDictionaryDeleteObject> { inspectionDictionaryDeleteObject ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val code = inspectionDictionaryDeleteObject.code
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryDeleteObject has not been implemented yet.")
+        val result = delegate.inspectionDictionaryDeleteObject(code, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.inspectionDictionaryDeleteParameter> { inspectionDictionaryDeleteParameter ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val code = inspectionDictionaryDeleteParameter.code
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryDeleteParameter has not been implemented yet.")
+        val result = delegate.inspectionDictionaryDeleteParameter(code, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.inspectionDictionaryDeleteSpecialty> { inspectionDictionaryDeleteSpecialty ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val code = inspectionDictionaryDeleteSpecialty.code
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryDeleteSpecialty has not been implemented yet.")
+        val result = delegate.inspectionDictionaryDeleteSpecialty(code, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.inspectionDictionaryDeleteStandard> { inspectionDictionaryDeleteStandard ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val code = inspectionDictionaryDeleteStandard.code
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryDeleteStandard has not been implemented yet.")
+        val result = delegate.inspectionDictionaryDeleteStandard(code, call)
+        call.respond(result)
+        
         
     }
     post<Paths.inspectionDictionaryLinkObjectParameter> { inspectionDictionaryLinkObjectParameter ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val objectParameterLink = call.receive<ObjectParameterLink>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 objectParameterLink.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryLinkObjectParameter has not been implemented yet.")
+        val result = delegate.inspectionDictionaryLinkObjectParameter(objectParameterLink, call)
+        call.respond(result)
+        
         
     }
     post<Paths.inspectionDictionaryLinkObjectStandard> { inspectionDictionaryLinkObjectStandard ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val objectStandardLink = call.receive<ObjectStandardLink>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 objectStandardLink.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryLinkObjectStandard has not been implemented yet.")
+        val result = delegate.inspectionDictionaryLinkObjectStandard(objectStandardLink, call)
+        call.respond(result)
+        
         
     }
     post<Paths.inspectionDictionaryLinkSpecialtyObject> { inspectionDictionaryLinkSpecialtyObject ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val specialtyObjectLink = call.receive<SpecialtyObjectLink>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 specialtyObjectLink.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryLinkSpecialtyObject has not been implemented yet.")
+        val result = delegate.inspectionDictionaryLinkSpecialtyObject(specialtyObjectLink, call)
+        call.respond(result)
+        
         
     }
     post<Paths.inspectionDictionaryLinkStandardParameter> { inspectionDictionaryLinkStandardParameter ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val standardParameterLink = call.receive<StandardParameterLink>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 standardParameterLink.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryLinkStandardParameter has not been implemented yet.")
+        val result = delegate.inspectionDictionaryLinkStandardParameter(standardParameterLink, call)
+        call.respond(result)
+        
         
     }
     get<Paths.inspectionDictionaryListObjectParameterLinks> { inspectionDictionaryListObjectParameterLinks ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "inspectionParameterCode" : "inspectionParameterCode",
-            "qualificationLevel" : "QUALIFIED",
-            "sourcePage" : 0,
-            "remark" : "remark"
-          }, {
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "inspectionParameterCode" : "inspectionParameterCode",
-            "qualificationLevel" : "QUALIFIED",
-            "sourcePage" : 0,
-            "remark" : "remark"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val inspectionObjectCode = inspectionDictionaryListObjectParameterLinks.inspectionObjectCode
+        val inspectionParameterCode = inspectionDictionaryListObjectParameterLinks.inspectionParameterCode
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryListObjectParameterLinks has not been implemented yet.")
+        val result = delegate.inspectionDictionaryListObjectParameterLinks(inspectionObjectCode, inspectionParameterCode, call)
+        call.respond(result)
+        
         
     }
     get<Paths.inspectionDictionaryListObjectStandardLinks> { inspectionDictionaryListObjectStandardLinks ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "inspectionStandardCode" : "inspectionStandardCode",
-            "role" : "TESTING",
-            "remark" : "remark"
-          }, {
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "inspectionStandardCode" : "inspectionStandardCode",
-            "role" : "TESTING",
-            "remark" : "remark"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val inspectionObjectCode = inspectionDictionaryListObjectStandardLinks.inspectionObjectCode
+        val role = inspectionDictionaryListObjectStandardLinks.role
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryListObjectStandardLinks has not been implemented yet.")
+        val result = delegate.inspectionDictionaryListObjectStandardLinks(inspectionObjectCode, role, call)
+        call.respond(result)
+        
         
     }
     get<Paths.inspectionDictionaryListObjects> { inspectionDictionaryListObjects ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "code" : "code",
-            "inspectionSpecialtyCode" : "inspectionSpecialtyCode",
-            "sourceProjectNo" : "sourceProjectNo",
-            "sourceProjectName" : "sourceProjectName",
-            "name" : "name",
-            "isOptionalForQualification" : true,
-            "isOfficial" : true,
-            "enabled" : true,
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "code" : "code",
-            "inspectionSpecialtyCode" : "inspectionSpecialtyCode",
-            "sourceProjectNo" : "sourceProjectNo",
-            "sourceProjectName" : "sourceProjectName",
-            "name" : "name",
-            "isOptionalForQualification" : true,
-            "isOfficial" : true,
-            "enabled" : true,
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val page = inspectionDictionaryListObjects.page
+        val pageSize = inspectionDictionaryListObjects.pageSize
+        val inspectionSpecialtyCode = inspectionDictionaryListObjects.inspectionSpecialtyCode
+        val keyword = inspectionDictionaryListObjects.keyword
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryListObjects has not been implemented yet.")
+        val result = delegate.inspectionDictionaryListObjects(page, pageSize, inspectionSpecialtyCode, keyword, call)
+        call.respond(result)
+        
         
     }
     get<Paths.inspectionDictionaryListParameters> { inspectionDictionaryListParameters ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "code" : "code",
-            "name" : "name",
-            "rawName" : "rawName",
-            "canonicalName" : "canonicalName",
-            "methodText" : "methodText",
-            "aliases" : [ "aliases", "aliases" ],
-            "unit" : "unit",
-            "sourceType" : "official",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "code" : "code",
-            "name" : "name",
-            "rawName" : "rawName",
-            "canonicalName" : "canonicalName",
-            "methodText" : "methodText",
-            "aliases" : [ "aliases", "aliases" ],
-            "unit" : "unit",
-            "sourceType" : "official",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val page = inspectionDictionaryListParameters.page
+        val pageSize = inspectionDictionaryListParameters.pageSize
+        val keyword = inspectionDictionaryListParameters.keyword
+        val sourceType = inspectionDictionaryListParameters.sourceType
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryListParameters has not been implemented yet.")
+        val result = delegate.inspectionDictionaryListParameters(page, pageSize, keyword, sourceType, call)
+        call.respond(result)
+        
         
     }
     get<Paths.inspectionDictionaryListSpecialties> { inspectionDictionaryListSpecialties ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "code" : "code",
-            "officialNo" : "officialNo",
-            "name" : "name",
-            "isOfficial" : true,
-            "enabled" : true,
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "code" : "code",
-            "officialNo" : "officialNo",
-            "name" : "name",
-            "isOfficial" : true,
-            "enabled" : true,
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val page = inspectionDictionaryListSpecialties.page
+        val pageSize = inspectionDictionaryListSpecialties.pageSize
+        val keyword = inspectionDictionaryListSpecialties.keyword
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryListSpecialties has not been implemented yet.")
+        val result = delegate.inspectionDictionaryListSpecialties(page, pageSize, keyword, call)
+        call.respond(result)
+        
         
     }
     get<Paths.inspectionDictionaryListSpecialtyObjectLinks> { inspectionDictionaryListSpecialtyObjectLinks ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "inspectionSpecialtyCode" : "inspectionSpecialtyCode",
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "remark" : "remark"
-          }, {
-            "inspectionSpecialtyCode" : "inspectionSpecialtyCode",
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "remark" : "remark"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val inspectionSpecialtyCode = inspectionDictionaryListSpecialtyObjectLinks.inspectionSpecialtyCode
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryListSpecialtyObjectLinks has not been implemented yet.")
+        val result = delegate.inspectionDictionaryListSpecialtyObjectLinks(inspectionSpecialtyCode, call)
+        call.respond(result)
+        
         
     }
     get<Paths.inspectionDictionaryListStandardParameterLinks> { inspectionDictionaryListStandardParameterLinks ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "inspectionStandardCode" : "inspectionStandardCode",
-            "inspectionParameterCode" : "inspectionParameterCode"
-          }, {
-            "inspectionStandardCode" : "inspectionStandardCode",
-            "inspectionParameterCode" : "inspectionParameterCode"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val inspectionStandardCode = inspectionDictionaryListStandardParameterLinks.inspectionStandardCode
+        val inspectionParameterCode = inspectionDictionaryListStandardParameterLinks.inspectionParameterCode
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryListStandardParameterLinks has not been implemented yet.")
+        val result = delegate.inspectionDictionaryListStandardParameterLinks(inspectionStandardCode, inspectionParameterCode, call)
+        call.respond(result)
+        
         
     }
     get<Paths.inspectionDictionaryListStandards> { inspectionDictionaryListStandards ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "code" : "code",
-            "name" : "name",
-            "version" : "version",
-            "status" : "active",
-            "sourceDocumentId" : "sourceDocumentId",
-            "sourceHash" : "sourceHash",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "code" : "code",
-            "name" : "name",
-            "version" : "version",
-            "status" : "active",
-            "sourceDocumentId" : "sourceDocumentId",
-            "sourceHash" : "sourceHash",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val page = inspectionDictionaryListStandards.page
+        val pageSize = inspectionDictionaryListStandards.pageSize
+        val keyword = inspectionDictionaryListStandards.keyword
+        val status = inspectionDictionaryListStandards.status
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryListStandards has not been implemented yet.")
+        val result = delegate.inspectionDictionaryListStandards(page, pageSize, keyword, status, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.inspectionDictionaryUnlinkObjectParameter> { inspectionDictionaryUnlinkObjectParameter ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val inspectionDictionaryUnlinkObjectParameterRequest = call.receive<InspectionDictionaryUnlinkObjectParameterRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 inspectionDictionaryUnlinkObjectParameterRequest.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryUnlinkObjectParameter has not been implemented yet.")
+        val result = delegate.inspectionDictionaryUnlinkObjectParameter(inspectionDictionaryUnlinkObjectParameterRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.inspectionDictionaryUnlinkObjectStandard> { inspectionDictionaryUnlinkObjectStandard ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val inspectionDictionaryUnlinkObjectStandardRequest = call.receive<InspectionDictionaryUnlinkObjectStandardRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 inspectionDictionaryUnlinkObjectStandardRequest.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryUnlinkObjectStandard has not been implemented yet.")
+        val result = delegate.inspectionDictionaryUnlinkObjectStandard(inspectionDictionaryUnlinkObjectStandardRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.inspectionDictionaryUnlinkSpecialtyObject> { inspectionDictionaryUnlinkSpecialtyObject ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val specialtyObjectLink = call.receive<SpecialtyObjectLink>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 specialtyObjectLink.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryUnlinkSpecialtyObject has not been implemented yet.")
+        val result = delegate.inspectionDictionaryUnlinkSpecialtyObject(specialtyObjectLink, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.inspectionDictionaryUnlinkStandardParameter> { inspectionDictionaryUnlinkStandardParameter ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val standardParameterLink = call.receive<StandardParameterLink>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 standardParameterLink.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryUnlinkStandardParameter has not been implemented yet.")
+        val result = delegate.inspectionDictionaryUnlinkStandardParameter(standardParameterLink, call)
+        call.respond(result)
+        
         
     }
     put<Paths.inspectionDictionaryUpdateObject> { inspectionDictionaryUpdateObject ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "inspectionSpecialtyCode" : "inspectionSpecialtyCode",
-          "sourceProjectNo" : "sourceProjectNo",
-          "sourceProjectName" : "sourceProjectName",
-          "name" : "name",
-          "isOptionalForQualification" : true,
-          "isOfficial" : true,
-          "enabled" : true,
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val code = inspectionDictionaryUpdateObject.code
+        val updateInspectionObjectRequest = call.receive<UpdateInspectionObjectRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateInspectionObjectRequest.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryUpdateObject has not been implemented yet.")
+        val result = delegate.inspectionDictionaryUpdateObject(code, updateInspectionObjectRequest, call)
+        call.respond(result)
+        
         
     }
     put<Paths.inspectionDictionaryUpdateParameter> { inspectionDictionaryUpdateParameter ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "name" : "name",
-          "rawName" : "rawName",
-          "canonicalName" : "canonicalName",
-          "methodText" : "methodText",
-          "aliases" : [ "aliases", "aliases" ],
-          "unit" : "unit",
-          "sourceType" : "official",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val code = inspectionDictionaryUpdateParameter.code
+        val updateInspectionParameterRequest = call.receive<UpdateInspectionParameterRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateInspectionParameterRequest.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryUpdateParameter has not been implemented yet.")
+        val result = delegate.inspectionDictionaryUpdateParameter(code, updateInspectionParameterRequest, call)
+        call.respond(result)
+        
         
     }
     put<Paths.inspectionDictionaryUpdateSpecialty> { inspectionDictionaryUpdateSpecialty ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "officialNo" : "officialNo",
-          "name" : "name",
-          "isOfficial" : true,
-          "enabled" : true,
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val code = inspectionDictionaryUpdateSpecialty.code
+        val updateInspectionSpecialtyRequest = call.receive<UpdateInspectionSpecialtyRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateInspectionSpecialtyRequest.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryUpdateSpecialty has not been implemented yet.")
+        val result = delegate.inspectionDictionaryUpdateSpecialty(code, updateInspectionSpecialtyRequest, call)
+        call.respond(result)
+        
         
     }
     put<Paths.inspectionDictionaryUpdateStandard> { inspectionDictionaryUpdateStandard ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "name" : "name",
-          "version" : "version",
-          "status" : "active",
-          "sourceDocumentId" : "sourceDocumentId",
-          "sourceHash" : "sourceHash",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionDictionaryApiDelegate: InspectionDictionaryApiDelegate? by call.delegates
+        val code = inspectionDictionaryUpdateStandard.code
+        val updateInspectionStandardRequest = call.receive<UpdateInspectionStandardRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateInspectionStandardRequest.validate()
+            
+        
+        val delegate = inspectionDictionaryApiDelegate ?: throw APINotImplementedException("API operation inspectionDictionaryUpdateStandard has not been implemented yet.")
+        val result = delegate.inspectionDictionaryUpdateStandard(code, updateInspectionStandardRequest, call)
+        call.respond(result)
+        
         
     }
 }

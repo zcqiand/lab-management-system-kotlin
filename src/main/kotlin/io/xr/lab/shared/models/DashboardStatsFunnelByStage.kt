@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param pendingCollect 
@@ -31,4 +32,14 @@ data class DashboardStatsFunnelByStage(
     val reviewing: kotlin.Int,
     val issued: kotlin.Int
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            
+        }
+}
 

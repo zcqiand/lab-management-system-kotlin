@@ -17,6 +17,7 @@ import io.xr.lab.shared.models.DashboardStatsReportCountByStatus
 import io.xr.lab.shared.models.DashboardStatsReportOutputByStatus
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param contractCount 
@@ -41,4 +42,21 @@ data class DashboardStats(
     val reportOutputByStatus: DashboardStatsReportOutputByStatus,
     val funnelByStage: DashboardStatsFunnelByStage
 )
+{
+        fun validate() {
+            
+            
+            
+            reportCountByStatus.validate()
+    
+            
+            
+            qualifiedRateByMaterial.validate()
+    
+            reportOutputByStatus.validate()
+    
+            funnelByStage.validate()
+    
+        }
+}
 

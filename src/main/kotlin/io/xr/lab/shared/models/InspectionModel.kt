@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param code 
@@ -35,4 +36,16 @@ data class InspectionModel(
     val inspectionObjectCode: kotlin.String? = null,
     val remark: kotlin.String? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+}
 

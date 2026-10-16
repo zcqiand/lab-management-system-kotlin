@@ -24,6 +24,11 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.head
 import io.ktor.server.resources.patch
 import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
+import io.xr.lab.shared.infrastructure.delegates
+import io.xr.lab.shared.infrastructure.BadParameterException
+import io.xr.lab.shared.infrastructure.APINotImplementedException
 import io.xr.lab.shared.infrastructure.ApiPrincipal
 import io.xr.lab.shared.models.CreateInspectionReportNameRequest
 import io.xr.lab.shared.models.ErrorResponse
@@ -43,380 +48,193 @@ import io.xr.lab.shared.models.UpdateInspectionReportNameRequest
 
 fun Route.ReportNamesApi() {
     post<Paths.reportNamesCreateReportName> { reportNamesCreateReportName ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "name" : "name",
-          "fullName" : "fullName",
-          "templatePath" : "templatePath",
-          "summaryName" : "summaryName",
-          "extFields" : [ {
-            "key" : "key",
-            "label" : "label",
-            "type" : "text",
-            "required" : true,
-            "options" : [ "options", "options" ],
-            "tag" : "tag",
-            "source" : "sample"
-          }, {
-            "key" : "key",
-            "label" : "label",
-            "type" : "text",
-            "required" : true,
-            "options" : [ "options", "options" ],
-            "tag" : "tag",
-            "source" : "sample"
-          } ],
-          "description" : "description",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val createInspectionReportNameRequest = call.receive<CreateInspectionReportNameRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createInspectionReportNameRequest.validate()
+            
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesCreateReportName has not been implemented yet.")
+        val result = delegate.reportNamesCreateReportName(createInspectionReportNameRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.reportNamesDeleteReportName> { reportNamesDeleteReportName ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val code = reportNamesDeleteReportName.code
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesDeleteReportName has not been implemented yet.")
+        val result = delegate.reportNamesDeleteReportName(code, call)
+        call.respond(result)
+        
         
     }
     get<Paths.reportNamesGetReportName> { reportNamesGetReportName ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "name" : "name",
-          "fullName" : "fullName",
-          "templatePath" : "templatePath",
-          "summaryName" : "summaryName",
-          "extFields" : [ {
-            "key" : "key",
-            "label" : "label",
-            "type" : "text",
-            "required" : true,
-            "options" : [ "options", "options" ],
-            "tag" : "tag",
-            "source" : "sample"
-          }, {
-            "key" : "key",
-            "label" : "label",
-            "type" : "text",
-            "required" : true,
-            "options" : [ "options", "options" ],
-            "tag" : "tag",
-            "source" : "sample"
-          } ],
-          "description" : "description",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val code = reportNamesGetReportName.code
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesGetReportName has not been implemented yet.")
+        val result = delegate.reportNamesGetReportName(code, call)
+        call.respond(result)
+        
         
     }
     post<Paths.reportNamesLinkObjectReportName> { reportNamesLinkObjectReportName ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val objectReportNameLink = call.receive<ObjectReportNameLink>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 objectReportNameLink.validate()
+            
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesLinkObjectReportName has not been implemented yet.")
+        val result = delegate.reportNamesLinkObjectReportName(objectReportNameLink, call)
+        call.respond(result)
+        
         
     }
     post<Paths.reportNamesLinkReportNameParameter> { reportNamesLinkReportNameParameter ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val reportNameParameterLink = call.receive<ReportNameParameterLink>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 reportNameParameterLink.validate()
+            
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesLinkReportNameParameter has not been implemented yet.")
+        val result = delegate.reportNamesLinkReportNameParameter(reportNameParameterLink, call)
+        call.respond(result)
+        
         
     }
     post<Paths.reportNamesLinkReportNameStandard> { reportNamesLinkReportNameStandard ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val reportNameStandardLink = call.receive<ReportNameStandardLink>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 reportNameStandardLink.validate()
+            
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesLinkReportNameStandard has not been implemented yet.")
+        val result = delegate.reportNamesLinkReportNameStandard(reportNameStandardLink, call)
+        call.respond(result)
+        
         
     }
     get<Paths.reportNamesListObjectReportNameLinks> { reportNamesListObjectReportNameLinks ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "reportNameCode" : "reportNameCode",
-            "remark" : "remark"
-          }, {
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "reportNameCode" : "reportNameCode",
-            "remark" : "remark"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val inspectionObjectCode = reportNamesListObjectReportNameLinks.inspectionObjectCode
+        val reportNameCode = reportNamesListObjectReportNameLinks.reportNameCode
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesListObjectReportNameLinks has not been implemented yet.")
+        val result = delegate.reportNamesListObjectReportNameLinks(inspectionObjectCode, reportNameCode, call)
+        call.respond(result)
+        
         
     }
     get<Paths.reportNamesListReportNameParameterLinks> { reportNamesListReportNameParameterLinks ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "reportNameCode" : "reportNameCode",
-            "inspectionParameterCode" : "inspectionParameterCode",
-            "remark" : "remark"
-          }, {
-            "reportNameCode" : "reportNameCode",
-            "inspectionParameterCode" : "inspectionParameterCode",
-            "remark" : "remark"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val reportNameCode = reportNamesListReportNameParameterLinks.reportNameCode
+        val inspectionParameterCode = reportNamesListReportNameParameterLinks.inspectionParameterCode
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesListReportNameParameterLinks has not been implemented yet.")
+        val result = delegate.reportNamesListReportNameParameterLinks(reportNameCode, inspectionParameterCode, call)
+        call.respond(result)
+        
         
     }
     get<Paths.reportNamesListReportNameStandardLinks> { reportNamesListReportNameStandardLinks ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "reportNameCode" : "reportNameCode",
-            "inspectionStandardCode" : "inspectionStandardCode",
-            "role" : "TESTING",
-            "remark" : "remark"
-          }, {
-            "reportNameCode" : "reportNameCode",
-            "inspectionStandardCode" : "inspectionStandardCode",
-            "role" : "TESTING",
-            "remark" : "remark"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val reportNameCode = reportNamesListReportNameStandardLinks.reportNameCode
+        val role = reportNamesListReportNameStandardLinks.role
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesListReportNameStandardLinks has not been implemented yet.")
+        val result = delegate.reportNamesListReportNameStandardLinks(reportNameCode, role, call)
+        call.respond(result)
+        
         
     }
     get<Paths.reportNamesListReportNames> { reportNamesListReportNames ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "code" : "code",
-            "name" : "name",
-            "fullName" : "fullName",
-            "templatePath" : "templatePath",
-            "summaryName" : "summaryName",
-            "extFields" : [ {
-              "key" : "key",
-              "label" : "label",
-              "type" : "text",
-              "required" : true,
-              "options" : [ "options", "options" ],
-              "tag" : "tag",
-              "source" : "sample"
-            }, {
-              "key" : "key",
-              "label" : "label",
-              "type" : "text",
-              "required" : true,
-              "options" : [ "options", "options" ],
-              "tag" : "tag",
-              "source" : "sample"
-            } ],
-            "description" : "description",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "code" : "code",
-            "name" : "name",
-            "fullName" : "fullName",
-            "templatePath" : "templatePath",
-            "summaryName" : "summaryName",
-            "extFields" : [ {
-              "key" : "key",
-              "label" : "label",
-              "type" : "text",
-              "required" : true,
-              "options" : [ "options", "options" ],
-              "tag" : "tag",
-              "source" : "sample"
-            }, {
-              "key" : "key",
-              "label" : "label",
-              "type" : "text",
-              "required" : true,
-              "options" : [ "options", "options" ],
-              "tag" : "tag",
-              "source" : "sample"
-            } ],
-            "description" : "description",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val page = reportNamesListReportNames.page
+        val pageSize = reportNamesListReportNames.pageSize
+        val keyword = reportNamesListReportNames.keyword
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesListReportNames has not been implemented yet.")
+        val result = delegate.reportNamesListReportNames(page, pageSize, keyword, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.reportNamesUnlinkObjectReportName> { reportNamesUnlinkObjectReportName ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val reportNamesUnlinkObjectReportNameRequest = call.receive<ReportNamesUnlinkObjectReportNameRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 reportNamesUnlinkObjectReportNameRequest.validate()
+            
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesUnlinkObjectReportName has not been implemented yet.")
+        val result = delegate.reportNamesUnlinkObjectReportName(reportNamesUnlinkObjectReportNameRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.reportNamesUnlinkReportNameParameter> { reportNamesUnlinkReportNameParameter ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val reportNamesUnlinkReportNameParameterRequest = call.receive<ReportNamesUnlinkReportNameParameterRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 reportNamesUnlinkReportNameParameterRequest.validate()
+            
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesUnlinkReportNameParameter has not been implemented yet.")
+        val result = delegate.reportNamesUnlinkReportNameParameter(reportNamesUnlinkReportNameParameterRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.reportNamesUnlinkReportNameStandard> { reportNamesUnlinkReportNameStandard ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val reportNamesUnlinkReportNameStandardRequest = call.receive<ReportNamesUnlinkReportNameStandardRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 reportNamesUnlinkReportNameStandardRequest.validate()
+            
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesUnlinkReportNameStandard has not been implemented yet.")
+        val result = delegate.reportNamesUnlinkReportNameStandard(reportNamesUnlinkReportNameStandardRequest, call)
+        call.respond(result)
+        
         
     }
     put<Paths.reportNamesUpdateReportName> { reportNamesUpdateReportName ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "name" : "name",
-          "fullName" : "fullName",
-          "templatePath" : "templatePath",
-          "summaryName" : "summaryName",
-          "extFields" : [ {
-            "key" : "key",
-            "label" : "label",
-            "type" : "text",
-            "required" : true,
-            "options" : [ "options", "options" ],
-            "tag" : "tag",
-            "source" : "sample"
-          }, {
-            "key" : "key",
-            "label" : "label",
-            "type" : "text",
-            "required" : true,
-            "options" : [ "options", "options" ],
-            "tag" : "tag",
-            "source" : "sample"
-          } ],
-          "description" : "description",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val reportNamesApiDelegate: ReportNamesApiDelegate? by call.delegates
+        val code = reportNamesUpdateReportName.code
+        val updateInspectionReportNameRequest = call.receive<UpdateInspectionReportNameRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateInspectionReportNameRequest.validate()
+            
+        
+        val delegate = reportNamesApiDelegate ?: throw APINotImplementedException("API operation reportNamesUpdateReportName has not been implemented yet.")
+        val result = delegate.reportNamesUpdateReportName(code, updateInspectionReportNameRequest, call)
+        call.respond(result)
+        
         
     }
 }

@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param key 
@@ -23,4 +24,10 @@ data class SummaryColumn(
     val key: kotlin.String,
     val label: kotlin.String
 )
+{
+        fun validate() {
+            
+            
+        }
+}
 

@@ -24,6 +24,11 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.head
 import io.ktor.server.resources.patch
 import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
+import io.xr.lab.shared.infrastructure.delegates
+import io.xr.lab.shared.infrastructure.BadParameterException
+import io.xr.lab.shared.infrastructure.APINotImplementedException
 import io.xr.lab.shared.infrastructure.ApiPrincipal
 import io.xr.lab.shared.models.Contract
 import io.xr.lab.shared.models.ContractStatus
@@ -34,179 +39,71 @@ import io.xr.lab.shared.models.UpdateContractRequest
 
 fun Route.ContractsApi() {
     post<Paths.contractsCreateContract> { contractsCreateContract ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "contractCode" : "contractCode",
-          "clientUnit" : "clientUnit",
-          "projectName" : "projectName",
-          "projectLocation" : "projectLocation",
-          "constructionUnit" : "constructionUnit",
-          "inspectionSpecialtyCode" : "inspectionSpecialtyCode",
-          "buildingUnit" : "buildingUnit",
-          "supervisorUnit" : "supervisorUnit",
-          "inspectionPerson" : "inspectionPerson",
-          "inspectionPhone" : "inspectionPhone",
-          "witnessUnit" : "witnessUnit",
-          "witness" : "witness",
-          "witnessPhone" : "witnessPhone",
-          "contactPerson" : "contactPerson",
-          "contactPhone" : "contactPhone",
-          "entrustedDate" : "entrustedDate",
-          "status" : "active",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val contractsApiDelegate: ContractsApiDelegate? by call.delegates
+        val createContractRequest = call.receive<CreateContractRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createContractRequest.validate()
+            
+        
+        val delegate = contractsApiDelegate ?: throw APINotImplementedException("API operation contractsCreateContract has not been implemented yet.")
+        val result = delegate.contractsCreateContract(createContractRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.contractsDeleteContract> { contractsDeleteContract ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val contractsApiDelegate: ContractsApiDelegate? by call.delegates
+        val id = contractsDeleteContract.id
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = contractsApiDelegate ?: throw APINotImplementedException("API operation contractsDeleteContract has not been implemented yet.")
+        val result = delegate.contractsDeleteContract(id, call)
+        call.respond(result)
+        
         
     }
     get<Paths.contractsGetContract> { contractsGetContract ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "contractCode" : "contractCode",
-          "clientUnit" : "clientUnit",
-          "projectName" : "projectName",
-          "projectLocation" : "projectLocation",
-          "constructionUnit" : "constructionUnit",
-          "inspectionSpecialtyCode" : "inspectionSpecialtyCode",
-          "buildingUnit" : "buildingUnit",
-          "supervisorUnit" : "supervisorUnit",
-          "inspectionPerson" : "inspectionPerson",
-          "inspectionPhone" : "inspectionPhone",
-          "witnessUnit" : "witnessUnit",
-          "witness" : "witness",
-          "witnessPhone" : "witnessPhone",
-          "contactPerson" : "contactPerson",
-          "contactPhone" : "contactPhone",
-          "entrustedDate" : "entrustedDate",
-          "status" : "active",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val contractsApiDelegate: ContractsApiDelegate? by call.delegates
+        val id = contractsGetContract.id
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = contractsApiDelegate ?: throw APINotImplementedException("API operation contractsGetContract has not been implemented yet.")
+        val result = delegate.contractsGetContract(id, call)
+        call.respond(result)
+        
         
     }
     get<Paths.contractsListContracts> { contractsListContracts ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "id" : "id",
-            "tenantId" : "tenantId",
-            "contractCode" : "contractCode",
-            "clientUnit" : "clientUnit",
-            "projectName" : "projectName",
-            "projectLocation" : "projectLocation",
-            "constructionUnit" : "constructionUnit",
-            "inspectionSpecialtyCode" : "inspectionSpecialtyCode",
-            "buildingUnit" : "buildingUnit",
-            "supervisorUnit" : "supervisorUnit",
-            "inspectionPerson" : "inspectionPerson",
-            "inspectionPhone" : "inspectionPhone",
-            "witnessUnit" : "witnessUnit",
-            "witness" : "witness",
-            "witnessPhone" : "witnessPhone",
-            "contactPerson" : "contactPerson",
-            "contactPhone" : "contactPhone",
-            "entrustedDate" : "entrustedDate",
-            "status" : "active",
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "id" : "id",
-            "tenantId" : "tenantId",
-            "contractCode" : "contractCode",
-            "clientUnit" : "clientUnit",
-            "projectName" : "projectName",
-            "projectLocation" : "projectLocation",
-            "constructionUnit" : "constructionUnit",
-            "inspectionSpecialtyCode" : "inspectionSpecialtyCode",
-            "buildingUnit" : "buildingUnit",
-            "supervisorUnit" : "supervisorUnit",
-            "inspectionPerson" : "inspectionPerson",
-            "inspectionPhone" : "inspectionPhone",
-            "witnessUnit" : "witnessUnit",
-            "witness" : "witness",
-            "witnessPhone" : "witnessPhone",
-            "contactPerson" : "contactPerson",
-            "contactPhone" : "contactPhone",
-            "entrustedDate" : "entrustedDate",
-            "status" : "active",
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val contractsApiDelegate: ContractsApiDelegate? by call.delegates
+        val page = contractsListContracts.page
+        val pageSize = contractsListContracts.pageSize
+        val keyword = contractsListContracts.keyword
+        val status = contractsListContracts.status
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = contractsApiDelegate ?: throw APINotImplementedException("API operation contractsListContracts has not been implemented yet.")
+        val result = delegate.contractsListContracts(page, pageSize, keyword, status, call)
+        call.respond(result)
+        
         
     }
     put<Paths.contractsUpdateContract> { contractsUpdateContract ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "contractCode" : "contractCode",
-          "clientUnit" : "clientUnit",
-          "projectName" : "projectName",
-          "projectLocation" : "projectLocation",
-          "constructionUnit" : "constructionUnit",
-          "inspectionSpecialtyCode" : "inspectionSpecialtyCode",
-          "buildingUnit" : "buildingUnit",
-          "supervisorUnit" : "supervisorUnit",
-          "inspectionPerson" : "inspectionPerson",
-          "inspectionPhone" : "inspectionPhone",
-          "witnessUnit" : "witnessUnit",
-          "witness" : "witness",
-          "witnessPhone" : "witnessPhone",
-          "contactPerson" : "contactPerson",
-          "contactPhone" : "contactPhone",
-          "entrustedDate" : "entrustedDate",
-          "status" : "active",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val contractsApiDelegate: ContractsApiDelegate? by call.delegates
+        val id = contractsUpdateContract.id
+        val updateContractRequest = call.receive<UpdateContractRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateContractRequest.validate()
+            
+        
+        val delegate = contractsApiDelegate ?: throw APINotImplementedException("API operation contractsUpdateContract has not been implemented yet.")
+        val result = delegate.contractsUpdateContract(id, updateContractRequest, call)
+        call.respond(result)
+        
         
     }
 }

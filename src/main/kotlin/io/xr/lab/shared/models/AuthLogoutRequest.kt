@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param token 
@@ -21,4 +22,9 @@ import kotlinx.serialization.Serializable
 data class AuthLogoutRequest(
     val token: kotlin.String
 )
+{
+        fun validate() {
+            
+        }
+}
 

@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.MaterialQualifiedRate
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param concrete 
@@ -26,4 +27,14 @@ data class DashboardStatsQualifiedRateByMaterial(
     val rebar: MaterialQualifiedRate,
     val sand: MaterialQualifiedRate
 )
+{
+        fun validate() {
+            concrete.validate()
+    
+            rebar.validate()
+    
+            sand.validate()
+    
+        }
+}
 

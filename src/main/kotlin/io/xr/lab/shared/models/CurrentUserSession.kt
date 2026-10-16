@@ -15,6 +15,7 @@ import io.xr.lab.shared.models.CurrentUser
 import io.xr.lab.shared.models.MyTenant
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param user 
@@ -27,4 +28,13 @@ data class CurrentUserSession(
     val tenants: kotlin.collections.List<MyTenant>,
     val currentTenantId: kotlin.String? = null
 )
+{
+        fun validate() {
+            user.validate()
+    
+            tenants.forEach { it.validate() }
+    
+            
+        }
+}
 

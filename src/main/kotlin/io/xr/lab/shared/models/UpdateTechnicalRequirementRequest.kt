@@ -17,6 +17,7 @@ import io.xr.lab.shared.models.RequirementValueType
 import io.xr.lab.shared.models.RequirementVerificationStatus
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param conditions 
@@ -63,4 +64,28 @@ data class UpdateTechnicalRequirementRequest(
     val remark: kotlin.String? = null,
     val sortOrder: kotlin.Int? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+}
 

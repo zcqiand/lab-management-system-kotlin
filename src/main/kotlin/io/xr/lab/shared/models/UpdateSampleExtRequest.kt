@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param ext 
@@ -21,4 +22,11 @@ import kotlinx.serialization.Serializable
 data class UpdateSampleExtRequest(
     val ext: kotlin.collections.Map<kotlin.String, kotlin.String>
 )
+{
+        fun validate() {
+            ext.forEach { (key, value) ->
+    }
+    
+        }
+}
 

@@ -24,6 +24,11 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.head
 import io.ktor.server.resources.patch
 import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
+import io.xr.lab.shared.infrastructure.delegates
+import io.xr.lab.shared.infrastructure.BadParameterException
+import io.xr.lab.shared.infrastructure.APINotImplementedException
 import io.xr.lab.shared.infrastructure.ApiPrincipal
 import io.xr.lab.shared.models.CatalogListBrands200Response
 import io.xr.lab.shared.models.CatalogListGrades200Response
@@ -39,367 +44,227 @@ import io.xr.lab.shared.models.UpdateCatalogEntryRequest
 
 fun Route.InspectionCatalogApi() {
     post<Paths.catalogCreateBrand> { catalogCreateBrand ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "tenantId" : "tenantId",
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "name" : "name",
-          "remark" : "remark",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val createCatalogEntryRequest = call.receive<CreateCatalogEntryRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createCatalogEntryRequest.validate()
+            
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogCreateBrand has not been implemented yet.")
+        val result = delegate.catalogCreateBrand(createCatalogEntryRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.catalogCreateGrade> { catalogCreateGrade ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "tenantId" : "tenantId",
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "name" : "name",
-          "remark" : "remark",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val createCatalogEntryRequest = call.receive<CreateCatalogEntryRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createCatalogEntryRequest.validate()
+            
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogCreateGrade has not been implemented yet.")
+        val result = delegate.catalogCreateGrade(createCatalogEntryRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.catalogCreateModel> { catalogCreateModel ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "tenantId" : "tenantId",
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "name" : "name",
-          "remark" : "remark",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val createCatalogEntryRequest = call.receive<CreateCatalogEntryRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createCatalogEntryRequest.validate()
+            
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogCreateModel has not been implemented yet.")
+        val result = delegate.catalogCreateModel(createCatalogEntryRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.catalogCreateSpec> { catalogCreateSpec ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "tenantId" : "tenantId",
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "name" : "name",
-          "remark" : "remark",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val createCatalogEntryRequest = call.receive<CreateCatalogEntryRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createCatalogEntryRequest.validate()
+            
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogCreateSpec has not been implemented yet.")
+        val result = delegate.catalogCreateSpec(createCatalogEntryRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.catalogDeleteBrand> { catalogDeleteBrand ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val code = catalogDeleteBrand.code
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogDeleteBrand has not been implemented yet.")
+        val result = delegate.catalogDeleteBrand(code, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.catalogDeleteGrade> { catalogDeleteGrade ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val code = catalogDeleteGrade.code
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogDeleteGrade has not been implemented yet.")
+        val result = delegate.catalogDeleteGrade(code, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.catalogDeleteModel> { catalogDeleteModel ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val code = catalogDeleteModel.code
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogDeleteModel has not been implemented yet.")
+        val result = delegate.catalogDeleteModel(code, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.catalogDeleteSpec> { catalogDeleteSpec ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val code = catalogDeleteSpec.code
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogDeleteSpec has not been implemented yet.")
+        val result = delegate.catalogDeleteSpec(code, call)
+        call.respond(result)
+        
         
     }
     get<Paths.catalogListBrands> { catalogListBrands ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "code" : "code",
-            "tenantId" : "tenantId",
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "name" : "name",
-            "remark" : "remark",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "code" : "code",
-            "tenantId" : "tenantId",
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "name" : "name",
-            "remark" : "remark",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val page = catalogListBrands.page
+        val pageSize = catalogListBrands.pageSize
+        val inspectionObjectCode = catalogListBrands.inspectionObjectCode
+        val keyword = catalogListBrands.keyword
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogListBrands has not been implemented yet.")
+        val result = delegate.catalogListBrands(page, pageSize, inspectionObjectCode, keyword, call)
+        call.respond(result)
+        
         
     }
     get<Paths.catalogListGrades> { catalogListGrades ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "code" : "code",
-            "tenantId" : "tenantId",
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "name" : "name",
-            "remark" : "remark",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "code" : "code",
-            "tenantId" : "tenantId",
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "name" : "name",
-            "remark" : "remark",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val page = catalogListGrades.page
+        val pageSize = catalogListGrades.pageSize
+        val inspectionObjectCode = catalogListGrades.inspectionObjectCode
+        val keyword = catalogListGrades.keyword
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogListGrades has not been implemented yet.")
+        val result = delegate.catalogListGrades(page, pageSize, inspectionObjectCode, keyword, call)
+        call.respond(result)
+        
         
     }
     get<Paths.catalogListModels> { catalogListModels ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "code" : "code",
-            "tenantId" : "tenantId",
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "name" : "name",
-            "remark" : "remark",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "code" : "code",
-            "tenantId" : "tenantId",
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "name" : "name",
-            "remark" : "remark",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val page = catalogListModels.page
+        val pageSize = catalogListModels.pageSize
+        val inspectionObjectCode = catalogListModels.inspectionObjectCode
+        val keyword = catalogListModels.keyword
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogListModels has not been implemented yet.")
+        val result = delegate.catalogListModels(page, pageSize, inspectionObjectCode, keyword, call)
+        call.respond(result)
+        
         
     }
     get<Paths.catalogListSpecs> { catalogListSpecs ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "code" : "code",
-            "tenantId" : "tenantId",
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "name" : "name",
-            "remark" : "remark",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "code" : "code",
-            "tenantId" : "tenantId",
-            "inspectionObjectCode" : "inspectionObjectCode",
-            "name" : "name",
-            "remark" : "remark",
-            "sortOrder" : 0,
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val page = catalogListSpecs.page
+        val pageSize = catalogListSpecs.pageSize
+        val inspectionObjectCode = catalogListSpecs.inspectionObjectCode
+        val keyword = catalogListSpecs.keyword
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogListSpecs has not been implemented yet.")
+        val result = delegate.catalogListSpecs(page, pageSize, inspectionObjectCode, keyword, call)
+        call.respond(result)
+        
         
     }
     put<Paths.catalogUpdateBrand> { catalogUpdateBrand ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "tenantId" : "tenantId",
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "name" : "name",
-          "remark" : "remark",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val code = catalogUpdateBrand.code
+        val updateCatalogEntryRequest = call.receive<UpdateCatalogEntryRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateCatalogEntryRequest.validate()
+            
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogUpdateBrand has not been implemented yet.")
+        val result = delegate.catalogUpdateBrand(code, updateCatalogEntryRequest, call)
+        call.respond(result)
+        
         
     }
     put<Paths.catalogUpdateGrade> { catalogUpdateGrade ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "tenantId" : "tenantId",
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "name" : "name",
-          "remark" : "remark",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val code = catalogUpdateGrade.code
+        val updateCatalogEntryRequest = call.receive<UpdateCatalogEntryRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateCatalogEntryRequest.validate()
+            
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogUpdateGrade has not been implemented yet.")
+        val result = delegate.catalogUpdateGrade(code, updateCatalogEntryRequest, call)
+        call.respond(result)
+        
         
     }
     put<Paths.catalogUpdateModel> { catalogUpdateModel ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "tenantId" : "tenantId",
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "name" : "name",
-          "remark" : "remark",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val code = catalogUpdateModel.code
+        val updateCatalogEntryRequest = call.receive<UpdateCatalogEntryRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateCatalogEntryRequest.validate()
+            
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogUpdateModel has not been implemented yet.")
+        val result = delegate.catalogUpdateModel(code, updateCatalogEntryRequest, call)
+        call.respond(result)
+        
         
     }
     put<Paths.catalogUpdateSpec> { catalogUpdateSpec ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "tenantId" : "tenantId",
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "name" : "name",
-          "remark" : "remark",
-          "sortOrder" : 0,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val inspectionCatalogApiDelegate: InspectionCatalogApiDelegate? by call.delegates
+        val code = catalogUpdateSpec.code
+        val updateCatalogEntryRequest = call.receive<UpdateCatalogEntryRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateCatalogEntryRequest.validate()
+            
+        
+        val delegate = inspectionCatalogApiDelegate ?: throw APINotImplementedException("API operation catalogUpdateSpec has not been implemented yet.")
+        val result = delegate.catalogUpdateSpec(code, updateCatalogEntryRequest, call)
+        call.respond(result)
+        
         
     }
 }

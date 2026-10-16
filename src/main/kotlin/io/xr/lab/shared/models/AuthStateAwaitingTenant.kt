@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.AuthStateAwaitingTenantValue
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param kind 
@@ -32,5 +33,10 @@ data class AuthStateAwaitingTenant(
     enum class Kind(val value: kotlin.String){
         awaiting_tenant("awaiting_tenant");
     }
+        fun validate() {
+            
+            `value`.validate()
+    
+        }
 }
 

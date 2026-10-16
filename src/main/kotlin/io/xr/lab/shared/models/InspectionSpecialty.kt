@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param code 
@@ -35,4 +36,16 @@ data class InspectionSpecialty(
     val createdAt: kotlin.String,
     val updatedAt: kotlin.String
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+}
 

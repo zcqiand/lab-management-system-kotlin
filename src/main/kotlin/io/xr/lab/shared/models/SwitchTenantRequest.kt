@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param tenantId 
@@ -21,4 +22,9 @@ import kotlinx.serialization.Serializable
 data class SwitchTenantRequest(
     val tenantId: kotlin.String
 )
+{
+        fun validate() {
+            
+        }
+}
 

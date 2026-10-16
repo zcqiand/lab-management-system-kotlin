@@ -27,5 +27,15 @@ enum class BackendId(val value: kotlin.String) {
     @kotlinx.serialization.SerialName("aspnetcore")
     aspnetcore("aspnetcore");
 
+
+    companion object {
+        /**
+         * Returns the enum individual associated with the [value] passed as parameter.
+         *
+         * @throws IllegalArgumentException if no enum individual is associated with the [value] passed as parameter.
+         */
+        fun fromValue(value: kotlin.String): BackendId =
+            values().firstOrNull { it.value == value } ?: throw IllegalArgumentException("No enum constant BackendId.$value")
+    }
 }
 

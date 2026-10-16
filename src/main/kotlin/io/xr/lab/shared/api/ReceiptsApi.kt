@@ -24,6 +24,11 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.head
 import io.ktor.server.resources.patch
 import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
+import io.xr.lab.shared.infrastructure.delegates
+import io.xr.lab.shared.infrastructure.BadParameterException
+import io.xr.lab.shared.infrastructure.APINotImplementedException
 import io.xr.lab.shared.infrastructure.ApiPrincipal
 import io.xr.lab.shared.models.AssignTaskRequest
 import io.xr.lab.shared.models.CreateSampleReceiptRequest
@@ -38,584 +43,198 @@ import io.xr.lab.shared.models.UpdateSampleReceiptRequest
 
 fun Route.ReceiptsApi() {
     post<Paths.receiptsActFlowApprove> { receiptsActFlowApprove ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """[ {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        }, {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        } ]"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val flowActionRequest = call.receive<FlowActionRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 flowActionRequest.validate()
+            
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsActFlowApprove has not been implemented yet.")
+        val result = delegate.receiptsActFlowApprove(flowActionRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.receiptsActFlowArchived> { receiptsActFlowArchived ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """[ {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        }, {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        } ]"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val flowActionRequest = call.receive<FlowActionRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 flowActionRequest.validate()
+            
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsActFlowArchived has not been implemented yet.")
+        val result = delegate.receiptsActFlowArchived(flowActionRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.receiptsActFlowAssigning> { receiptsActFlowAssigning ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """[ {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        }, {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        } ]"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val flowActionRequest = call.receive<FlowActionRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 flowActionRequest.validate()
+            
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsActFlowAssigning has not been implemented yet.")
+        val result = delegate.receiptsActFlowAssigning(flowActionRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.receiptsActFlowDataEntry> { receiptsActFlowDataEntry ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """[ {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        }, {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        } ]"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val flowActionRequest = call.receive<FlowActionRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 flowActionRequest.validate()
+            
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsActFlowDataEntry has not been implemented yet.")
+        val result = delegate.receiptsActFlowDataEntry(flowActionRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.receiptsActFlowIssuance> { receiptsActFlowIssuance ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """[ {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        }, {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        } ]"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val flowActionRequest = call.receive<FlowActionRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 flowActionRequest.validate()
+            
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsActFlowIssuance has not been implemented yet.")
+        val result = delegate.receiptsActFlowIssuance(flowActionRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.receiptsActFlowReceiving> { receiptsActFlowReceiving ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """[ {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        }, {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        } ]"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val flowActionRequest = call.receive<FlowActionRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 flowActionRequest.validate()
+            
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsActFlowReceiving has not been implemented yet.")
+        val result = delegate.receiptsActFlowReceiving(flowActionRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.receiptsActFlowReview> { receiptsActFlowReview ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """[ {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        }, {
-          "id" : "id",
-          "ok" : true,
-          "message" : "message",
-          "flowStatus" : "receiving"
-        } ]"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val flowActionRequest = call.receive<FlowActionRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 flowActionRequest.validate()
+            
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsActFlowReview has not been implemented yet.")
+        val result = delegate.receiptsActFlowReview(flowActionRequest, call)
+        call.respond(result)
+        
         
     }
     put<Paths.receiptsAssignTask> { receiptsAssignTask ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "contractId" : "contractId",
-          "commissionCode" : "commissionCode",
-          "commissionDate" : "commissionDate",
-          "commissionRegisterCode" : "commissionRegisterCode",
-          "commissionRegisterDate" : "commissionRegisterDate",
-          "categoryCode" : "categoryCode",
-          "projectName" : "projectName",
-          "clientUnit" : "clientUnit",
-          "buildingUnit" : "buildingUnit",
-          "supervisorUnit" : "supervisorUnit",
-          "constructionUnit" : "constructionUnit",
-          "witnessUnit" : "witnessUnit",
-          "samplingLocation" : "samplingLocation",
-          "witness" : "witness",
-          "witnessPhone" : "witnessPhone",
-          "inspector" : "inspector",
-          "inspectorPhone" : "inspectorPhone",
-          "receivedBy" : "receivedBy",
-          "sampleSource" : "sampleSource",
-          "testCategory" : "testCategory",
-          "testEnvironment" : "testEnvironment",
-          "mainEquipment" : "mainEquipment",
-          "testOperator" : "testOperator",
-          "testStartDate" : "testStartDate",
-          "testEndDate" : "testEndDate",
-          "originalRecordNo" : "originalRecordNo",
-          "remark" : "remark",
-          "judgmentBasis" : [ "judgmentBasis", "judgmentBasis" ],
-          "testingBasis" : [ "testingBasis", "testingBasis" ],
-          "testParameters" : [ "testParameters", "testParameters" ],
-          "flowStatus" : "receiving",
-          "flowHistory" : [ {
-            "action" : "submit",
-            "operator" : "operator",
-            "at" : "at",
-            "reason" : "reason"
-          }, {
-            "action" : "submit",
-            "operator" : "operator",
-            "at" : "at",
-            "reason" : "reason"
-          } ],
-          "lastSubmittedBy" : "lastSubmittedBy",
-          "assigneeId" : "assigneeId",
-          "assigneeName" : "assigneeName",
-          "plannedTestDate" : "plannedTestDate",
-          "reportCode" : "reportCode",
-          "reportDate" : "reportDate",
-          "conclusion" : "conclusion",
-          "result" : "pass",
-          "issuedAt" : "issuedAt",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val id = receiptsAssignTask.id
+        val assignTaskRequest = call.receive<AssignTaskRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 assignTaskRequest.validate()
+            
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsAssignTask has not been implemented yet.")
+        val result = delegate.receiptsAssignTask(id, assignTaskRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.receiptsCreateReceipt> { receiptsCreateReceipt ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "contractId" : "contractId",
-          "commissionCode" : "commissionCode",
-          "commissionDate" : "commissionDate",
-          "commissionRegisterCode" : "commissionRegisterCode",
-          "commissionRegisterDate" : "commissionRegisterDate",
-          "categoryCode" : "categoryCode",
-          "projectName" : "projectName",
-          "clientUnit" : "clientUnit",
-          "buildingUnit" : "buildingUnit",
-          "supervisorUnit" : "supervisorUnit",
-          "constructionUnit" : "constructionUnit",
-          "witnessUnit" : "witnessUnit",
-          "samplingLocation" : "samplingLocation",
-          "witness" : "witness",
-          "witnessPhone" : "witnessPhone",
-          "inspector" : "inspector",
-          "inspectorPhone" : "inspectorPhone",
-          "receivedBy" : "receivedBy",
-          "sampleSource" : "sampleSource",
-          "testCategory" : "testCategory",
-          "testEnvironment" : "testEnvironment",
-          "mainEquipment" : "mainEquipment",
-          "testOperator" : "testOperator",
-          "testStartDate" : "testStartDate",
-          "testEndDate" : "testEndDate",
-          "originalRecordNo" : "originalRecordNo",
-          "remark" : "remark",
-          "judgmentBasis" : [ "judgmentBasis", "judgmentBasis" ],
-          "testingBasis" : [ "testingBasis", "testingBasis" ],
-          "testParameters" : [ "testParameters", "testParameters" ],
-          "flowStatus" : "receiving",
-          "flowHistory" : [ {
-            "action" : "submit",
-            "operator" : "operator",
-            "at" : "at",
-            "reason" : "reason"
-          }, {
-            "action" : "submit",
-            "operator" : "operator",
-            "at" : "at",
-            "reason" : "reason"
-          } ],
-          "lastSubmittedBy" : "lastSubmittedBy",
-          "assigneeId" : "assigneeId",
-          "assigneeName" : "assigneeName",
-          "plannedTestDate" : "plannedTestDate",
-          "reportCode" : "reportCode",
-          "reportDate" : "reportDate",
-          "conclusion" : "conclusion",
-          "result" : "pass",
-          "issuedAt" : "issuedAt",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val createSampleReceiptRequest = call.receive<CreateSampleReceiptRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createSampleReceiptRequest.validate()
+            
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsCreateReceipt has not been implemented yet.")
+        val result = delegate.receiptsCreateReceipt(createSampleReceiptRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.receiptsDeleteReceipt> { receiptsDeleteReceipt ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val id = receiptsDeleteReceipt.id
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsDeleteReceipt has not been implemented yet.")
+        val result = delegate.receiptsDeleteReceipt(id, call)
+        call.respond(result)
+        
         
     }
     get<Paths.receiptsGetReceipt> { receiptsGetReceipt ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "contractId" : "contractId",
-          "commissionCode" : "commissionCode",
-          "commissionDate" : "commissionDate",
-          "commissionRegisterCode" : "commissionRegisterCode",
-          "commissionRegisterDate" : "commissionRegisterDate",
-          "categoryCode" : "categoryCode",
-          "projectName" : "projectName",
-          "clientUnit" : "clientUnit",
-          "buildingUnit" : "buildingUnit",
-          "supervisorUnit" : "supervisorUnit",
-          "constructionUnit" : "constructionUnit",
-          "witnessUnit" : "witnessUnit",
-          "samplingLocation" : "samplingLocation",
-          "witness" : "witness",
-          "witnessPhone" : "witnessPhone",
-          "inspector" : "inspector",
-          "inspectorPhone" : "inspectorPhone",
-          "receivedBy" : "receivedBy",
-          "sampleSource" : "sampleSource",
-          "testCategory" : "testCategory",
-          "testEnvironment" : "testEnvironment",
-          "mainEquipment" : "mainEquipment",
-          "testOperator" : "testOperator",
-          "testStartDate" : "testStartDate",
-          "testEndDate" : "testEndDate",
-          "originalRecordNo" : "originalRecordNo",
-          "remark" : "remark",
-          "judgmentBasis" : [ "judgmentBasis", "judgmentBasis" ],
-          "testingBasis" : [ "testingBasis", "testingBasis" ],
-          "testParameters" : [ "testParameters", "testParameters" ],
-          "flowStatus" : "receiving",
-          "flowHistory" : [ {
-            "action" : "submit",
-            "operator" : "operator",
-            "at" : "at",
-            "reason" : "reason"
-          }, {
-            "action" : "submit",
-            "operator" : "operator",
-            "at" : "at",
-            "reason" : "reason"
-          } ],
-          "lastSubmittedBy" : "lastSubmittedBy",
-          "assigneeId" : "assigneeId",
-          "assigneeName" : "assigneeName",
-          "plannedTestDate" : "plannedTestDate",
-          "reportCode" : "reportCode",
-          "reportDate" : "reportDate",
-          "conclusion" : "conclusion",
-          "result" : "pass",
-          "issuedAt" : "issuedAt",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val id = receiptsGetReceipt.id
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsGetReceipt has not been implemented yet.")
+        val result = delegate.receiptsGetReceipt(id, call)
+        call.respond(result)
+        
         
     }
     get<Paths.receiptsGetReceiptHistory> { receiptsGetReceiptHistory ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """[ {
-          "action" : "submit",
-          "operator" : "operator",
-          "at" : "at",
-          "reason" : "reason"
-        }, {
-          "action" : "submit",
-          "operator" : "operator",
-          "at" : "at",
-          "reason" : "reason"
-        } ]"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val id = receiptsGetReceiptHistory.id
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsGetReceiptHistory has not been implemented yet.")
+        val result = delegate.receiptsGetReceiptHistory(id, call)
+        call.respond(result)
+        
         
     }
     get<Paths.receiptsListReceipts> { receiptsListReceipts ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "id" : "id",
-            "tenantId" : "tenantId",
-            "contractId" : "contractId",
-            "commissionCode" : "commissionCode",
-            "commissionDate" : "commissionDate",
-            "commissionRegisterCode" : "commissionRegisterCode",
-            "commissionRegisterDate" : "commissionRegisterDate",
-            "categoryCode" : "categoryCode",
-            "projectName" : "projectName",
-            "clientUnit" : "clientUnit",
-            "buildingUnit" : "buildingUnit",
-            "supervisorUnit" : "supervisorUnit",
-            "constructionUnit" : "constructionUnit",
-            "witnessUnit" : "witnessUnit",
-            "samplingLocation" : "samplingLocation",
-            "witness" : "witness",
-            "witnessPhone" : "witnessPhone",
-            "inspector" : "inspector",
-            "inspectorPhone" : "inspectorPhone",
-            "receivedBy" : "receivedBy",
-            "sampleSource" : "sampleSource",
-            "testCategory" : "testCategory",
-            "testEnvironment" : "testEnvironment",
-            "mainEquipment" : "mainEquipment",
-            "testOperator" : "testOperator",
-            "testStartDate" : "testStartDate",
-            "testEndDate" : "testEndDate",
-            "originalRecordNo" : "originalRecordNo",
-            "remark" : "remark",
-            "judgmentBasis" : [ "judgmentBasis", "judgmentBasis" ],
-            "testingBasis" : [ "testingBasis", "testingBasis" ],
-            "testParameters" : [ "testParameters", "testParameters" ],
-            "flowStatus" : "receiving",
-            "flowHistory" : [ {
-              "action" : "submit",
-              "operator" : "operator",
-              "at" : "at",
-              "reason" : "reason"
-            }, {
-              "action" : "submit",
-              "operator" : "operator",
-              "at" : "at",
-              "reason" : "reason"
-            } ],
-            "lastSubmittedBy" : "lastSubmittedBy",
-            "assigneeId" : "assigneeId",
-            "assigneeName" : "assigneeName",
-            "plannedTestDate" : "plannedTestDate",
-            "reportCode" : "reportCode",
-            "reportDate" : "reportDate",
-            "conclusion" : "conclusion",
-            "result" : "pass",
-            "issuedAt" : "issuedAt",
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "id" : "id",
-            "tenantId" : "tenantId",
-            "contractId" : "contractId",
-            "commissionCode" : "commissionCode",
-            "commissionDate" : "commissionDate",
-            "commissionRegisterCode" : "commissionRegisterCode",
-            "commissionRegisterDate" : "commissionRegisterDate",
-            "categoryCode" : "categoryCode",
-            "projectName" : "projectName",
-            "clientUnit" : "clientUnit",
-            "buildingUnit" : "buildingUnit",
-            "supervisorUnit" : "supervisorUnit",
-            "constructionUnit" : "constructionUnit",
-            "witnessUnit" : "witnessUnit",
-            "samplingLocation" : "samplingLocation",
-            "witness" : "witness",
-            "witnessPhone" : "witnessPhone",
-            "inspector" : "inspector",
-            "inspectorPhone" : "inspectorPhone",
-            "receivedBy" : "receivedBy",
-            "sampleSource" : "sampleSource",
-            "testCategory" : "testCategory",
-            "testEnvironment" : "testEnvironment",
-            "mainEquipment" : "mainEquipment",
-            "testOperator" : "testOperator",
-            "testStartDate" : "testStartDate",
-            "testEndDate" : "testEndDate",
-            "originalRecordNo" : "originalRecordNo",
-            "remark" : "remark",
-            "judgmentBasis" : [ "judgmentBasis", "judgmentBasis" ],
-            "testingBasis" : [ "testingBasis", "testingBasis" ],
-            "testParameters" : [ "testParameters", "testParameters" ],
-            "flowStatus" : "receiving",
-            "flowHistory" : [ {
-              "action" : "submit",
-              "operator" : "operator",
-              "at" : "at",
-              "reason" : "reason"
-            }, {
-              "action" : "submit",
-              "operator" : "operator",
-              "at" : "at",
-              "reason" : "reason"
-            } ],
-            "lastSubmittedBy" : "lastSubmittedBy",
-            "assigneeId" : "assigneeId",
-            "assigneeName" : "assigneeName",
-            "plannedTestDate" : "plannedTestDate",
-            "reportCode" : "reportCode",
-            "reportDate" : "reportDate",
-            "conclusion" : "conclusion",
-            "result" : "pass",
-            "issuedAt" : "issuedAt",
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val page = receiptsListReceipts.page
+        val pageSize = receiptsListReceipts.pageSize
+        val keyword = receiptsListReceipts.keyword
+        val contractId = receiptsListReceipts.contractId
+        val flowStatus = receiptsListReceipts.flowStatus
+        val filter = receiptsListReceipts.filter
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsListReceipts has not been implemented yet.")
+        val result = delegate.receiptsListReceipts(page, pageSize, keyword, contractId, flowStatus, filter, call)
+        call.respond(result)
+        
         
     }
     put<Paths.receiptsUpdateReceipt> { receiptsUpdateReceipt ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "contractId" : "contractId",
-          "commissionCode" : "commissionCode",
-          "commissionDate" : "commissionDate",
-          "commissionRegisterCode" : "commissionRegisterCode",
-          "commissionRegisterDate" : "commissionRegisterDate",
-          "categoryCode" : "categoryCode",
-          "projectName" : "projectName",
-          "clientUnit" : "clientUnit",
-          "buildingUnit" : "buildingUnit",
-          "supervisorUnit" : "supervisorUnit",
-          "constructionUnit" : "constructionUnit",
-          "witnessUnit" : "witnessUnit",
-          "samplingLocation" : "samplingLocation",
-          "witness" : "witness",
-          "witnessPhone" : "witnessPhone",
-          "inspector" : "inspector",
-          "inspectorPhone" : "inspectorPhone",
-          "receivedBy" : "receivedBy",
-          "sampleSource" : "sampleSource",
-          "testCategory" : "testCategory",
-          "testEnvironment" : "testEnvironment",
-          "mainEquipment" : "mainEquipment",
-          "testOperator" : "testOperator",
-          "testStartDate" : "testStartDate",
-          "testEndDate" : "testEndDate",
-          "originalRecordNo" : "originalRecordNo",
-          "remark" : "remark",
-          "judgmentBasis" : [ "judgmentBasis", "judgmentBasis" ],
-          "testingBasis" : [ "testingBasis", "testingBasis" ],
-          "testParameters" : [ "testParameters", "testParameters" ],
-          "flowStatus" : "receiving",
-          "flowHistory" : [ {
-            "action" : "submit",
-            "operator" : "operator",
-            "at" : "at",
-            "reason" : "reason"
-          }, {
-            "action" : "submit",
-            "operator" : "operator",
-            "at" : "at",
-            "reason" : "reason"
-          } ],
-          "lastSubmittedBy" : "lastSubmittedBy",
-          "assigneeId" : "assigneeId",
-          "assigneeName" : "assigneeName",
-          "plannedTestDate" : "plannedTestDate",
-          "reportCode" : "reportCode",
-          "reportDate" : "reportDate",
-          "conclusion" : "conclusion",
-          "result" : "pass",
-          "issuedAt" : "issuedAt",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val receiptsApiDelegate: ReceiptsApiDelegate? by call.delegates
+        val id = receiptsUpdateReceipt.id
+        val updateSampleReceiptRequest = call.receive<UpdateSampleReceiptRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateSampleReceiptRequest.validate()
+            
+        
+        val delegate = receiptsApiDelegate ?: throw APINotImplementedException("API operation receiptsUpdateReceipt has not been implemented yet.")
+        val result = delegate.receiptsUpdateReceipt(id, updateSampleReceiptRequest, call)
+        call.respond(result)
+        
         
     }
 }

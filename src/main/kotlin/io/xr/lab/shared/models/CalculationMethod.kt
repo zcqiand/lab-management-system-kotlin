@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.CalculationAlgorithmType
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param inspectionObjectCode 
@@ -46,4 +47,21 @@ data class CalculationMethod(
     val roundingRule: kotlin.String? = null,
     val remark: kotlin.String? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+}
 

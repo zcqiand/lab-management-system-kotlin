@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.FlowAction
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param ids 
@@ -28,4 +29,14 @@ data class FlowActionRequest(
     val `operator`: kotlin.String,
     val reason: kotlin.String? = null
 )
+{
+        fun validate() {
+            ids.forEach {
+    }
+    
+            
+            
+            
+        }
+}
 

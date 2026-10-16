@@ -18,6 +18,7 @@ import io.xr.lab.shared.models.AuthStateAwaitingTenant
 import io.xr.lab.shared.models.AuthStateIdle
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * auth 状态机 4 态。Vue: pinia store / React: Context;两侧实现可同构
  * @param kind 
@@ -36,5 +37,10 @@ data class AuthState(
     enum class Kind(val value: kotlin.String){
         authenticated("authenticated");
     }
+        fun validate() {
+            
+            `value`.validate()
+    
+        }
 }
 

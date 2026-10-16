@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param tenantId 
@@ -27,4 +28,14 @@ data class MyTenant(
     val name: kotlin.String,
     val roleIds: kotlin.collections.List<kotlin.String>
 )
+{
+        fun validate() {
+            
+            
+            
+            roleIds.forEach {
+    }
+    
+        }
+}
 

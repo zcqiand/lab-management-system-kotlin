@@ -24,6 +24,11 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.head
 import io.ktor.server.resources.patch
 import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
+import io.xr.lab.shared.infrastructure.delegates
+import io.xr.lab.shared.infrastructure.BadParameterException
+import io.xr.lab.shared.infrastructure.APINotImplementedException
 import io.xr.lab.shared.infrastructure.ApiPrincipal
 import io.xr.lab.shared.models.CreateTestRecordRequest
 import io.xr.lab.shared.models.ErrorResponse
@@ -34,152 +39,86 @@ import io.xr.lab.shared.models.UpdateTestRecordRequest
 
 fun Route.TestRecordsApi() {
     post<Paths.testRecordsCreateTestRecord> { testRecordsCreateTestRecord ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "sampleId" : "sampleId",
-          "parameterCode" : "parameterCode",
-          "standardCode" : "standardCode",
-          "requirementCode" : "requirementCode",
-          "requirement" : "requirement",
-          "result" : "result",
-          "verdict" : "verdict",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val testRecordsApiDelegate: TestRecordsApiDelegate? by call.delegates
+        val createTestRecordRequest = call.receive<CreateTestRecordRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createTestRecordRequest.validate()
+            
+        
+        val delegate = testRecordsApiDelegate ?: throw APINotImplementedException("API operation testRecordsCreateTestRecord has not been implemented yet.")
+        val result = delegate.testRecordsCreateTestRecord(createTestRecordRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.testRecordsDeleteTestRecord> { testRecordsDeleteTestRecord ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val testRecordsApiDelegate: TestRecordsApiDelegate? by call.delegates
+        val id = testRecordsDeleteTestRecord.id
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = testRecordsApiDelegate ?: throw APINotImplementedException("API operation testRecordsDeleteTestRecord has not been implemented yet.")
+        val result = delegate.testRecordsDeleteTestRecord(id, call)
+        call.respond(result)
+        
         
     }
     get<Paths.testRecordsGetTestRecord> { testRecordsGetTestRecord ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "sampleId" : "sampleId",
-          "parameterCode" : "parameterCode",
-          "standardCode" : "standardCode",
-          "requirementCode" : "requirementCode",
-          "requirement" : "requirement",
-          "result" : "result",
-          "verdict" : "verdict",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val testRecordsApiDelegate: TestRecordsApiDelegate? by call.delegates
+        val id = testRecordsGetTestRecord.id
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = testRecordsApiDelegate ?: throw APINotImplementedException("API operation testRecordsGetTestRecord has not been implemented yet.")
+        val result = delegate.testRecordsGetTestRecord(id, call)
+        call.respond(result)
+        
         
     }
     get<Paths.testRecordsListTestRecords> { testRecordsListTestRecords ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "id" : "id",
-            "tenantId" : "tenantId",
-            "sampleId" : "sampleId",
-            "parameterCode" : "parameterCode",
-            "standardCode" : "standardCode",
-            "requirementCode" : "requirementCode",
-            "requirement" : "requirement",
-            "result" : "result",
-            "verdict" : "verdict",
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "id" : "id",
-            "tenantId" : "tenantId",
-            "sampleId" : "sampleId",
-            "parameterCode" : "parameterCode",
-            "standardCode" : "standardCode",
-            "requirementCode" : "requirementCode",
-            "requirement" : "requirement",
-            "result" : "result",
-            "verdict" : "verdict",
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val testRecordsApiDelegate: TestRecordsApiDelegate? by call.delegates
+        val page = testRecordsListTestRecords.page
+        val pageSize = testRecordsListTestRecords.pageSize
+        val sampleId = testRecordsListTestRecords.sampleId
+        val parameterCode = testRecordsListTestRecords.parameterCode
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = testRecordsApiDelegate ?: throw APINotImplementedException("API operation testRecordsListTestRecords has not been implemented yet.")
+        val result = delegate.testRecordsListTestRecords(page, pageSize, sampleId, parameterCode, call)
+        call.respond(result)
+        
         
     }
     patch<Paths.testRecordsSetVerdict> { testRecordsSetVerdict ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "sampleId" : "sampleId",
-          "parameterCode" : "parameterCode",
-          "standardCode" : "standardCode",
-          "requirementCode" : "requirementCode",
-          "requirement" : "requirement",
-          "result" : "result",
-          "verdict" : "verdict",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val testRecordsApiDelegate: TestRecordsApiDelegate? by call.delegates
+        val id = testRecordsSetVerdict.id
+        val testRecordsSetVerdictRequest = call.receive<TestRecordsSetVerdictRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 testRecordsSetVerdictRequest.validate()
+            
+        
+        val delegate = testRecordsApiDelegate ?: throw APINotImplementedException("API operation testRecordsSetVerdict has not been implemented yet.")
+        val result = delegate.testRecordsSetVerdict(id, testRecordsSetVerdictRequest, call)
+        call.respond(result)
+        
         
     }
     put<Paths.testRecordsUpdateTestRecord> { testRecordsUpdateTestRecord ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "sampleId" : "sampleId",
-          "parameterCode" : "parameterCode",
-          "standardCode" : "standardCode",
-          "requirementCode" : "requirementCode",
-          "requirement" : "requirement",
-          "result" : "result",
-          "verdict" : "verdict",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val testRecordsApiDelegate: TestRecordsApiDelegate? by call.delegates
+        val id = testRecordsUpdateTestRecord.id
+        val updateTestRecordRequest = call.receive<UpdateTestRecordRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateTestRecordRequest.validate()
+            
+        
+        val delegate = testRecordsApiDelegate ?: throw APINotImplementedException("API operation testRecordsUpdateTestRecord has not been implemented yet.")
+        val result = delegate.testRecordsUpdateTestRecord(id, updateTestRecordRequest, call)
+        call.respond(result)
+        
         
     }
 }

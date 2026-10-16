@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param id 
@@ -41,4 +42,19 @@ data class TestRecord(
     val requirementCode: kotlin.String? = null,
     val verdict: kotlin.String? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+}
 

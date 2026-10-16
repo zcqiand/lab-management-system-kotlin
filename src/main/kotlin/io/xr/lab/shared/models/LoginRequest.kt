@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param username 
@@ -23,4 +24,10 @@ data class LoginRequest(
     val username: kotlin.String,
     val password: kotlin.String
 )
+{
+        fun validate() {
+            
+            
+        }
+}
 

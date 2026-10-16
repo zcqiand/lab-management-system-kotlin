@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param generated 
@@ -25,4 +26,11 @@ data class DashboardStatsReportOutputByStatus(
     val pending: kotlin.Int,
     val issued: kotlin.Int
 )
+{
+        fun validate() {
+            
+            
+            
+        }
+}
 

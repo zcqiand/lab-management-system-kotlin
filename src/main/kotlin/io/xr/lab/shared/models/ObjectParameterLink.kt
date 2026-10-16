@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.QualificationLevel
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param inspectionObjectCode 
@@ -30,4 +31,13 @@ data class ObjectParameterLink(
     val sourcePage: kotlin.Int? = null,
     val remark: kotlin.String? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+        }
+}
 

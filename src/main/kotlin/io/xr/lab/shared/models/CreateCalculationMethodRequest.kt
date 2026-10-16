@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.CalculationAlgorithmType
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param inspectionObjectCode 
@@ -42,4 +43,19 @@ data class CreateCalculationMethodRequest(
     val remark: kotlin.String? = null,
     val sortOrder: kotlin.Int? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+}
 

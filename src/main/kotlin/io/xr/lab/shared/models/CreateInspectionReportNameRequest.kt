@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.ExtFieldDef
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param code 
@@ -36,4 +37,17 @@ data class CreateInspectionReportNameRequest(
     val description: kotlin.String? = null,
     val sortOrder: kotlin.Int? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            extFields?.forEach { it.validate() }
+    
+            
+            
+        }
+}
 

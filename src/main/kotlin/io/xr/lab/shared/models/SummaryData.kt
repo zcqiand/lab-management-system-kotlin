@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.SummaryColumn
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param summaryName 
@@ -26,4 +27,14 @@ data class SummaryData(
     val columns: kotlin.collections.List<SummaryColumn>,
     val rows: kotlin.collections.List<kotlin.collections.Map<kotlin.String, kotlin.String>>
 )
+{
+        fun validate() {
+            
+            columns.forEach { it.validate() }
+    
+            rows.forEach {
+    }
+    
+        }
+}
 

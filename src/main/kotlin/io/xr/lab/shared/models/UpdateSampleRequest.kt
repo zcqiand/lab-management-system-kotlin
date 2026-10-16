@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param receiptId 
@@ -57,4 +58,29 @@ data class UpdateSampleRequest(
     val ext: kotlin.collections.Map<kotlin.String, kotlin.String>? = null,
     val remark: kotlin.String? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            ext?.forEach { (key, value) ->
+    }
+    
+            
+        }
+}
 

@@ -24,6 +24,11 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.head
 import io.ktor.server.resources.patch
 import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
+import io.xr.lab.shared.infrastructure.delegates
+import io.xr.lab.shared.infrastructure.BadParameterException
+import io.xr.lab.shared.infrastructure.APINotImplementedException
 import io.xr.lab.shared.infrastructure.ApiPrincipal
 import io.xr.lab.shared.models.CalculationMethod
 import io.xr.lab.shared.models.CreateCalculationMethodRequest
@@ -32,134 +37,72 @@ import io.xr.lab.shared.models.UpdateCalculationMethodRequest
 
 fun Route.CalculationMethodsApi() {
     post<Paths.calculationMethodsCreateCalculationMethod> { calculationMethodsCreateCalculationMethod ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "inspectionParameterCode" : "inspectionParameterCode",
-          "testingStandardCode" : "testingStandardCode",
-          "reportNameCode" : "reportNameCode",
-          "algorithmType" : "simple_avg",
-          "specimenCount" : 0,
-          "formula" : "formula",
-          "conditions" : "conditions",
-          "roundingRule" : "roundingRule",
-          "remark" : "remark",
-          "sortOrder" : 6,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val calculationMethodsApiDelegate: CalculationMethodsApiDelegate? by call.delegates
+        val createCalculationMethodRequest = call.receive<CreateCalculationMethodRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createCalculationMethodRequest.validate()
+            
+        
+        val delegate = calculationMethodsApiDelegate ?: throw APINotImplementedException("API operation calculationMethodsCreateCalculationMethod has not been implemented yet.")
+        val result = delegate.calculationMethodsCreateCalculationMethod(createCalculationMethodRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.calculationMethodsDeleteCalculationMethod> { calculationMethodsDeleteCalculationMethod ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val calculationMethodsApiDelegate: CalculationMethodsApiDelegate? by call.delegates
+        val inspectionObjectCode = calculationMethodsDeleteCalculationMethod.inspectionObjectCode
+        val inspectionParameterCode = calculationMethodsDeleteCalculationMethod.inspectionParameterCode
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = calculationMethodsApiDelegate ?: throw APINotImplementedException("API operation calculationMethodsDeleteCalculationMethod has not been implemented yet.")
+        val result = delegate.calculationMethodsDeleteCalculationMethod(inspectionObjectCode, inspectionParameterCode, call)
+        call.respond(result)
+        
         
     }
     get<Paths.calculationMethodsGetCalculationMethod> { calculationMethodsGetCalculationMethod ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "inspectionParameterCode" : "inspectionParameterCode",
-          "testingStandardCode" : "testingStandardCode",
-          "reportNameCode" : "reportNameCode",
-          "algorithmType" : "simple_avg",
-          "specimenCount" : 0,
-          "formula" : "formula",
-          "conditions" : "conditions",
-          "roundingRule" : "roundingRule",
-          "remark" : "remark",
-          "sortOrder" : 6,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val calculationMethodsApiDelegate: CalculationMethodsApiDelegate? by call.delegates
+        val inspectionObjectCode = calculationMethodsGetCalculationMethod.inspectionObjectCode
+        val inspectionParameterCode = calculationMethodsGetCalculationMethod.inspectionParameterCode
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = calculationMethodsApiDelegate ?: throw APINotImplementedException("API operation calculationMethodsGetCalculationMethod has not been implemented yet.")
+        val result = delegate.calculationMethodsGetCalculationMethod(inspectionObjectCode, inspectionParameterCode, call)
+        call.respond(result)
+        
         
     }
     get<Paths.calculationMethodsListCalculationMethods> { calculationMethodsListCalculationMethods ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """[ {
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "inspectionParameterCode" : "inspectionParameterCode",
-          "testingStandardCode" : "testingStandardCode",
-          "reportNameCode" : "reportNameCode",
-          "algorithmType" : "simple_avg",
-          "specimenCount" : 0,
-          "formula" : "formula",
-          "conditions" : "conditions",
-          "roundingRule" : "roundingRule",
-          "remark" : "remark",
-          "sortOrder" : 6,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }, {
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "inspectionParameterCode" : "inspectionParameterCode",
-          "testingStandardCode" : "testingStandardCode",
-          "reportNameCode" : "reportNameCode",
-          "algorithmType" : "simple_avg",
-          "specimenCount" : 0,
-          "formula" : "formula",
-          "conditions" : "conditions",
-          "roundingRule" : "roundingRule",
-          "remark" : "remark",
-          "sortOrder" : 6,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        } ]"""
+        val calculationMethodsApiDelegate: CalculationMethodsApiDelegate? by call.delegates
+        val inspectionObjectCode = calculationMethodsListCalculationMethods.inspectionObjectCode
+        val inspectionParameterCode = calculationMethodsListCalculationMethods.inspectionParameterCode
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = calculationMethodsApiDelegate ?: throw APINotImplementedException("API operation calculationMethodsListCalculationMethods has not been implemented yet.")
+        val result = delegate.calculationMethodsListCalculationMethods(inspectionObjectCode, inspectionParameterCode, call)
+        call.respond(result)
+        
         
     }
     put<Paths.calculationMethodsUpdateCalculationMethod> { calculationMethodsUpdateCalculationMethod ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "inspectionParameterCode" : "inspectionParameterCode",
-          "testingStandardCode" : "testingStandardCode",
-          "reportNameCode" : "reportNameCode",
-          "algorithmType" : "simple_avg",
-          "specimenCount" : 0,
-          "formula" : "formula",
-          "conditions" : "conditions",
-          "roundingRule" : "roundingRule",
-          "remark" : "remark",
-          "sortOrder" : 6,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val calculationMethodsApiDelegate: CalculationMethodsApiDelegate? by call.delegates
+        val inspectionObjectCode = calculationMethodsUpdateCalculationMethod.inspectionObjectCode
+        val inspectionParameterCode = calculationMethodsUpdateCalculationMethod.inspectionParameterCode
+        val updateCalculationMethodRequest = call.receive<UpdateCalculationMethodRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateCalculationMethodRequest.validate()
+            
+        
+        val delegate = calculationMethodsApiDelegate ?: throw APINotImplementedException("API operation calculationMethodsUpdateCalculationMethod has not been implemented yet.")
+        val result = delegate.calculationMethodsUpdateCalculationMethod(inspectionObjectCode, inspectionParameterCode, updateCalculationMethodRequest, call)
+        call.respond(result)
+        
         
     }
 }

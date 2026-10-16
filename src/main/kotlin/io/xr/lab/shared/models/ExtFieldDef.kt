@@ -15,6 +15,7 @@ import io.xr.lab.shared.models.ExtFieldDefSource
 import io.xr.lab.shared.models.ExtFieldDefType
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param key 
@@ -35,4 +36,17 @@ data class ExtFieldDef(
     val tag: kotlin.String? = null,
     val source: ExtFieldDefSource? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            options?.forEach {
+    }
+    
+            
+            
+        }
+}
 

@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.FlowStatus
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param id 
@@ -28,4 +29,12 @@ data class FlowActionResult(
     val message: kotlin.String? = null,
     val flowStatus: FlowStatus? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+        }
+}
 

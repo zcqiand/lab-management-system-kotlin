@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.AuthStateAnonymousValue
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param kind 
@@ -32,5 +33,10 @@ data class AuthStateAnonymous(
     enum class Kind(val value: kotlin.String){
         anonymous("anonymous");
     }
+        fun validate() {
+            
+            `value`.validate()
+    
+        }
 }
 

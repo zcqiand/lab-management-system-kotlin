@@ -17,6 +17,7 @@ import io.xr.lab.shared.models.RequirementValueType
 import io.xr.lab.shared.models.RequirementVerificationStatus
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param tenantId 
@@ -75,4 +76,34 @@ data class TechnicalRequirement(
     val sieve: kotlin.String? = null,
     val remark: kotlin.String? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+}
 

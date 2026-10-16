@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param name 
@@ -31,4 +32,16 @@ data class UpdateParamInterfaceRequest(
     val sortOrder: kotlin.Int? = null,
     val config: kotlin.collections.Map<kotlin.String, kotlinx.serialization.json.JsonElement>? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            config?.forEach { (key, value) ->
+    }
+    
+        }
+}
 

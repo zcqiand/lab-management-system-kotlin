@@ -16,6 +16,7 @@ import io.xr.lab.shared.models.BackendRegistry
 import io.xr.lab.shared.models.TokenStorageKeys
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param registry 已废弃 (ADR-0014);保留以维持 BackendRegistry schema 在 openapi.yaml 里的可达性
@@ -29,4 +30,14 @@ data class FrontendBindMetaFrontendBindSnapshot(
     val authContext: AuthContext,
     val tokenKeys: TokenStorageKeys
 )
+{
+        fun validate() {
+            registry.validate()
+    
+            authContext.validate()
+    
+            tokenKeys.validate()
+    
+        }
+}
 

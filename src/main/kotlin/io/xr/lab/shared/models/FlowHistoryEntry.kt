@@ -15,6 +15,7 @@ import io.xr.lab.shared.models.FlowAction
 import io.xr.lab.shared.models.FlowStatus
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param action 
@@ -33,4 +34,14 @@ data class FlowHistoryEntry(
     val at: kotlin.String,
     val reason: kotlin.String? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            
+        }
+}
 

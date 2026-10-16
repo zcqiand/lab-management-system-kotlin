@@ -15,6 +15,7 @@ import io.xr.lab.shared.models.CurrentUser
 import io.xr.lab.shared.models.MyTenant
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param kind 
@@ -35,5 +36,12 @@ data class AuthStateAwaitingTenantValue(
     enum class Kind(val value: kotlin.String){
         awaiting_tenant("awaiting_tenant");
     }
+        fun validate() {
+            
+            user.validate()
+    
+            tenants.forEach { it.validate() }
+    
+        }
 }
 

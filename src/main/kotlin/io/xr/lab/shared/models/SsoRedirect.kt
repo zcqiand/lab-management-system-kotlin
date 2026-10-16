@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param authorizeUrl 
@@ -23,4 +24,10 @@ data class SsoRedirect(
     val authorizeUrl: kotlin.String,
     val state: kotlin.String
 )
+{
+        fun validate() {
+            
+            
+        }
+}
 

@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 前端持久化 key 命名约定;后端契约不感知,但前端实现必须遵守
  * @param accessToken Bearer token
@@ -60,5 +61,11 @@ data class TokenStorageKeys(
     enum class PermissionsCache(val value: kotlin.String){
         labPeriodPermissions("lab.permissions");
     }
+        fun validate() {
+            
+            
+            
+            
+        }
 }
 

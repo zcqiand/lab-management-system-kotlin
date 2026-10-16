@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param inspectionParameterCode 
@@ -23,4 +24,10 @@ data class ParamInterfacesUnlinkParamInterfaceRequest(
     val inspectionParameterCode: kotlin.String,
     val paramInterfaceCode: kotlin.String
 )
+{
+        fun validate() {
+            
+            
+        }
+}
 

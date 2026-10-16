@@ -15,6 +15,7 @@ import io.xr.lab.shared.models.CurrentUser
 import io.xr.lab.shared.models.MyTenant
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param kind 
@@ -40,5 +41,16 @@ data class AuthStateAuthenticatedValue(
     enum class Kind(val value: kotlin.String){
         authenticated("authenticated");
     }
+        fun validate() {
+            
+            user.validate()
+    
+            tenant.validate()
+    
+            permissions.forEach {
+    }
+    
+            
+        }
 }
 

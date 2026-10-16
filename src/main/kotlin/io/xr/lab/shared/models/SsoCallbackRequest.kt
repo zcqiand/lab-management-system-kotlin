@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.OAuthGrantType
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param grantType 
@@ -28,4 +29,12 @@ data class SsoCallbackRequest(
     val redirectUri: kotlin.String,
     val state: kotlin.String
 )
+{
+        fun validate() {
+            
+            
+            
+            
+        }
+}
 

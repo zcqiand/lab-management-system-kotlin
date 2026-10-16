@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param id 
@@ -29,4 +30,14 @@ data class MenuNode(
     val icon: kotlin.String? = null,
     val children: kotlin.collections.List<MenuNode>? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            children?.forEach { it.validate() }
+    
+        }
+}
 

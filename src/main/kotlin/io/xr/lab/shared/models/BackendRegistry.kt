@@ -15,6 +15,7 @@ import io.xr.lab.shared.models.BackendConfig
 import io.xr.lab.shared.models.BackendId
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 已废弃 (ADR-0014);运行时注册表:当前激活 + 可切列表
  * @param active 当前激活后端
@@ -27,4 +28,11 @@ data class BackendRegistry(
     /* 可切换列表(通常包含全部 4 个槽位) */
     val available: kotlin.collections.List<BackendConfig>
 )
+{
+        fun validate() {
+            
+            available.forEach { it.validate() }
+    
+        }
+}
 

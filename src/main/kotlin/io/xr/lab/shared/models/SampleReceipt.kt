@@ -16,6 +16,7 @@ import io.xr.lab.shared.models.FlowStatus
 import io.xr.lab.shared.models.ReceiptResult
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param id 
@@ -112,4 +113,60 @@ data class SampleReceipt(
     val result: ReceiptResult? = null,
     val issuedAt: kotlin.String? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            flowHistory.forEach { it.validate() }
+    
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            judgmentBasis?.forEach {
+    }
+    
+            testingBasis?.forEach {
+    }
+    
+            testParameters?.forEach {
+    }
+    
+            
+            
+            
+            
+            
+            
+            
+            
+            
+        }
+}
 

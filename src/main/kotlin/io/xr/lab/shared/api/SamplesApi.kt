@@ -24,6 +24,11 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.head
 import io.ktor.server.resources.patch
 import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
+import io.xr.lab.shared.infrastructure.delegates
+import io.xr.lab.shared.infrastructure.BadParameterException
+import io.xr.lab.shared.infrastructure.APINotImplementedException
 import io.xr.lab.shared.infrastructure.ApiPrincipal
 import io.xr.lab.shared.models.CreateSampleRequest
 import io.xr.lab.shared.models.ErrorResponse
@@ -34,236 +39,86 @@ import io.xr.lab.shared.models.UpdateSampleRequest
 
 fun Route.SamplesApi() {
     post<Paths.samplesCreateSample> { samplesCreateSample ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "receiptId" : "receiptId",
-          "sampleCode" : "sampleCode",
-          "sampleName" : "sampleName",
-          "model" : "model",
-          "specification" : "specification",
-          "grade" : "grade",
-          "brand" : "brand",
-          "manufacturer" : "manufacturer",
-          "structuralPart" : "structuralPart",
-          "representQuantity" : "representQuantity",
-          "sampleQuantity" : "sampleQuantity",
-          "batchNumber" : "batchNumber",
-          "supplyUnit" : "supplyUnit",
-          "arrivalDate" : "arrivalDate",
-          "samplingDate" : "samplingDate",
-          "curingCondition" : "curingCondition",
-          "age" : "age",
-          "ext" : {
-            "key" : "ext"
-          },
-          "remark" : "remark",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val samplesApiDelegate: SamplesApiDelegate? by call.delegates
+        val createSampleRequest = call.receive<CreateSampleRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createSampleRequest.validate()
+            
+        
+        val delegate = samplesApiDelegate ?: throw APINotImplementedException("API operation samplesCreateSample has not been implemented yet.")
+        val result = delegate.samplesCreateSample(createSampleRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.samplesDeleteSample> { samplesDeleteSample ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val samplesApiDelegate: SamplesApiDelegate? by call.delegates
+        val id = samplesDeleteSample.id
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = samplesApiDelegate ?: throw APINotImplementedException("API operation samplesDeleteSample has not been implemented yet.")
+        val result = delegate.samplesDeleteSample(id, call)
+        call.respond(result)
+        
         
     }
     get<Paths.samplesGetSample> { samplesGetSample ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "receiptId" : "receiptId",
-          "sampleCode" : "sampleCode",
-          "sampleName" : "sampleName",
-          "model" : "model",
-          "specification" : "specification",
-          "grade" : "grade",
-          "brand" : "brand",
-          "manufacturer" : "manufacturer",
-          "structuralPart" : "structuralPart",
-          "representQuantity" : "representQuantity",
-          "sampleQuantity" : "sampleQuantity",
-          "batchNumber" : "batchNumber",
-          "supplyUnit" : "supplyUnit",
-          "arrivalDate" : "arrivalDate",
-          "samplingDate" : "samplingDate",
-          "curingCondition" : "curingCondition",
-          "age" : "age",
-          "ext" : {
-            "key" : "ext"
-          },
-          "remark" : "remark",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val samplesApiDelegate: SamplesApiDelegate? by call.delegates
+        val id = samplesGetSample.id
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = samplesApiDelegate ?: throw APINotImplementedException("API operation samplesGetSample has not been implemented yet.")
+        val result = delegate.samplesGetSample(id, call)
+        call.respond(result)
+        
         
     }
     get<Paths.samplesListSamples> { samplesListSamples ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "id" : "id",
-            "tenantId" : "tenantId",
-            "receiptId" : "receiptId",
-            "sampleCode" : "sampleCode",
-            "sampleName" : "sampleName",
-            "model" : "model",
-            "specification" : "specification",
-            "grade" : "grade",
-            "brand" : "brand",
-            "manufacturer" : "manufacturer",
-            "structuralPart" : "structuralPart",
-            "representQuantity" : "representQuantity",
-            "sampleQuantity" : "sampleQuantity",
-            "batchNumber" : "batchNumber",
-            "supplyUnit" : "supplyUnit",
-            "arrivalDate" : "arrivalDate",
-            "samplingDate" : "samplingDate",
-            "curingCondition" : "curingCondition",
-            "age" : "age",
-            "ext" : {
-              "key" : "ext"
-            },
-            "remark" : "remark",
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "id" : "id",
-            "tenantId" : "tenantId",
-            "receiptId" : "receiptId",
-            "sampleCode" : "sampleCode",
-            "sampleName" : "sampleName",
-            "model" : "model",
-            "specification" : "specification",
-            "grade" : "grade",
-            "brand" : "brand",
-            "manufacturer" : "manufacturer",
-            "structuralPart" : "structuralPart",
-            "representQuantity" : "representQuantity",
-            "sampleQuantity" : "sampleQuantity",
-            "batchNumber" : "batchNumber",
-            "supplyUnit" : "supplyUnit",
-            "arrivalDate" : "arrivalDate",
-            "samplingDate" : "samplingDate",
-            "curingCondition" : "curingCondition",
-            "age" : "age",
-            "ext" : {
-              "key" : "ext"
-            },
-            "remark" : "remark",
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val samplesApiDelegate: SamplesApiDelegate? by call.delegates
+        val page = samplesListSamples.page
+        val pageSize = samplesListSamples.pageSize
+        val receiptId = samplesListSamples.receiptId
+        val keyword = samplesListSamples.keyword
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = samplesApiDelegate ?: throw APINotImplementedException("API operation samplesListSamples has not been implemented yet.")
+        val result = delegate.samplesListSamples(page, pageSize, receiptId, keyword, call)
+        call.respond(result)
+        
         
     }
     put<Paths.samplesUpdateSample> { samplesUpdateSample ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "receiptId" : "receiptId",
-          "sampleCode" : "sampleCode",
-          "sampleName" : "sampleName",
-          "model" : "model",
-          "specification" : "specification",
-          "grade" : "grade",
-          "brand" : "brand",
-          "manufacturer" : "manufacturer",
-          "structuralPart" : "structuralPart",
-          "representQuantity" : "representQuantity",
-          "sampleQuantity" : "sampleQuantity",
-          "batchNumber" : "batchNumber",
-          "supplyUnit" : "supplyUnit",
-          "arrivalDate" : "arrivalDate",
-          "samplingDate" : "samplingDate",
-          "curingCondition" : "curingCondition",
-          "age" : "age",
-          "ext" : {
-            "key" : "ext"
-          },
-          "remark" : "remark",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val samplesApiDelegate: SamplesApiDelegate? by call.delegates
+        val id = samplesUpdateSample.id
+        val updateSampleRequest = call.receive<UpdateSampleRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateSampleRequest.validate()
+            
+        
+        val delegate = samplesApiDelegate ?: throw APINotImplementedException("API operation samplesUpdateSample has not been implemented yet.")
+        val result = delegate.samplesUpdateSample(id, updateSampleRequest, call)
+        call.respond(result)
+        
         
     }
     put<Paths.samplesUpdateSampleExt> { samplesUpdateSampleExt ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "id" : "id",
-          "tenantId" : "tenantId",
-          "receiptId" : "receiptId",
-          "sampleCode" : "sampleCode",
-          "sampleName" : "sampleName",
-          "model" : "model",
-          "specification" : "specification",
-          "grade" : "grade",
-          "brand" : "brand",
-          "manufacturer" : "manufacturer",
-          "structuralPart" : "structuralPart",
-          "representQuantity" : "representQuantity",
-          "sampleQuantity" : "sampleQuantity",
-          "batchNumber" : "batchNumber",
-          "supplyUnit" : "supplyUnit",
-          "arrivalDate" : "arrivalDate",
-          "samplingDate" : "samplingDate",
-          "curingCondition" : "curingCondition",
-          "age" : "age",
-          "ext" : {
-            "key" : "ext"
-          },
-          "remark" : "remark",
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val samplesApiDelegate: SamplesApiDelegate? by call.delegates
+        val id = samplesUpdateSampleExt.id
+        val updateSampleExtRequest = call.receive<UpdateSampleExtRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateSampleExtRequest.validate()
+            
+        
+        val delegate = samplesApiDelegate ?: throw APINotImplementedException("API operation samplesUpdateSampleExt has not been implemented yet.")
+        val result = delegate.samplesUpdateSampleExt(id, updateSampleExtRequest, call)
+        call.respond(result)
+        
         
     }
 }

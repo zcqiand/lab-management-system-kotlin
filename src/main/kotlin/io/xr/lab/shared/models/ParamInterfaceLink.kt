@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param inspectionParameterCode 
@@ -27,4 +28,14 @@ data class ParamInterfaceLink(
     val reportNameCode: kotlin.String? = null,
     val config: kotlin.collections.Map<kotlin.String, kotlinx.serialization.json.JsonElement>? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            config?.forEach { (key, value) ->
+    }
+    
+        }
+}
 

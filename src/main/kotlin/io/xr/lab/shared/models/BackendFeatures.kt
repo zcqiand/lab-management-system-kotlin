@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 已废弃 (ADR-0014);后端能力矩阵
  * @param sso 是否启用 SSO 跳转(nextjs=true / springboot/aspnetcore 视实现)
@@ -25,4 +26,10 @@ data class BackendFeatures(
     /* 是否对接真实数据库(vs mock seed) */
     val realDb: kotlin.Boolean
 )
+{
+        fun validate() {
+            
+            
+        }
+}
 

@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param total 
@@ -25,4 +26,11 @@ data class MaterialQualifiedRate(
     val pass: kotlin.Int,
     val rate: kotlin.Double
 )
+{
+        fun validate() {
+            
+            
+            
+        }
+}
 

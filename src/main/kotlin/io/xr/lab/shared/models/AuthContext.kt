@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.AuthState
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * AuthContext 数据契约。方法(login/logout/refresh/switchTenant/hasPermission/onChange)由消费方实现,TS 签名见 .state/decision-log.md §2.2
  * @param state 当前 auth 状态
@@ -23,4 +24,10 @@ data class AuthContext(
     /* 当前 auth 状态 */
     val state: AuthState
 )
+{
+        fun validate() {
+            state.validate()
+    
+        }
+}
 

@@ -24,6 +24,11 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.head
 import io.ktor.server.resources.patch
 import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
+import io.xr.lab.shared.infrastructure.delegates
+import io.xr.lab.shared.infrastructure.BadParameterException
+import io.xr.lab.shared.infrastructure.APINotImplementedException
 import io.xr.lab.shared.infrastructure.ApiPrincipal
 import io.xr.lab.shared.models.DashboardStats
 import io.xr.lab.shared.models.ErrorResponse
@@ -31,80 +36,28 @@ import io.xr.lab.shared.models.SummaryData
 
 fun Route.SummaryApi() {
     get<Paths.summaryGetDashboardStats> { summaryGetDashboardStats ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "contractCount" : 0,
-          "receiptCount" : 6,
-          "sampleCount" : 1,
-          "reportCountByStatus" : {
-            "draft" : 5,
-            "reviewing" : 5,
-            "issued" : 2
-          },
-          "pendingTaskCount" : 7,
-          "todayTestCount" : 9,
-          "qualifiedRateByMaterial" : {
-            "concrete" : {
-              "total" : 3,
-              "pass" : 2,
-              "rate" : 4.145608029883936
-            },
-            "rebar" : {
-              "total" : 3,
-              "pass" : 2,
-              "rate" : 4.145608029883936
-            },
-            "sand" : {
-              "total" : 3,
-              "pass" : 2,
-              "rate" : 4.145608029883936
-            }
-          },
-          "reportOutputByStatus" : {
-            "generated" : 7,
-            "pending" : 1,
-            "issued" : 1
-          },
-          "funnelByStage" : {
-            "pending_collect" : 1,
-            "received" : 6,
-            "testing" : 7,
-            "reporting" : 1,
-            "reviewing" : 4,
-            "issued" : 5
-          }
-        }"""
+        val summaryApiDelegate: SummaryApiDelegate? by call.delegates
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = summaryApiDelegate ?: throw APINotImplementedException("API operation summaryGetDashboardStats has not been implemented yet.")
+        val result = delegate.summaryGetDashboardStats(call)
+        call.respond(result)
+        
         
     }
     get<Paths.summaryGetReportSummary> { summaryGetReportSummary ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "summaryName" : "summaryName",
-          "columns" : [ {
-            "key" : "key",
-            "label" : "label"
-          }, {
-            "key" : "key",
-            "label" : "label"
-          } ],
-          "rows" : [ {
-            "key" : "rows"
-          }, {
-            "key" : "rows"
-          } ]
-        }"""
+        val summaryApiDelegate: SummaryApiDelegate? by call.delegates
+        val categoryCode = summaryGetReportSummary.categoryCode
+        val dateFrom = summaryGetReportSummary.dateFrom
+        val dateTo = summaryGetReportSummary.dateTo
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = summaryApiDelegate ?: throw APINotImplementedException("API operation summaryGetReportSummary has not been implemented yet.")
+        val result = delegate.summaryGetReportSummary(categoryCode, dateFrom, dateTo, call)
+        call.respond(result)
+        
         
     }
 }

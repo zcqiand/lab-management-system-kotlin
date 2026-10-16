@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.InspectionSpecialty
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param items 
@@ -28,4 +29,13 @@ data class InspectionDictionaryListSpecialties200Response(
     val pageSize: kotlin.Int,
     val total: kotlin.Long
 )
+{
+        fun validate() {
+            items.forEach { it.validate() }
+    
+            
+            
+            
+        }
+}
 

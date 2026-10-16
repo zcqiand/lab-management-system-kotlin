@@ -24,30 +24,24 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.head
 import io.ktor.server.resources.patch
 import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
+import io.xr.lab.shared.infrastructure.delegates
+import io.xr.lab.shared.infrastructure.BadParameterException
+import io.xr.lab.shared.infrastructure.APINotImplementedException
 import io.xr.lab.shared.infrastructure.ApiPrincipal
 import io.xr.lab.shared.models.FrontendBindMetaFrontendBindSnapshot
 
 fun Route.FrontendBindMetaApi() {
     get<Paths.frontendBindMetaGetFrontendBindSnapshot> { frontendBindMetaGetFrontendBindSnapshot ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "registry" : "",
-          "authContext" : {
-            "state" : ""
-          },
-          "tokenKeys" : {
-            "accessToken" : "lab.accessToken",
-            "refreshToken" : "lab.refreshToken",
-            "activeTenantId" : "lab.activeTenantId",
-            "permissionsCache" : "lab.permissions"
-          }
-        }"""
+        val frontendBindMetaApiDelegate: FrontendBindMetaApiDelegate? by call.delegates
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = frontendBindMetaApiDelegate ?: throw APINotImplementedException("API operation frontendBindMetaGetFrontendBindSnapshot has not been implemented yet.")
+        val result = delegate.frontendBindMetaGetFrontendBindSnapshot(call)
+        call.respond(result)
+        
         
     }
 }

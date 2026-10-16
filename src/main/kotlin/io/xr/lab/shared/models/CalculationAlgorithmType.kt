@@ -39,5 +39,15 @@ enum class CalculationAlgorithmType(val value: kotlin.String) {
     @kotlinx.serialization.SerialName("auto_calc_ratio")
     auto_calc_ratio("auto_calc_ratio");
 
+
+    companion object {
+        /**
+         * Returns the enum individual associated with the [value] passed as parameter.
+         *
+         * @throws IllegalArgumentException if no enum individual is associated with the [value] passed as parameter.
+         */
+        fun fromValue(value: kotlin.String): CalculationAlgorithmType =
+            values().firstOrNull { it.value == value } ?: throw IllegalArgumentException("No enum constant CalculationAlgorithmType.$value")
+    }
 }
 

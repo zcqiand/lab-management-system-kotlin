@@ -24,6 +24,11 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.head
 import io.ktor.server.resources.patch
 import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
+import io.xr.lab.shared.infrastructure.delegates
+import io.xr.lab.shared.infrastructure.BadParameterException
+import io.xr.lab.shared.infrastructure.APINotImplementedException
 import io.xr.lab.shared.infrastructure.ApiPrincipal
 import io.xr.lab.shared.models.CreateTechnicalRequirementRequest
 import io.xr.lab.shared.models.ErrorResponse
@@ -33,199 +38,77 @@ import io.xr.lab.shared.models.UpdateTechnicalRequirementRequest
 
 fun Route.TechnicalRequirementsApi() {
     post<Paths.technicalRequirementsCreateTechnicalRequirement> { technicalRequirementsCreateTechnicalRequirement ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "tenantId" : "tenantId",
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "inspectionParameterCode" : "inspectionParameterCode",
-          "judgmentStandardCode" : "judgmentStandardCode",
-          "conditions" : "conditions",
-          "valueType" : "numeric",
-          "minValue" : 0,
-          "maxValue" : 6,
-          "targetValue" : "targetValue",
-          "expression" : "expression",
-          "unit" : "unit",
-          "comparison" : "≥",
-          "judgmentMode" : "automatic",
-          "verificationStatus" : "draft",
-          "clause" : "clause",
-          "sourcePage" : 1,
-          "sourceHash" : "sourceHash",
-          "brand" : "brand",
-          "model" : "model",
-          "grade" : "grade",
-          "spec" : "spec",
-          "sieve" : "sieve",
-          "remark" : "remark",
-          "sortOrder" : 5,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val technicalRequirementsApiDelegate: TechnicalRequirementsApiDelegate? by call.delegates
+        val createTechnicalRequirementRequest = call.receive<CreateTechnicalRequirementRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createTechnicalRequirementRequest.validate()
+            
+        
+        val delegate = technicalRequirementsApiDelegate ?: throw APINotImplementedException("API operation technicalRequirementsCreateTechnicalRequirement has not been implemented yet.")
+        val result = delegate.technicalRequirementsCreateTechnicalRequirement(createTechnicalRequirementRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.technicalRequirementsDeleteTechnicalRequirement> { technicalRequirementsDeleteTechnicalRequirement ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val technicalRequirementsApiDelegate: TechnicalRequirementsApiDelegate? by call.delegates
+        val inspectionObjectCode = technicalRequirementsDeleteTechnicalRequirement.inspectionObjectCode
+        val inspectionParameterCode = technicalRequirementsDeleteTechnicalRequirement.inspectionParameterCode
+        val judgmentStandardCode = technicalRequirementsDeleteTechnicalRequirement.judgmentStandardCode
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = technicalRequirementsApiDelegate ?: throw APINotImplementedException("API operation technicalRequirementsDeleteTechnicalRequirement has not been implemented yet.")
+        val result = delegate.technicalRequirementsDeleteTechnicalRequirement(inspectionObjectCode, inspectionParameterCode, judgmentStandardCode, call)
+        call.respond(result)
+        
         
     }
     get<Paths.technicalRequirementsGetTechnicalRequirement> { technicalRequirementsGetTechnicalRequirement ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "tenantId" : "tenantId",
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "inspectionParameterCode" : "inspectionParameterCode",
-          "judgmentStandardCode" : "judgmentStandardCode",
-          "conditions" : "conditions",
-          "valueType" : "numeric",
-          "minValue" : 0,
-          "maxValue" : 6,
-          "targetValue" : "targetValue",
-          "expression" : "expression",
-          "unit" : "unit",
-          "comparison" : "≥",
-          "judgmentMode" : "automatic",
-          "verificationStatus" : "draft",
-          "clause" : "clause",
-          "sourcePage" : 1,
-          "sourceHash" : "sourceHash",
-          "brand" : "brand",
-          "model" : "model",
-          "grade" : "grade",
-          "spec" : "spec",
-          "sieve" : "sieve",
-          "remark" : "remark",
-          "sortOrder" : 5,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val technicalRequirementsApiDelegate: TechnicalRequirementsApiDelegate? by call.delegates
+        val inspectionObjectCode = technicalRequirementsGetTechnicalRequirement.inspectionObjectCode
+        val inspectionParameterCode = technicalRequirementsGetTechnicalRequirement.inspectionParameterCode
+        val judgmentStandardCode = technicalRequirementsGetTechnicalRequirement.judgmentStandardCode
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = technicalRequirementsApiDelegate ?: throw APINotImplementedException("API operation technicalRequirementsGetTechnicalRequirement has not been implemented yet.")
+        val result = delegate.technicalRequirementsGetTechnicalRequirement(inspectionObjectCode, inspectionParameterCode, judgmentStandardCode, call)
+        call.respond(result)
+        
         
     }
     get<Paths.technicalRequirementsListTechnicalRequirements> { technicalRequirementsListTechnicalRequirements ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """[ {
-          "tenantId" : "tenantId",
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "inspectionParameterCode" : "inspectionParameterCode",
-          "judgmentStandardCode" : "judgmentStandardCode",
-          "conditions" : "conditions",
-          "valueType" : "numeric",
-          "minValue" : 0,
-          "maxValue" : 6,
-          "targetValue" : "targetValue",
-          "expression" : "expression",
-          "unit" : "unit",
-          "comparison" : "≥",
-          "judgmentMode" : "automatic",
-          "verificationStatus" : "draft",
-          "clause" : "clause",
-          "sourcePage" : 1,
-          "sourceHash" : "sourceHash",
-          "brand" : "brand",
-          "model" : "model",
-          "grade" : "grade",
-          "spec" : "spec",
-          "sieve" : "sieve",
-          "remark" : "remark",
-          "sortOrder" : 5,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }, {
-          "tenantId" : "tenantId",
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "inspectionParameterCode" : "inspectionParameterCode",
-          "judgmentStandardCode" : "judgmentStandardCode",
-          "conditions" : "conditions",
-          "valueType" : "numeric",
-          "minValue" : 0,
-          "maxValue" : 6,
-          "targetValue" : "targetValue",
-          "expression" : "expression",
-          "unit" : "unit",
-          "comparison" : "≥",
-          "judgmentMode" : "automatic",
-          "verificationStatus" : "draft",
-          "clause" : "clause",
-          "sourcePage" : 1,
-          "sourceHash" : "sourceHash",
-          "brand" : "brand",
-          "model" : "model",
-          "grade" : "grade",
-          "spec" : "spec",
-          "sieve" : "sieve",
-          "remark" : "remark",
-          "sortOrder" : 5,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        } ]"""
+        val technicalRequirementsApiDelegate: TechnicalRequirementsApiDelegate? by call.delegates
+        val inspectionObjectCode = technicalRequirementsListTechnicalRequirements.inspectionObjectCode
+        val inspectionParameterCode = technicalRequirementsListTechnicalRequirements.inspectionParameterCode
+        val judgmentStandardCode = technicalRequirementsListTechnicalRequirements.judgmentStandardCode
+        val verificationStatus = technicalRequirementsListTechnicalRequirements.verificationStatus
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = technicalRequirementsApiDelegate ?: throw APINotImplementedException("API operation technicalRequirementsListTechnicalRequirements has not been implemented yet.")
+        val result = delegate.technicalRequirementsListTechnicalRequirements(inspectionObjectCode, inspectionParameterCode, judgmentStandardCode, verificationStatus, call)
+        call.respond(result)
+        
         
     }
     put<Paths.technicalRequirementsUpdateTechnicalRequirement> { technicalRequirementsUpdateTechnicalRequirement ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "tenantId" : "tenantId",
-          "inspectionObjectCode" : "inspectionObjectCode",
-          "inspectionParameterCode" : "inspectionParameterCode",
-          "judgmentStandardCode" : "judgmentStandardCode",
-          "conditions" : "conditions",
-          "valueType" : "numeric",
-          "minValue" : 0,
-          "maxValue" : 6,
-          "targetValue" : "targetValue",
-          "expression" : "expression",
-          "unit" : "unit",
-          "comparison" : "≥",
-          "judgmentMode" : "automatic",
-          "verificationStatus" : "draft",
-          "clause" : "clause",
-          "sourcePage" : 1,
-          "sourceHash" : "sourceHash",
-          "brand" : "brand",
-          "model" : "model",
-          "grade" : "grade",
-          "spec" : "spec",
-          "sieve" : "sieve",
-          "remark" : "remark",
-          "sortOrder" : 5,
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val technicalRequirementsApiDelegate: TechnicalRequirementsApiDelegate? by call.delegates
+        val inspectionObjectCode = technicalRequirementsUpdateTechnicalRequirement.inspectionObjectCode
+        val inspectionParameterCode = technicalRequirementsUpdateTechnicalRequirement.inspectionParameterCode
+        val judgmentStandardCode = technicalRequirementsUpdateTechnicalRequirement.judgmentStandardCode
+        val updateTechnicalRequirementRequest = call.receive<UpdateTechnicalRequirementRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateTechnicalRequirementRequest.validate()
+            
+        
+        val delegate = technicalRequirementsApiDelegate ?: throw APINotImplementedException("API operation technicalRequirementsUpdateTechnicalRequirement has not been implemented yet.")
+        val result = delegate.technicalRequirementsUpdateTechnicalRequirement(inspectionObjectCode, inspectionParameterCode, judgmentStandardCode, updateTechnicalRequirementRequest, call)
+        call.respond(result)
+        
         
     }
 }

@@ -14,6 +14,7 @@ package io.xr.lab.shared.models
 import io.xr.lab.shared.models.InspectionParameterSourceType
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param code 
@@ -38,4 +39,19 @@ data class CreateInspectionParameterRequest(
     val sourceType: InspectionParameterSourceType? = null,
     val sortOrder: kotlin.Int? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            aliases?.forEach {
+    }
+    
+            
+            
+            
+        }
+}
 

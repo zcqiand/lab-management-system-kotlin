@@ -16,6 +16,7 @@ import io.xr.lab.shared.models.BackendFeatures
 import io.xr.lab.shared.models.BackendId
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 已废弃 (ADR-0014):用 VITE_API_BASE_URL / NEXT_PUBLIC_API_BASE_URL 替代;4-backend 运行时切换配置
  * @param id 槽位标识,必须是 BackendId 之一
@@ -40,4 +41,15 @@ data class BackendConfig(
     /* SSO 回调路径(仅启用 SSO 的后端填写) */
     val ssoCallbackPath: kotlin.String? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            features.validate()
+    
+            
+        }
+}
 

@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param contractId 
@@ -79,4 +80,44 @@ data class UpdateSampleReceiptRequest(
     val testingBasis: kotlin.collections.List<kotlin.String>? = null,
     val testParameters: kotlin.collections.List<kotlin.String>? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            judgmentBasis?.forEach {
+    }
+    
+            testingBasis?.forEach {
+    }
+    
+            testParameters?.forEach {
+    }
+    
+        }
+}
 

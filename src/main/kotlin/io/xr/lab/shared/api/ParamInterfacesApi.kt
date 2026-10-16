@@ -24,6 +24,11 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.head
 import io.ktor.server.resources.patch
 import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
+import io.xr.lab.shared.infrastructure.delegates
+import io.xr.lab.shared.infrastructure.BadParameterException
+import io.xr.lab.shared.infrastructure.APINotImplementedException
 import io.xr.lab.shared.infrastructure.ApiPrincipal
 import io.xr.lab.shared.models.CreateParamInterfaceRequest
 import io.xr.lab.shared.models.ErrorResponse
@@ -36,193 +41,111 @@ import io.xr.lab.shared.models.UpdateParamInterfaceRequest
 
 fun Route.ParamInterfacesApi() {
     post<Paths.paramInterfacesCreateParamInterface> { paramInterfacesCreateParamInterface ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "name" : "name",
-          "componentPath" : "componentPath",
-          "description" : "description",
-          "isOfficial" : true,
-          "sortOrder" : 0,
-          "config" : {
-            "key" : ""
-          },
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val paramInterfacesApiDelegate: ParamInterfacesApiDelegate? by call.delegates
+        val createParamInterfaceRequest = call.receive<CreateParamInterfaceRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 createParamInterfaceRequest.validate()
+            
+        
+        val delegate = paramInterfacesApiDelegate ?: throw APINotImplementedException("API operation paramInterfacesCreateParamInterface has not been implemented yet.")
+        val result = delegate.paramInterfacesCreateParamInterface(createParamInterfaceRequest, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.paramInterfacesDeleteParamInterface> { paramInterfacesDeleteParamInterface ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val paramInterfacesApiDelegate: ParamInterfacesApiDelegate? by call.delegates
+        val code = paramInterfacesDeleteParamInterface.code
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = paramInterfacesApiDelegate ?: throw APINotImplementedException("API operation paramInterfacesDeleteParamInterface has not been implemented yet.")
+        val result = delegate.paramInterfacesDeleteParamInterface(code, call)
+        call.respond(result)
+        
         
     }
     get<Paths.paramInterfacesGetParamInterface> { paramInterfacesGetParamInterface ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "name" : "name",
-          "componentPath" : "componentPath",
-          "description" : "description",
-          "isOfficial" : true,
-          "sortOrder" : 0,
-          "config" : {
-            "key" : ""
-          },
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val paramInterfacesApiDelegate: ParamInterfacesApiDelegate? by call.delegates
+        val code = paramInterfacesGetParamInterface.code
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = paramInterfacesApiDelegate ?: throw APINotImplementedException("API operation paramInterfacesGetParamInterface has not been implemented yet.")
+        val result = delegate.paramInterfacesGetParamInterface(code, call)
+        call.respond(result)
+        
         
     }
     post<Paths.paramInterfacesLinkParamInterface> { paramInterfacesLinkParamInterface ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val paramInterfacesApiDelegate: ParamInterfacesApiDelegate? by call.delegates
+        val paramInterfaceLink = call.receive<ParamInterfaceLink>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 paramInterfaceLink.validate()
+            
+        
+        val delegate = paramInterfacesApiDelegate ?: throw APINotImplementedException("API operation paramInterfacesLinkParamInterface has not been implemented yet.")
+        val result = delegate.paramInterfacesLinkParamInterface(paramInterfaceLink, call)
+        call.respond(result)
+        
         
     }
     get<Paths.paramInterfacesListParamInterfaceLinks> { paramInterfacesListParamInterfaceLinks ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "inspectionParameterCode" : "inspectionParameterCode",
-            "paramInterfaceCode" : "paramInterfaceCode",
-            "reportNameCode" : "reportNameCode",
-            "config" : {
-              "key" : ""
-            }
-          }, {
-            "inspectionParameterCode" : "inspectionParameterCode",
-            "paramInterfaceCode" : "paramInterfaceCode",
-            "reportNameCode" : "reportNameCode",
-            "config" : {
-              "key" : ""
-            }
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val paramInterfacesApiDelegate: ParamInterfacesApiDelegate? by call.delegates
+        val inspectionParameterCode = paramInterfacesListParamInterfaceLinks.inspectionParameterCode
+        val paramInterfaceCode = paramInterfacesListParamInterfaceLinks.paramInterfaceCode
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = paramInterfacesApiDelegate ?: throw APINotImplementedException("API operation paramInterfacesListParamInterfaceLinks has not been implemented yet.")
+        val result = delegate.paramInterfacesListParamInterfaceLinks(inspectionParameterCode, paramInterfaceCode, call)
+        call.respond(result)
+        
         
     }
     get<Paths.paramInterfacesListParamInterfaces> { paramInterfacesListParamInterfaces ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "items" : [ {
-            "code" : "code",
-            "name" : "name",
-            "componentPath" : "componentPath",
-            "description" : "description",
-            "isOfficial" : true,
-            "sortOrder" : 0,
-            "config" : {
-              "key" : ""
-            },
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          }, {
-            "code" : "code",
-            "name" : "name",
-            "componentPath" : "componentPath",
-            "description" : "description",
-            "isOfficial" : true,
-            "sortOrder" : 0,
-            "config" : {
-              "key" : ""
-            },
-            "createdAt" : "createdAt",
-            "updatedAt" : "updatedAt"
-          } ],
-          "page" : 1,
-          "pageSize" : 20,
-          "total" : 0
-        }"""
+        val paramInterfacesApiDelegate: ParamInterfacesApiDelegate? by call.delegates
+        val page = paramInterfacesListParamInterfaces.page
+        val pageSize = paramInterfacesListParamInterfaces.pageSize
+        val keyword = paramInterfacesListParamInterfaces.keyword
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = paramInterfacesApiDelegate ?: throw APINotImplementedException("API operation paramInterfacesListParamInterfaces has not been implemented yet.")
+        val result = delegate.paramInterfacesListParamInterfaces(page, pageSize, keyword, call)
+        call.respond(result)
+        
         
     }
     delete<Paths.paramInterfacesUnlinkParamInterface> { paramInterfacesUnlinkParamInterface ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val paramInterfacesApiDelegate: ParamInterfacesApiDelegate? by call.delegates
+        val paramInterfacesUnlinkParamInterfaceRequest = call.receive<ParamInterfacesUnlinkParamInterfaceRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 paramInterfacesUnlinkParamInterfaceRequest.validate()
+            
+        
+        val delegate = paramInterfacesApiDelegate ?: throw APINotImplementedException("API operation paramInterfacesUnlinkParamInterface has not been implemented yet.")
+        val result = delegate.paramInterfacesUnlinkParamInterface(paramInterfacesUnlinkParamInterfaceRequest, call)
+        call.respond(result)
+        
         
     }
     put<Paths.paramInterfacesUpdateParamInterface> { paramInterfacesUpdateParamInterface ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "code",
-          "name" : "name",
-          "componentPath" : "componentPath",
-          "description" : "description",
-          "isOfficial" : true,
-          "sortOrder" : 0,
-          "config" : {
-            "key" : ""
-          },
-          "createdAt" : "createdAt",
-          "updatedAt" : "updatedAt"
-        }"""
+        val paramInterfacesApiDelegate: ParamInterfacesApiDelegate? by call.delegates
+        val code = paramInterfacesUpdateParamInterface.code
+        val updateParamInterfaceRequest = call.receive<UpdateParamInterfaceRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 updateParamInterfaceRequest.validate()
+            
+        
+        val delegate = paramInterfacesApiDelegate ?: throw APINotImplementedException("API operation paramInterfacesUpdateParamInterface has not been implemented yet.")
+        val result = delegate.paramInterfacesUpdateParamInterface(code, updateParamInterfaceRequest, call)
+        call.respond(result)
+        
         
     }
 }

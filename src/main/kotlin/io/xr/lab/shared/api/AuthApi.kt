@@ -24,6 +24,11 @@ import io.ktor.server.resources.delete
 import io.ktor.server.resources.head
 import io.ktor.server.resources.patch
 import io.ktor.server.routing.*
+import io.ktor.server.request.*
+import io.ktor.http.content.*
+import io.xr.lab.shared.infrastructure.delegates
+import io.xr.lab.shared.infrastructure.BadParameterException
+import io.xr.lab.shared.infrastructure.APINotImplementedException
 import io.xr.lab.shared.infrastructure.ApiPrincipal
 import io.xr.lab.shared.models.AuthLogoutRequest
 import io.xr.lab.shared.models.CurrentUserSession
@@ -40,255 +45,135 @@ import io.xr.lab.shared.models.SwitchTenantRequest
 
 fun Route.AuthApi() {
     get<Paths.authGetCurrentUser> { authGetCurrentUser ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "user" : {
-            "id" : "id",
-            "username" : "username",
-            "displayName" : "displayName",
-            "roleCode" : "roleCode"
-          },
-          "tenants" : [ {
-            "tenantId" : "tenantId",
-            "code" : "code",
-            "name" : "name",
-            "roleIds" : [ "roleIds", "roleIds" ]
-          }, {
-            "tenantId" : "tenantId",
-            "code" : "code",
-            "name" : "name",
-            "roleIds" : [ "roleIds", "roleIds" ]
-          } ],
-          "currentTenantId" : "currentTenantId"
-        }"""
+        val authApiDelegate: AuthApiDelegate? by call.delegates
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = authApiDelegate ?: throw APINotImplementedException("API operation authGetCurrentUser has not been implemented yet.")
+        val result = delegate.authGetCurrentUser(call)
+        call.respond(result)
+        
         
     }
     get<Paths.authGetMenus> { authGetMenus ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """[ {
-          "id" : "id",
-          "label" : "label",
-          "path" : "path",
-          "icon" : "icon",
-          "children" : [ null, null ]
-        }, {
-          "id" : "id",
-          "label" : "label",
-          "path" : "path",
-          "icon" : "icon",
-          "children" : [ null, null ]
-        } ]"""
+        val authApiDelegate: AuthApiDelegate? by call.delegates
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = authApiDelegate ?: throw APINotImplementedException("API operation authGetMenus has not been implemented yet.")
+        val result = delegate.authGetMenus(call)
+        call.respond(result)
+        
         
     }
     get<Paths.authGetPermissions> { authGetPermissions ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "permissions" : [ "permissions", "permissions" ]
-        }"""
+        val authApiDelegate: AuthApiDelegate? by call.delegates
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = authApiDelegate ?: throw APINotImplementedException("API operation authGetPermissions has not been implemented yet.")
+        val result = delegate.authGetPermissions(call)
+        call.respond(result)
+        
         
     }
     post<Paths.authLogin> { authLogin ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "token" : "token",
-          "refreshToken" : "refreshToken",
-          "user" : {
-            "id" : "id",
-            "username" : "username",
-            "displayName" : "displayName",
-            "roleCode" : "roleCode"
-          },
-          "tenants" : [ {
-            "tenantId" : "tenantId",
-            "code" : "code",
-            "name" : "name",
-            "roleIds" : [ "roleIds", "roleIds" ]
-          }, {
-            "tenantId" : "tenantId",
-            "code" : "code",
-            "name" : "name",
-            "roleIds" : [ "roleIds", "roleIds" ]
-          } ]
-        }"""
+        val authApiDelegate: AuthApiDelegate? by call.delegates
+        val loginRequest = call.receive<LoginRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 loginRequest.validate()
+            
+        
+        val delegate = authApiDelegate ?: throw APINotImplementedException("API operation authLogin has not been implemented yet.")
+        val result = delegate.authLogin(loginRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.authLogout> { authLogout ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "code" : "BAD_REQUEST",
-          "message" : "message",
-          "details" : {
-            "key" : ""
-          }
-        }"""
+        val authApiDelegate: AuthApiDelegate? by call.delegates
+        val authLogoutRequest = call.receive<AuthLogoutRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 authLogoutRequest.validate()
+            
+        
+        val delegate = authApiDelegate ?: throw APINotImplementedException("API operation authLogout has not been implemented yet.")
+        val result = delegate.authLogout(authLogoutRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.authNativeLogin> { authNativeLogin ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "token" : "token",
-          "refreshToken" : "refreshToken",
-          "user" : {
-            "id" : "id",
-            "username" : "username",
-            "displayName" : "displayName",
-            "roleCode" : "roleCode"
-          },
-          "tenants" : [ {
-            "tenantId" : "tenantId",
-            "code" : "code",
-            "name" : "name",
-            "roleIds" : [ "roleIds", "roleIds" ]
-          }, {
-            "tenantId" : "tenantId",
-            "code" : "code",
-            "name" : "name",
-            "roleIds" : [ "roleIds", "roleIds" ]
-          } ]
-        }"""
+        val authApiDelegate: AuthApiDelegate? by call.delegates
+        val loginRequest = call.receive<LoginRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 loginRequest.validate()
+            
+        
+        val delegate = authApiDelegate ?: throw APINotImplementedException("API operation authNativeLogin has not been implemented yet.")
+        val result = delegate.authNativeLogin(loginRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.authRefresh> { authRefresh ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "token" : "token",
-          "refreshToken" : "refreshToken",
-          "user" : {
-            "id" : "id",
-            "username" : "username",
-            "displayName" : "displayName",
-            "roleCode" : "roleCode"
-          },
-          "tenants" : [ {
-            "tenantId" : "tenantId",
-            "code" : "code",
-            "name" : "name",
-            "roleIds" : [ "roleIds", "roleIds" ]
-          }, {
-            "tenantId" : "tenantId",
-            "code" : "code",
-            "name" : "name",
-            "roleIds" : [ "roleIds", "roleIds" ]
-          } ]
-        }"""
+        val authApiDelegate: AuthApiDelegate? by call.delegates
+        val refreshTokenRequest = call.receive<RefreshTokenRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 refreshTokenRequest.validate()
+            
+        
+        val delegate = authApiDelegate ?: throw APINotImplementedException("API operation authRefresh has not been implemented yet.")
+        val result = delegate.authRefresh(refreshTokenRequest, call)
+        call.respond(result)
+        
         
     }
     get<Paths.authSsoAuthorize> { authSsoAuthorize ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "authorizeUrl" : "authorizeUrl",
-          "state" : "state"
-        }"""
+        val authApiDelegate: AuthApiDelegate? by call.delegates
+        val responseType = authSsoAuthorize.responseType
+        val clientId = authSsoAuthorize.clientId
+        val redirectUri = authSsoAuthorize.redirectUri
+        val state = authSsoAuthorize.state
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+        
+        val delegate = authApiDelegate ?: throw APINotImplementedException("API operation authSsoAuthorize has not been implemented yet.")
+        val result = delegate.authSsoAuthorize(responseType, clientId, redirectUri, state, call)
+        call.respond(result)
+        
         
     }
     post<Paths.authSsoCallback> { authSsoCallback ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "token" : "token",
-          "refreshToken" : "refreshToken",
-          "user" : {
-            "id" : "id",
-            "username" : "username",
-            "displayName" : "displayName",
-            "roleCode" : "roleCode"
-          },
-          "tenants" : [ {
-            "tenantId" : "tenantId",
-            "code" : "code",
-            "name" : "name",
-            "roleIds" : [ "roleIds", "roleIds" ]
-          }, {
-            "tenantId" : "tenantId",
-            "code" : "code",
-            "name" : "name",
-            "roleIds" : [ "roleIds", "roleIds" ]
-          } ]
-        }"""
+        val authApiDelegate: AuthApiDelegate? by call.delegates
+        val ssoCallbackRequest = call.receive<SsoCallbackRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 ssoCallbackRequest.validate()
+            
+        
+        val delegate = authApiDelegate ?: throw APINotImplementedException("API operation authSsoCallback has not been implemented yet.")
+        val result = delegate.authSsoCallback(ssoCallbackRequest, call)
+        call.respond(result)
+        
         
     }
     post<Paths.authSwitchTenant> { authSwitchTenant ->
-        val exampleContentType = "application/json"
-        val exampleContentString = """{
-          "token" : "token",
-          "refreshToken" : "refreshToken",
-          "user" : {
-            "id" : "id",
-            "username" : "username",
-            "displayName" : "displayName",
-            "roleCode" : "roleCode"
-          },
-          "tenants" : [ {
-            "tenantId" : "tenantId",
-            "code" : "code",
-            "name" : "name",
-            "roleIds" : [ "roleIds", "roleIds" ]
-          }, {
-            "tenantId" : "tenantId",
-            "code" : "code",
-            "name" : "name",
-            "roleIds" : [ "roleIds", "roleIds" ]
-          } ]
-        }"""
+        val authApiDelegate: AuthApiDelegate? by call.delegates
+        val switchTenantRequest = call.receive<SwitchTenantRequest>()
         
-        when (exampleContentType) {
-            "application/json" -> call.respondText(exampleContentType, ContentType.Application.Json)
-            "application/xml" -> call.respondText(exampleContentString, ContentType.Text.Xml)
-            else -> call.respondText(exampleContentString)
-        }
+        
+                 switchTenantRequest.validate()
+            
+        
+        val delegate = authApiDelegate ?: throw APINotImplementedException("API operation authSwitchTenant has not been implemented yet.")
+        val result = delegate.authSwitchTenant(switchTenantRequest, call)
+        call.respond(result)
+        
         
     }
 }

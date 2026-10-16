@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param id 
@@ -27,4 +28,12 @@ data class CurrentUser(
     val displayName: kotlin.String? = null,
     val roleCode: kotlin.String? = null
 )
+{
+        fun validate() {
+            
+            
+            
+            
+        }
+}
 

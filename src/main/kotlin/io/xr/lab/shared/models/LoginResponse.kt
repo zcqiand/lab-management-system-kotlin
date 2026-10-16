@@ -15,6 +15,7 @@ import io.xr.lab.shared.models.CurrentUser
 import io.xr.lab.shared.models.MyTenant
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param token 
@@ -29,4 +30,14 @@ data class LoginResponse(
     val tenants: kotlin.collections.List<MyTenant>,
     val refreshToken: kotlin.String? = null
 )
+{
+        fun validate() {
+            
+            user.validate()
+    
+            tenants.forEach { it.validate() }
+    
+            
+        }
+}
 

@@ -13,6 +13,7 @@ package io.xr.lab.shared.models
 
 
 import kotlinx.serialization.Serializable
+import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param kind 
@@ -29,5 +30,8 @@ data class AuthStateIdleValue(
     enum class Kind(val value: kotlin.String){
         idle("idle");
     }
+        fun validate() {
+            
+        }
 }
 
