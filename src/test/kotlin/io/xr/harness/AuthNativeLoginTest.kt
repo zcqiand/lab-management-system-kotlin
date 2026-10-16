@@ -283,6 +283,32 @@ class AuthNativeLoginTest {
   }
 
   @Test
+  fun zeroTenantSaasUserGetsEmptyTenantsNotDemoFallback() {
+    // 终审 Important 补钉：saas 零租户用户——空列表保持空（fastapi `tenants if tenants is not
+    // None` 镜像：密码路径空即空），不得回落 demo 字面量租户（hard-rules §3 同族：身份字段禁兜 demo）
+    val (status, body) =
+        postLogin(
+            """{"username":"lonely","password":"x"}""",
+            FakeSaasAuth(
+                login = {
+                  SaasLoginResponse(
+                      user = SaasLoginUser(id = "u9", username = "lonely"),
+                      availableTenants = emptyList(),
+                      accessToken = "at",
+                      userId = "u9",
+                      currentTenantId = null,
+                  )
+                }
+            ),
+            FakeSaasMe(),
+        )
+    assertEquals(HttpStatusCode.OK, status)
+    val dto = Json.decodeFromString<LoginResponse>(body)
+    assertEquals(emptyList<String>(), dto.tenants.map { it.tenantId }) // 现实现兜 3 个 demo 租户 → RED
+    assertTrue(!body.contains("city-lab"), "demo 租户字面量不得出现")
+  }
+
+  @Test
   fun deprecatedLoginSharesSameChain() {
     // I01 已废弃不挂 ID；同链冒烟：/auth/login 与 native-login 同响应
     val (nativeStatus, _) =

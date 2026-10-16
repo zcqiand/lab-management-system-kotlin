@@ -1,6 +1,7 @@
 package io.xr.harness
 
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
@@ -84,6 +85,13 @@ private fun Application.installCors(cfg: AppConfig) {
       val host = if (origin.port == -1) (origin.host ?: "") else "${origin.host}:${origin.port}"
       allowHost(host = host, schemes = listOf(origin.scheme))
     }
+    // fastapi CORSMiddleware 口径（终审 Important 对齐）：allow_methods 含 CRUD 写动词
+    // （ktor 默认只有 GET/POST/HEAD，Phase 5 跨域 PUT/PATCH/DELETE 会被浏览器拦）、
+    // allow_credentials=true；headers 维持 Authorization/Content-Type 显式集
+    allowMethod(HttpMethod.Put)
+    allowMethod(HttpMethod.Patch)
+    allowMethod(HttpMethod.Delete)
+    allowCredentials = true
     allowHeader(HttpHeaders.Authorization)
     allowHeader(HttpHeaders.ContentType)
   }

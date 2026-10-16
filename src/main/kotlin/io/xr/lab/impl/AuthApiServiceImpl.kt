@@ -84,7 +84,9 @@ class AuthApiServiceImpl(
         user.displayName,
         user.roleCode,
     )
-    // 步骤 7：lab 自家 JWT 重签；refresh 恒 dev-placeholder（密码路径不透传 saas refreshToken）
+    // 步骤 7：lab 自家 JWT 重签；refresh 恒 dev-placeholder（密码路径不透传 saas refreshToken）。
+    // 租户空列表保持空（终审 Important：fastapi `tenants if tenants is not None` 镜像——
+    // 空即空，禁回落 demo 字面量，suite-hard-rules §3 同族）
     return session(user, saasLogin.currentTenantId ?: tenants.firstOrNull()?.tenantId, tenants)
   }
 
@@ -165,6 +167,8 @@ class AuthApiServiceImpl(
           token = jwt.issue(user.id, tenantId),
           refreshToken = jwt.issueRefresh(user.id, DEV_PLACEHOLDER_REFRESH),
           user = user,
-          tenants = tenants.ifEmpty { directory.tenantsOf(user.username) },
+          // 空列表保持空（fastapi `_session` 镜像：密码路径空即空，禁 demo 兜底）；
+          // directory.tenantsOf 仍留作 SSO 路径（Phase 5）的 mirror 面
+          tenants = tenants,
       )
 }

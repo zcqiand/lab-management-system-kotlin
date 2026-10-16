@@ -25,19 +25,29 @@ private const val HTTP_SERVER_ERROR = 500
 
 private val outboundJson = Json { ignoreUnknownKeys = true }
 
+/** 进程级共享客户端（终审 Important：每请求 newBuilder 从不 close = 线程/连接泄漏）。 */
+private val outboundHttp: HttpClient =
+    HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(OUTBOUND_TIMEOUT_SECONDS)).build()
+
+/**
+ * 请求级读超时（终审 Important：connectTimeout 只管建连，saas accept 后挂死 = send 永久阻塞）。 HttpTimeoutException 是
+ * IOException 子类，sendForJson 既有 catch 已翻 SaasUpstream（502）。
+ */
+private fun outboundRequest(build: HttpRequest.Builder.() -> Unit): HttpRequest =
+    HttpRequest.newBuilder()
+        .timeout(Duration.ofSeconds(OUTBOUND_TIMEOUT_SECONDS))
+        .apply(build)
+        .build()
+
 /**
  * 出站公共段（fastapi saas_client 镜像，Review Focus 1/2 防位）： 连接失败/超时 → SaasUpstream（impl 层翻 502）；saas 401 →
  * UnauthorizedClient、 其他 4xx → InvalidGrant（impl 层统一翻 401 INVALID_CREDENTIALS，不透传内部码）。
  */
 private suspend fun sendForJson(request: HttpRequest, endpoint: String): String =
     withContext(Dispatchers.IO) {
-      val http =
-          HttpClient.newBuilder()
-              .connectTimeout(Duration.ofSeconds(OUTBOUND_TIMEOUT_SECONDS))
-              .build()
       val resp =
           try {
-            http.send(request, HttpResponse.BodyHandlers.ofString())
+            outboundHttp.send(request, HttpResponse.BodyHandlers.ofString())
           } catch (err: IOException) {
             throw SaasUpstreamError("saas $endpoint connect failed: ${err.message}", err)
           } catch (err: InterruptedException) {
@@ -61,19 +71,18 @@ private fun classifySaasError(status: Int, body: String, endpoint: String): Noth
   throw classified
 }
 
-private fun loginRequest(base: String, body: String): HttpRequest =
-    HttpRequest.newBuilder()
-        .uri(URI.create("$base/api/v1/auth/login"))
-        .header("Content-Type", "application/json")
-        .POST(HttpRequest.BodyPublishers.ofString(body))
-        .build()
+private fun loginRequest(base: String, body: String): HttpRequest = outboundRequest {
+  uri(URI.create("$base/api/v1/auth/login"))
+  header("Content-Type", "application/json")
+  POST(HttpRequest.BodyPublishers.ofString(body))
+}
 
 private fun bearerGetRequest(base: String, path: String, accessToken: String): HttpRequest =
-    HttpRequest.newBuilder()
-        .uri(URI.create(base + path))
-        .header("Authorization", "Bearer $accessToken")
-        .GET()
-        .build()
+    outboundRequest {
+      uri(URI.create(base + path))
+      header("Authorization", "Bearer $accessToken")
+      GET()
+    }
 
 private fun loginPayload(username: String, password: String, clientId: String): String =
     buildJsonObject {
