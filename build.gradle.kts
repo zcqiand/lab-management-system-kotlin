@@ -22,6 +22,12 @@ dependencies {
   implementation("io.ktor:ktor-server-auth")
   implementation("io.ktor:ktor-server-resources")
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+  // 组合根插件（saas 同款 + CORS）：content-negotiation=DTO JSON 收发；status-pages=异常映射；
+  // cors=LAB_CORS_ALLOWED_ORIGINS 白名单（fastapi CORSMiddleware 同语义）。版本走 ktor-bom。
+  implementation("io.ktor:ktor-server-content-negotiation")
+  implementation("io.ktor:ktor-serialization-kotlinx-json")
+  implementation("io.ktor:ktor-server-status-pages")
+  implementation("io.ktor:ktor-server-cors")
   // JWT HS256 签发（jjwt 0.12.x fluent API，saas 同款；lab 自签 access/refresh）
   implementation("io.jsonwebtoken:jjwt-api:0.12.6")
   runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")

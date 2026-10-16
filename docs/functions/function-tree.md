@@ -37,12 +37,24 @@
 | 功能 ID | 功能名称 | 说明 | 状态 |
 |---|---|---|---|
 | M01.F01 | （待填） | | 规划 |
+| M01.F05 | 认证管理 | 认证通道切片（ktor 契约面；Phase 4 首个纵切） | 开发中 |
 
 ### M01.F01 （待填）
 
 | 子项 ID | 名称 | 类型 | 交付 | 说明 | 状态 |
 |---|---|---|---|---|---|
 | M01.F01.I01 | （待填） | 查询 | 后端 | | 规划 |
+
+### M01.F05 认证管理
+
+> 登录通道切片：native-login 代理链 + logout。语义参照：fastapi auth_impl 七步（spec
+> docs/superpowers/specs/2026-10-16-lab-kotlin-login-proxy-design.md）。镜像 SSOT
+> lab shared 树 M01.F05；I01-I04 不在本仓实现范围，未挂镜像行。
+
+| 子项 ID | 名称 | 类型 | 交付 | 说明 | 状态 |
+|---|---|---|---|---|---|
+| M01.F05.I06 | 原生登录 | 接口 | 前端+后端 | POST /api/auth/native-login：非浏览器客户端密码通道；校验代理 saas IdP——请求体账密调 saas /api/v1/auth/login（clientId=lab-management），saas 4xx→401 INVALID_CREDENTIALS 不透传、5xx/不可达→502 SAAS_UNAVAILABLE；lab 自家 JWT 重签（HS256），refresh 恒 dev-placeholder，LoginResponse 契约形状不变 | 开发中 |
+| M01.F05.I05 | 登出 | 接口 | 前端+后端 | POST /api/auth/logout：无状态 JWT 服务端无 session，前端清存储 | 开发中 |
 
 ---
 
