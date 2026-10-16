@@ -23,7 +23,9 @@ Lab 管理系统 Kotlin/Ktor 端（`lab-management-system-kotlin`，技术栈 `k
 - **API 面只认生成物**：`src/main/kotlin/io/xr/lab/shared/` 整树 = `scripts/gen-shared.sh`
   产物，禁手改（suite 硬规则 §4）；改 shared 契约 → 重跑该脚本再跑门禁（saas-kotlin 同款）
 - **实体 DB-First**：`src/main/kotlin/io/xr/lab/entity/` 整树 = `scripts/scaffold-entities.sh`
-  反推 `lab_dev` 产物，禁手改（ADR-0046）；`DATABASE_URL` 必填显式传入，先删后写 + 漂移 fail-loud
+  反推 `lab_dev` 产物，禁手改（ADR-0046）；`DATABASE_URL` 必填显式传入，先删后写 + 拒绝漂移
+- **业务手写区**：`src/main/kotlin/io/xr/lab/impl/` = 唯一业务手写目录，正常过
+  静态门；错误只抛类型化异常（StatusPages 映射），禁 route 内直接 respond（ADR-0047/0048）
 
 ## 3. 技术栈与版本（钉死于 version-lock.json）
 
