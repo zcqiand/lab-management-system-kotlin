@@ -47,9 +47,9 @@ fun Application.harnessModule(
     cfg: AppConfig,
     saasAuth: SaasAuthClient = HttpSaasAuthClient(cfg),
     saasMe: SaasMeClient = HttpSaasMeClient(cfg),
+    directory: ConfigUserDirectory = ConfigUserDirectory(),
 ) {
   val jwt = JwtIssuer(cfg.jwtSigningKey, cfg.jwtIssuer, cfg.jwtTtlSeconds, cfg.jwtRefreshTtlSeconds)
-  val directory = ConfigUserDirectory()
   val menuCache = SnapshotCache.create<List<MenuNode>>()
   val membershipCache = SnapshotCache.create<List<MyTenant>>()
 

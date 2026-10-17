@@ -36,8 +36,27 @@
 
 | 功能 ID | 功能名称 | 说明 | 状态 |
 |---|---|---|---|
+| M00.F01 | 当前用户会话 | 当前用户信息 + 关联租户列表 + 当前选中租户（GET /auth/me） | 开发中 |
+| M00.F02 | 登录选租户 | 登录后选择租户，换发携带 tenant_id claim 的 token（POST /auth/switch-tenant） | 开发中 |
 | M01.F01 | （待填） | | 规划 |
+| M01.F04 | 权限管理 | RBAC 角色权限、路由守卫、权限指令、动态菜单（身份平台下发） | 开发中 |
 | M01.F05 | 认证管理 | 认证通道切片（ktor 契约面；Phase 4 首个纵切） | 开发中 |
+
+## M00 基础会话（Phase 5 新增段，镜像 SSOT lab shared 树）
+
+### M00.F01 当前用户会话
+
+| 子项 ID | 名称 | 类型 | 交付 | 说明 | 状态 |
+|---|---|---|---|---|---|
+| M00.F01.I01 | 当前会话 | 接口 | 前端+后端 | GET /api/auth/me：user + 关联租户列表 + currentTenantId（token tenant_id claim，缺省 TENANT-001） | 开发中 |
+
+### M00.F02 登录选租户
+
+| 子项 ID | 名称 | 类型 | 交付 | 说明 | 状态 |
+|---|---|---|---|---|---|
+| M00.F02.I01 | 选租户换发 | 接口 | 前端+后端 | POST /api/auth/switch-tenant：校验租户归属后换发携带 tenant_id claim 的 token | 开发中 |
+
+## M01 （待填）
 
 ### M01.F01 （待填）
 
@@ -45,16 +64,31 @@
 |---|---|---|---|---|---|
 | M01.F01.I01 | （待填） | 查询 | 后端 | | 规划 |
 
+### M01.F04 权限管理
+
+> Phase 5 新增段，镜像 SSOT lab shared 树 M01.F04；I03/I04 为前端标签页行（本仓无对应端点，随 SSOT 照录）。
+
+| 子项 ID | 名称 | 类型 | 交付 | 说明 | 状态 |
+|---|---|---|---|---|---|
+| M01.F04.I01 | 动态菜单 | 接口 | 前端+后端 | GET /api/auth/menus：按角色下发导航树（5 根节点，镜像 lab-msw） | 开发中 |
+| M01.F04.I02 | 权限集 | 接口 | 前端+后端 | GET /api/auth/permissions：RBAC 权限串列表（admin 全量 11 项） | 开发中 |
+| M01.F04.I03 | 路由守卫（未登录/无权限拦截） | 标签页 | 前端+后端 | 前端路由守卫 useRequireAuth 钩子（react/vue 仓实现）；本仓 BASE 登记仓内未挂 entry，react/vue 仓 useRequireAuth 5+ 处引用作为产品线 anchor | 开发中 |
+| M01.F04.I04 | 动态菜单（lab 侧边栏）          | 标签页 | 前端+后端 | 前端 useSidebarContainer 钩子锚点（nextjs 仓 `<aside>` 实现），无后端端点对应 | 开发中 |
+
 ### M01.F05 认证管理
 
-> 登录通道切片：native-login 代理链 + logout。语义参照：fastapi auth_impl 七步（spec
-> docs/superpowers/specs/2026-10-16-lab-kotlin-login-proxy-design.md）。镜像 SSOT
-> lab shared 树 M01.F05；I01-I04 不在本仓实现范围，未挂镜像行。
+> 登录通道切片（Phase 4：native-login + logout）+ 认证收尾（Phase 5：SSO/refresh）。语义参照：fastapi
+> auth_impl（spec docs/superpowers/specs/2026-10-16-lab-kotlin-login-proxy-slice-design.md、
+> 2026-10-17-lab-kotlin-auth-finish-slice-design.md）。镜像 SSOT lab shared 树 M01.F05；I01 已废弃
+> （见废弃段），I02-I06 本仓在册。
 
 | 子项 ID | 名称 | 类型 | 交付 | 说明 | 状态 |
 |---|---|---|---|---|---|
 | M01.F05.I06 | 原生登录 | 接口 | 前端+后端 | POST /api/auth/native-login：非浏览器客户端密码通道；校验代理 saas IdP——请求体账密调 saas /api/v1/auth/login（clientId=lab-management），saas 4xx→401 INVALID_CREDENTIALS 不透传、5xx/不可达→502 SAAS_UNAVAILABLE；lab 自家 JWT 重签（HS256），refresh 恒 dev-placeholder，LoginResponse 契约形状不变 | 开发中 |
 | M01.F05.I05 | 登出 | 接口 | 前端+后端 | POST /api/auth/logout：无状态 JWT 服务端无 session，前端清存储 | 开发中 |
+| M01.F05.I02 | SSO 跳转 | 接口 | 前端+后端 | GET /api/auth/sso/authorize：RFC 6749 §10.12 标准 state（前端生成、原样透传 saas 回显、前端比对），forward saas POST /api/v1/oauth/authorize 拿 code | 开发中 |
+| M01.F05.I03 | SSO 回调 | 接口 | 前端+后端 | POST /api/auth/sso/callback:saas POST /api/v1/oauth/token 用一次性 code 换 token,再 /me/whoami + /me/tenants 拿 user,membership 信 saas;首次 SSO 按 email upsert 到 lab directory;state 校验在前端回跳比对 | 开发中 |
+| M01.F05.I04 | 刷新 token | 接口 | 前端+后端 | POST /api/auth/refresh:lab refresh token 是 HS256 JWT(typ=refresh),内嵌 saas refresh token;调 saas POST /api/v1/oauth/token grantType=refresh_token 续,再签新 lab JWT | 开发中 |
 
 ---
 

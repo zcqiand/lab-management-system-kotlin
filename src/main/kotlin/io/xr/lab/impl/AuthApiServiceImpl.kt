@@ -1,13 +1,17 @@
 package io.xr.lab.impl
 
+import io.jsonwebtoken.Claims
 import io.ktor.server.routing.RoutingCall
 import io.xr.lab.shared.api.AuthApiDelegate
 import io.xr.lab.shared.models.AuthLogoutRequest
 import io.xr.lab.shared.models.CurrentUser
+import io.xr.lab.shared.models.CurrentUserSession
 import io.xr.lab.shared.models.LoginRequest
 import io.xr.lab.shared.models.LoginResponse
 import io.xr.lab.shared.models.MenuNode
 import io.xr.lab.shared.models.MyTenant
+import io.xr.lab.shared.models.PermissionSet
+import io.xr.lab.shared.models.SwitchTenantRequest
 import org.slf4j.LoggerFactory
 
 private const val LAB_APP_CODE = "lab-management"
@@ -16,6 +20,22 @@ private const val FALLBACK_ROLE = "member"
 private const val FALLBACK_USER = "unknown"
 private const val FALLBACK_DISPLAY_NAME = "未知用户"
 private const val SAAS_STATUS_REMOVED = "removed"
+
+/** _DEMO_PERMISSIONS 逐项镜像（fastapi auth_impl），顺序即契约——permissions 端点全量回包。 */
+private val DEMO_PERMISSIONS =
+    listOf(
+        "contract:read",
+        "contract:write",
+        "sample:read",
+        "sample:write",
+        "report:read",
+        "report:write",
+        "report:issue",
+        "inspection:read",
+        "inspection:write",
+        "audit:read",
+        "*",
+    )
 
 private val logger = LoggerFactory.getLogger("io.xr.lab.impl.AuthApiServiceImpl")
 
@@ -27,8 +47,9 @@ private fun firstNonEmpty(vararg values: String?): String =
     values.firstOrNull { !it.isNullOrEmpty() } ?: ""
 
 /**
- * M01.F05.I06 native-login + 已废弃 I01 login（同链镜像）+ I05 logout（no-op）。 其余 7 op 不 override = 接口默认
- * 500（显式未实现，ADR-0047 决策 2）。 登录语义七步镜像 fastapi auth_impl.auth_login（spec §4）。
+ * 登录/会话七 op（native-login + 已废弃 login 同链 + logout + me + switch-tenant + menus +
+ * permissions）； 剩余 refresh/SSO 三 op 不 override = 接口默认 500（显式未实现，ADR-0047 决策 2， Phase
+ * 5 T4/T5 收口）。 登录语义七步镜像 fastapi auth_impl.auth_login（spec §4）。
  */
 class AuthApiServiceImpl(
     private val directory: ConfigUserDirectory,
@@ -49,6 +70,57 @@ class AuthApiServiceImpl(
 
   override suspend fun authLogout(authLogoutRequest: AuthLogoutRequest, call: RoutingCall) {
     // 无状态登出（fastapi auth_logout 镜像）：服务端无 session store，body 的 token 不消费
+  }
+
+  override suspend fun authGetCurrentUser(call: RoutingCall): CurrentUserSession {
+    val claims = requireBearer(call, jwt)
+    val user = resolveUser(claims)
+    val cached = membershipCache.get(user.id)
+    if (cached != null) {
+      return CurrentUserSession(
+          user = user,
+          tenants = cached,
+          currentTenantId = claims.get("tenant_id") as? String ?: cached.first().tenantId,
+      )
+    }
+    // SSO 用户（目录持 saas refresh）快照 miss → 401 提示自愈，禁 demo 目录兜底（Review Focus 1）
+    if (directory.getSaasRefreshToken(user.id) != null) {
+      throw InvalidCredentialsError(
+          "membership snapshot unavailable for user ${user.id} (cache miss); refresh required",
+      )
+    }
+    return CurrentUserSession(
+        user = user,
+        tenants = directory.tenantsOf(user.username),
+        currentTenantId = claims.get("tenant_id") as? String ?: directory.defaultTenant().tenantId,
+    )
+  }
+
+  override suspend fun authSwitchTenant(
+      switchTenantRequest: SwitchTenantRequest,
+      call: RoutingCall,
+  ): LoginResponse {
+    val claims = requireBearer(call, jwt)
+    val user = resolveUser(claims)
+    val tenantId = switchTenantRequest.tenantId
+    val known = membershipCache.get(user.id) ?: directory.tenantsOf(user.username)
+    val target =
+        known.firstOrNull { it.tenantId == tenantId } ?: throw NotFoundError("Tenant not found")
+    // 命中换发：新 access 带 tenant_id=目标；saas refresh 不透传（第 4 参 null→placeholder）
+    return session(user, target.tenantId, known, null)
+  }
+
+  override suspend fun authGetMenus(call: RoutingCall): List<MenuNode> {
+    val claims = requireBearer(call, jwt)
+    return menuCache.get(claims.subject)
+        ?: throw MenusUnavailableError(
+            "menu snapshot unavailable for user ${claims.subject}; re-login to refresh",
+        )
+  }
+
+  override suspend fun authGetPermissions(call: RoutingCall): PermissionSet {
+    requireBearer(call, jwt)
+    return PermissionSet(permissions = DEMO_PERMISSIONS.toList())
   }
 
   private suspend fun doLogin(request: LoginRequest?): LoginResponse {
@@ -90,7 +162,7 @@ class AuthApiServiceImpl(
     // 步骤 7：lab 自家 JWT 重签；refresh 恒 dev-placeholder（密码路径不透传 saas refreshToken）。
     // 租户空列表保持空（终审 Important：fastapi `tenants if tenants is not None` 镜像——
     // 空即空，禁回落 demo 字面量，suite-hard-rules §3 同族）
-    return session(user, saasLogin.currentTenantId ?: tenants.firstOrNull()?.tenantId, tenants)
+    return session(user, saasLogin.currentTenantId ?: tenants.firstOrNull()?.tenantId, tenants, null)
   }
 
   private suspend fun proxySaasLogin(username: String, password: String): SaasLoginResponse =
@@ -159,14 +231,26 @@ class AuthApiServiceImpl(
     logger.warn("menu snapshot fetch failed for user {}: {}", userId, err.message)
   }
 
+  /** sub 三路查目录（id→email→username，fastapi resolve_user 镜像）；全空 = 401。 */
+  private fun resolveUser(claims: Claims): CurrentUser {
+    val sub = claims.subject ?: ""
+    if (sub.isEmpty()) throw InvalidCredentialsError("missing sub claim")
+    return directory.findById(sub)
+        ?: directory.findByEmail(sub)
+        ?: directory.findByUsername(sub)
+        ?: throw InvalidCredentialsError("unknown user: $sub")
+  }
+
   private fun session(
       user: CurrentUser,
       tenantId: String?,
       tenants: List<MyTenant>,
+      saasRefreshToken: String?,
   ): LoginResponse =
       LoginResponse(
           token = jwt.issue(user.id, tenantId),
-          refreshToken = jwt.issueRefresh(user.id, DEV_PLACEHOLDER_REFRESH),
+          // saas refresh 透传进 JWT claim（refresh/SSO 链，T4/T5）；密码路径 null→dev-placeholder
+          refreshToken = jwt.issueRefresh(user.id, saasRefreshToken ?: DEV_PLACEHOLDER_REFRESH),
           user = user,
           // 空列表保持空（fastapi `_session` 镜像：密码路径空即空，禁 demo 兜底）；
           // directory.tenantsOf 仍留作 SSO 路径（Phase 5）的 mirror 面

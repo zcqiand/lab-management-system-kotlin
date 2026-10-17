@@ -10,3 +10,6 @@ build/
 
 # openapi-generator 临时目录（gen-shared.sh 中转，2026-10-15 Phase 2 收尾补登记）
 .openapi-tmp/
+
+# IDE 语言服务器构建输出（非 gradle build/，勿入库）
+bin/

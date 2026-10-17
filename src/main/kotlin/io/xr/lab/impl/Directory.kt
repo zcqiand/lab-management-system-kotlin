@@ -65,6 +65,9 @@ class ConfigUserDirectory {
   @Suppress("UnusedParameter")
   fun tenantsOf(username: String?): List<MyTenant> = DEMO_TENANTS.toList()
 
+  /** demo 目录默认租户（fastapi directory.default_tenant 镜像——me 缓存 miss 分支的 currentTenantId 兜底）。 */
+  fun defaultTenant(): MyTenant = DEMO_TENANTS.first()
+
   /**
    * email 键 upsert（登录链目录口）：命中即返回既有（不更新字段，镜像 springboot）； roleCode 空兜
    * viewer。调用方保证键非空（firstNonEmpty(email, username) 链）。
