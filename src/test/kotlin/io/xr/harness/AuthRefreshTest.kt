@@ -12,12 +12,10 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.testing.testApplication
 import io.xr.lab.impl.ConfigUserDirectory
-import io.xr.lab.impl.InvalidGrantError
 import io.xr.lab.impl.JwtIssuer
 import io.xr.lab.impl.SaasAuthClient
 import io.xr.lab.impl.SaasCurrentUser
 import io.xr.lab.impl.SaasLoginResponse
-import io.xr.lab.impl.SaasLoginUser
 import io.xr.lab.impl.SaasMeClient
 import io.xr.lab.impl.SaasMenuNode
 import io.xr.lab.impl.SaasPlatformTenant
@@ -36,8 +34,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 /**
- * M01.F05.I04 refresh 链（fastapi auth_impl.auth_refresh 镜像）：typ/claim 双校验、 rotate-once 写回目录、saas
- * 失败包 401 不透 502。路径以 Paths.kt 生成物为准。
+ * M01.F05.I04 refresh 链（fastapi auth_impl.auth_refresh 镜像）：typ/claim 双校验、 rotate-once 写回目录、saas 失败包
+ * 401 不透 502。路径以 Paths.kt 生成物为准。
  */
 @Suppress("TooManyFunctions")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -91,7 +89,8 @@ class AuthRefreshTest {
 
     override suspend fun whoami(accessToken: String): SaasCurrentUser = whoami()
 
-    override suspend fun listMyTenants(accessToken: String): List<SaasTenantMembership> = myTenants()
+    override suspend fun listMyTenants(accessToken: String): List<SaasTenantMembership> =
+        myTenants()
   }
 
   /** 单应用作用域（同 AuthSessionTest.withApp：多请求共享内存态）。 */
@@ -110,7 +109,10 @@ class AuthRefreshTest {
     return result
   }
 
-  private suspend fun HttpClient.postJson(path: String, body: String): Pair<HttpStatusCode, String> {
+  private suspend fun HttpClient.postJson(
+      path: String,
+      body: String,
+  ): Pair<HttpStatusCode, String> {
     val resp =
         post(path) {
           contentType(ContentType.Application.Json)
@@ -119,9 +121,11 @@ class AuthRefreshTest {
     return resp.status to resp.bodyAsText()
   }
 
-  private suspend fun HttpClient.getJson(path: String, token: String): Pair<HttpStatusCode, String> {
-    val resp =
-        get(path) { header("Authorization", "Bearer $token") }
+  private suspend fun HttpClient.getJson(
+      path: String,
+      token: String,
+  ): Pair<HttpStatusCode, String> {
+    val resp = get(path) { header("Authorization", "Bearer $token") }
     return resp.status to resp.bodyAsText()
   }
 
@@ -146,11 +150,22 @@ class AuthRefreshTest {
     directory.upsert("u-sso", "alice@lab", "Alice", "viewer")
     directory.setSaasRefreshToken("u-sso", "old-rt")
     val saasAuth =
-        RecordingSaasAuth(tokenResult = { SaasToken(accessToken = "saas-at-2", refreshToken = "saas-rt-2") })
+        RecordingSaasAuth(
+            tokenResult = { SaasToken(accessToken = "saas-at-2", refreshToken = "saas-rt-2") }
+        )
     val saasMe =
         FakeSaasMe(
-            whoami = { SaasCurrentUser(id = "u-sso", email = "alice@lab", displayName = "Alice", currentTenantId = "TENANT-001") },
-            myTenants = { listOf(SaasTenantMembership(tenantId = "TENANT-001", roleIds = listOf("viewer"))) },
+            whoami = {
+              SaasCurrentUser(
+                  id = "u-sso",
+                  email = "alice@lab",
+                  displayName = "Alice",
+                  currentTenantId = "TENANT-001",
+              )
+            },
+            myTenants = {
+              listOf(SaasTenantMembership(tenantId = "TENANT-001", roleIds = listOf("viewer")))
+            },
         )
     val refreshToken = jwt.issueRefresh("u-sso", "old-rt")
     var refreshCall: Pair<HttpStatusCode, String>? = null
@@ -161,7 +176,10 @@ class AuthRefreshTest {
       refreshCall = client.postJson("/api/auth/refresh", """{"refreshToken":"$refreshToken"}""")
       if (refreshCall!!.first == HttpStatusCode.OK) {
         val newToken =
-            Json.parseToJsonElement(refreshCall!!.second).jsonObject["token"]!!.jsonPrimitive.content
+            Json.parseToJsonElement(refreshCall!!.second)
+                .jsonObject["token"]!!
+                .jsonPrimitive
+                .content
         menusStatus = client.getJson("/api/auth/menus", newToken).first
         val me = client.getJson("/api/auth/me", newToken)
         meStatus = me.first
@@ -223,7 +241,8 @@ class AuthRefreshTest {
   fun `saas refresh failure wraps to 401 not 502`() {
     directory.upsert("u-sso", "alice@lab", "Alice", "viewer")
     directory.setSaasRefreshToken("u-sso", "old-rt")
-    val saasAuth = RecordingSaasAuth(tokenResult = { throw SaasUpstreamError("saas oauth/token down") })
+    val saasAuth =
+        RecordingSaasAuth(tokenResult = { throw SaasUpstreamError("saas oauth/token down") })
     val refreshToken = jwt.issueRefresh("u-sso", "old-rt")
     val (status, body) =
         withApp(saasAuth, FakeSaasMe()) {

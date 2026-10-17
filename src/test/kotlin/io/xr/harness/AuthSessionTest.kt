@@ -20,8 +20,8 @@ import io.xr.lab.impl.SaasLoginUser
 import io.xr.lab.impl.SaasMeClient
 import io.xr.lab.impl.SaasMenuNode
 import io.xr.lab.impl.SaasPlatformTenant
-import io.xr.lab.impl.SaasToken
 import io.xr.lab.impl.SaasTenantMembership
+import io.xr.lab.impl.SaasToken
 import io.xr.lab.impl.SaasUpstreamError
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -35,9 +35,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 
 /**
- * me / switch-tenant / menus / permissions 四端点（fastapi auth_impl 镜像，Phase 5 T3）； 快照三分支与 requireBearer
- * 边界钉死。路径以 Paths.kt 生成物为准。 多步流程在同一 testApplication 内走完——快照缓存是模块内内存态，
- * 跨请求共享（Phase 4 单请求测试未暴露此前提）。
+ * me / switch-tenant / menus / permissions 四端点（fastapi auth_impl 镜像，Phase 5 T3）； 快照三分支与
+ * requireBearer 边界钉死。路径以 Paths.kt 生成物为准。 多步流程在同一 testApplication 内走完——快照缓存是模块内内存态， 跨请求共享（Phase 4
+ * 单请求测试未暴露此前提）。
  */
 @Suppress("TooManyFunctions")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -72,7 +72,9 @@ class AuthSessionTest {
       private val tenants: () -> List<SaasPlatformTenant> = { emptyList() },
       private val menus: () -> List<SaasMenuNode> = { emptyList() },
       private val whoami: () -> SaasCurrentUser = { throw SaasUpstreamError("no stub") },
-      private val myTenants: () -> List<SaasTenantMembership> = { throw SaasUpstreamError("no stub") },
+      private val myTenants: () -> List<SaasTenantMembership> = {
+        throw SaasUpstreamError("no stub")
+      },
   ) : SaasMeClient {
     override suspend fun listPlatformTenants(accessToken: String): List<SaasPlatformTenant> =
         tenants()
@@ -82,7 +84,8 @@ class AuthSessionTest {
 
     override suspend fun whoami(accessToken: String): SaasCurrentUser = whoami()
 
-    override suspend fun listMyTenants(accessToken: String): List<SaasTenantMembership> = myTenants()
+    override suspend fun listMyTenants(accessToken: String): List<SaasTenantMembership> =
+        myTenants()
   }
 
   /** 双租户登录桩：TENANT-001 active + TENANT-002 active（switch 用例的归属集）。 */
@@ -91,8 +94,16 @@ class AuthSessionTest {
         user = SaasLoginUser(id = "saas-u-1", username = "alice", email = "alice@lab"),
         availableTenants =
             listOf(
-                SaasAvailableTenant(tenantId = "TENANT-001", roleIds = listOf("admin"), status = "active"),
-                SaasAvailableTenant(tenantId = "TENANT-002", roleIds = listOf("viewer"), status = "active"),
+                SaasAvailableTenant(
+                    tenantId = "TENANT-001",
+                    roleIds = listOf("admin"),
+                    status = "active",
+                ),
+                SaasAvailableTenant(
+                    tenantId = "TENANT-002",
+                    roleIds = listOf("viewer"),
+                    status = "active",
+                ),
             ),
         accessToken = "saas-at",
         userId = "saas-u-1",
@@ -150,13 +161,13 @@ class AuthSessionTest {
 
   /** 登录并返回 token（密码登录即写双快照，Phase 4 doLogin 链）。 */
   private suspend fun HttpClient.loginForToken(): String {
-    val (_, body) =
-        postJson("/api/auth/native-login", """{"username":"alice","password":"x"}""")
+    val (_, body) = postJson("/api/auth/native-login", """{"username":"alice","password":"x"}""")
     return tokenOf(body)
   }
 
   private fun tokenOf(body: String): String =
-      Json.parseToJsonElement(body).jsonObject["token"]?.jsonPrimitive?.content ?: error("no token: $body")
+      Json.parseToJsonElement(body).jsonObject["token"]?.jsonPrimitive?.content
+          ?: error("no token: $body")
 
   private fun bodyField(body: String, key: String): String? =
       Json.parseToJsonElement(body).jsonObject[key]?.jsonPrimitive?.contentOrNull
@@ -186,8 +197,7 @@ class AuthSessionTest {
   fun `me claim tenant wins over directory default`() {
     // demo 用户（目录直查 USER-A）+ token claim TENANT-002 + 无快照 → 目录兜底分支，claim 优先实证
     val token = jwt.issue("USER-A", "TENANT-002")
-    val (status, body) =
-        withApp(FakeSaasAuth(), FakeSaasMe()) { it.getJson("/api/auth/me", token) }
+    val (status, body) = withApp(FakeSaasAuth(), FakeSaasMe()) { it.getJson("/api/auth/me", token) }
     assertEquals(HttpStatusCode.OK, status)
     assertEquals("TENANT-002", bodyField(body, "currentTenantId"))
     assertTrue(body.contains("TENANT-001") && body.contains("TENANT-003"), "目录兜底返回全 3 租户")
@@ -202,8 +212,7 @@ class AuthSessionTest {
     directory.upsert("u-sso", "sso@lab", "SSO 用户", null)
     directory.setSaasRefreshToken("u-sso", "rt-sso")
     val token = jwt.issue("u-sso", null)
-    val (status, body) =
-        withApp(FakeSaasAuth(), FakeSaasMe()) { it.getJson("/api/auth/me", token) }
+    val (status, body) = withApp(FakeSaasAuth(), FakeSaasMe()) { it.getJson("/api/auth/me", token) }
     assertEquals(HttpStatusCode.Unauthorized, status)
     assertTrue(body.contains("INVALID_CREDENTIALS"))
     assertTrue(!body.contains("TENANT-001"), "SSO 用户 miss 不得落 demo 租户: $body")
@@ -213,8 +222,7 @@ class AuthSessionTest {
   @Fn(["M00.F01.I01"])
   fun `me password user cache miss falls back to directory`() {
     val token = jwt.issue("USER-A", null)
-    val (status, body) =
-        withApp(FakeSaasAuth(), FakeSaasMe()) { it.getJson("/api/auth/me", token) }
+    val (status, body) = withApp(FakeSaasAuth(), FakeSaasMe()) { it.getJson("/api/auth/me", token) }
     assertEquals(HttpStatusCode.OK, status)
     assertEquals("TENANT-001", bodyField(body, "currentTenantId")) // defaultTenant 兜底
     assertTrue(body.contains("TENANT-003"))
@@ -224,8 +232,7 @@ class AuthSessionTest {
   @Fn(["M00.F01.I01"])
   fun `me unknown sub is 401`() {
     val token = jwt.issue("ghost", null)
-    val (status, body) =
-        withApp(FakeSaasAuth(), FakeSaasMe()) { it.getJson("/api/auth/me", token) }
+    val (status, body) = withApp(FakeSaasAuth(), FakeSaasMe()) { it.getJson("/api/auth/me", token) }
     assertEquals(HttpStatusCode.Unauthorized, status)
     assertTrue(body.contains("INVALID_CREDENTIALS"))
   }

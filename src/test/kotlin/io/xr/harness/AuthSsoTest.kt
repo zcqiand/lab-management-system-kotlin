@@ -16,7 +16,6 @@ import io.xr.lab.impl.JwtIssuer
 import io.xr.lab.impl.SaasAuthClient
 import io.xr.lab.impl.SaasCurrentUser
 import io.xr.lab.impl.SaasLoginResponse
-import io.xr.lab.impl.SaasLoginUser
 import io.xr.lab.impl.SaasMeClient
 import io.xr.lab.impl.SaasMenuNode
 import io.xr.lab.impl.SaasPlatformTenant
@@ -35,7 +34,8 @@ import org.junit.jupiter.api.TestInstance
 
 /**
  * M01.F05.I02/I03 SSO 双端点（fastapi auth_impl ssoAuthorize/ssoCallback 镜像，跳板形收敛）： authorize 只消费
- * redirect_uri+state（client_id 取 config）； callback token→whoami/tenants→upsertByEmail→rotate-once→快照。
+ * redirect_uri+state（client_id 取 config）； callback
+ * token→whoami/tenants→upsertByEmail→rotate-once→快照。
  */
 @Suppress("TooManyFunctions")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -83,7 +83,8 @@ class AuthSsoTest {
 
     override suspend fun whoami(accessToken: String): SaasCurrentUser = whoami()
 
-    override suspend fun listMyTenants(accessToken: String): List<SaasTenantMembership> = myTenants()
+    override suspend fun listMyTenants(accessToken: String): List<SaasTenantMembership> =
+        myTenants()
   }
 
   private fun <T : Any> withApp(
@@ -101,7 +102,10 @@ class AuthSsoTest {
     return result
   }
 
-  private suspend fun HttpClient.postJson(path: String, body: String): Pair<HttpStatusCode, String> {
+  private suspend fun HttpClient.postJson(
+      path: String,
+      body: String,
+  ): Pair<HttpStatusCode, String> {
     val resp =
         post(path) {
           contentType(ContentType.Application.Json)
@@ -149,31 +153,38 @@ class AuthSsoTest {
   @Fn(["M01.F05.I02"])
   fun `authorize blank redirect_uri is 400 not env fallback`() {
     // ADR-0019：redirect_uri 缺失 fail-fast 禁兜 env（ssoCallbackRedirect 不得漏出）
-    val (status, body) =
-        withApp(TokenStubSaasAuth(), FakeSaasMe()) { it.getAuthorize("", "s1") }
+    val (status, body) = withApp(TokenStubSaasAuth(), FakeSaasMe()) { it.getAuthorize("", "s1") }
     assertEquals(HttpStatusCode.BadRequest, status)
     assertTrue(!body.contains("5201/callback"), "env 兜底回归: $body")
   }
 
   // === callback（M01.F05.I03）===
 
-  private fun callbackBody() =
+  private val callbackBody =
       """{"grantType":"authorization_code","code":"c1","redirectUri":"http://localhost:5201/cb","state":"s1"}"""
 
   private fun happyMe() =
       FakeSaasMe(
           whoami = {
-            SaasCurrentUser(id = "u-sso", email = "alice@lab", displayName = "Alice", currentTenantId = "TENANT-001")
+            SaasCurrentUser(
+                id = "u-sso",
+                email = "alice@lab",
+                displayName = "Alice",
+                currentTenantId = "TENANT-001",
+            )
           },
-          myTenants = { listOf(SaasTenantMembership(tenantId = "TENANT-001", roleIds = listOf("viewer"))) },
+          myTenants = {
+            listOf(SaasTenantMembership(tenantId = "TENANT-001", roleIds = listOf("viewer")))
+          },
       )
 
   @Test
   @Fn(["M01.F05.I03"])
   fun `callback happy upserts by email rotates and sessions whoami tenant`() {
-    val saasAuth = TokenStubSaasAuth(tokenResult = { SaasToken(accessToken = "at", refreshToken = "rt") })
+    val saasAuth =
+        TokenStubSaasAuth(tokenResult = { SaasToken(accessToken = "at", refreshToken = "rt") })
     val (status, body) =
-        withApp(saasAuth, happyMe()) { it.postJson("/api/auth/sso/callback", callbackBody()) }
+        withApp(saasAuth, happyMe()) { it.postJson("/api/auth/sso/callback", callbackBody) }
     assertEquals(HttpStatusCode.OK, status)
     // 出站形状：grantType=authorization_code + redirectUri 透传
     assertEquals("authorization_code", saasAuth.lastGrantType)
@@ -197,11 +208,13 @@ class AuthSsoTest {
   fun `callback second visit rotates again not duplicates`() {
     // 同链两次：目录槽位指向最新 rt（rotate-once 幂等写，Review Focus 3）
     val saasMe = happyMe()
-    val first = TokenStubSaasAuth(tokenResult = { SaasToken(accessToken = "at-1", refreshToken = "rt-1") })
-    withApp(first, saasMe) { it.postJson("/api/auth/sso/callback", callbackBody()) }
-    val second = TokenStubSaasAuth(tokenResult = { SaasToken(accessToken = "at-2", refreshToken = "rt-2") })
+    val first =
+        TokenStubSaasAuth(tokenResult = { SaasToken(accessToken = "at-1", refreshToken = "rt-1") })
+    withApp(first, saasMe) { it.postJson("/api/auth/sso/callback", callbackBody) }
+    val second =
+        TokenStubSaasAuth(tokenResult = { SaasToken(accessToken = "at-2", refreshToken = "rt-2") })
     val (status, _) =
-        withApp(second, saasMe) { it.postJson("/api/auth/sso/callback", callbackBody()) }
+        withApp(second, saasMe) { it.postJson("/api/auth/sso/callback", callbackBody) }
     assertEquals(HttpStatusCode.OK, status)
     assertEquals("rt-2", directory.getSaasRefreshToken("u-sso"))
     // upsertByEmail 命中既有：id 不漂（email 键唯一，directory 无枚举面，二次建档=同键覆盖即同 id）
@@ -214,12 +227,16 @@ class AuthSsoTest {
     // 裸出站异常漏到映射层走 fastapi errors.py ApiError 状态镜像（Ruling：plan 写 401/SAAS_UNAVAILABLE
     // 与参考相悖——ssoCallback 不二次包装）：InvalidGrantError → 400 INVALID_GRANT（detail 留痕）；
     // SaasUpstreamError → 502 SAAS_UPSTREAM_ERROR
-    val grantFail = TokenStubSaasAuth(tokenResult = { throw InvalidGrantError("saas oauth/token 400 bad") })
-    val (s1, b1) = withApp(grantFail, happyMe()) { it.postJson("/api/auth/sso/callback", callbackBody()) }
+    val grantFail =
+        TokenStubSaasAuth(tokenResult = { throw InvalidGrantError("saas oauth/token 400 bad") })
+    val (s1, b1) =
+        withApp(grantFail, happyMe()) { it.postJson("/api/auth/sso/callback", callbackBody) }
     assertEquals(HttpStatusCode.BadRequest, s1)
     assertTrue(b1.contains("INVALID_GRANT"), "实收: $b1")
-    val upstreamFail = TokenStubSaasAuth(tokenResult = { throw SaasUpstreamError("saas oauth/token down") })
-    val (s2, b2) = withApp(upstreamFail, happyMe()) { it.postJson("/api/auth/sso/callback", callbackBody()) }
+    val upstreamFail =
+        TokenStubSaasAuth(tokenResult = { throw SaasUpstreamError("saas oauth/token down") })
+    val (s2, b2) =
+        withApp(upstreamFail, happyMe()) { it.postJson("/api/auth/sso/callback", callbackBody) }
     assertEquals(HttpStatusCode.BadGateway, s2)
     assertTrue(b2.contains("SAAS_UPSTREAM_ERROR"), "实收: $b2")
   }

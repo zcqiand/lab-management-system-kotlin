@@ -59,12 +59,15 @@ class JwtIssuer(
     return try {
       Jwts.parser().verifyWith(key).requireIssuer(issuer).build().parseSignedClaims(token).payload
     } catch (err: JwtException) {
-      throw InvalidCredentialsError(err.message ?: "invalid token", err)
+      invalidToken(err)
     } catch (err: IllegalArgumentException) {
       // jjwt 对畸形 token 串抛 IllegalArgumentException——漏接即 500 裸栈
-      throw InvalidCredentialsError(err.message ?: "invalid token", err)
+      invalidToken(err)
     }
   }
+
+  private fun invalidToken(err: RuntimeException): Nothing =
+      throw InvalidCredentialsError(err.message ?: "invalid token", err)
 
   private companion object {
 

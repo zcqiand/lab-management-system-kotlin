@@ -54,12 +54,11 @@ private fun firstNonEmpty(vararg values: String?): String =
     values.firstOrNull { !it.isNullOrEmpty() } ?: ""
 
 /** Python quote_plus 同款（空格→+）；sso 跳板 URL 参数编码。 */
-private fun urlEncode(value: String): String =
-    URLEncoder.encode(value, StandardCharsets.UTF_8)
+private fun urlEncode(value: String): String = URLEncoder.encode(value, StandardCharsets.UTF_8)
 
 /**
- * 登录/会话全链 op（native-login + 已废弃 login 同链 + logout + me + switch-tenant + menus +
- * permissions + refresh + SSO authorize/callback）。 登录语义镜像 fastapi auth_impl（spec §4）。
+ * 登录/会话全链 op（native-login + 已废弃 login 同链 + logout + me + switch-tenant + menus + permissions +
+ * refresh + SSO authorize/callback）。 登录语义镜像 fastapi auth_impl（spec §4）。
  */
 class AuthApiServiceImpl(
     private val cfg: AppConfig,
@@ -254,7 +253,12 @@ class AuthApiServiceImpl(
     // 步骤 7：lab 自家 JWT 重签；refresh 恒 dev-placeholder（密码路径不透传 saas refreshToken）。
     // 租户空列表保持空（终审 Important：fastapi `tenants if tenants is not None` 镜像——
     // 空即空，禁回落 demo 字面量，suite-hard-rules §3 同族）
-    return session(user, saasLogin.currentTenantId ?: tenants.firstOrNull()?.tenantId, tenants, null)
+    return session(
+        user,
+        saasLogin.currentTenantId ?: tenants.firstOrNull()?.tenantId,
+        tenants,
+        null,
+    )
   }
 
   private suspend fun proxySaasLogin(username: String, password: String): SaasLoginResponse =
@@ -269,16 +273,13 @@ class AuthApiServiceImpl(
       }
 
   /**
-   * 富化 best-effort：任何出站失败都降级空表（Review Focus 3），登录照常 200。吞异常是本函数 的语义本身（随日志框架落
-   * warn 由 cacheMenus 链兑现），降级行为由测试钉死。
+   * 富化 best-effort：任何出站失败都降级空表（Review Focus 3），登录照常 200。吞异常是本函数 的语义本身（随日志框架落 warn 由 cacheMenus
+   * 链兑现），降级行为由测试钉死。
    */
   @Suppress("SwallowedException")
   private suspend fun fetchTenantNames(accessToken: String): Map<String, SaasPlatformTenant> =
       try {
-        saasMe
-            .listPlatformTenants(accessToken)
-            .associateBy { it.id }
-            .filterKeys { it.isNotEmpty() }
+        saasMe.listPlatformTenants(accessToken).associateBy { it.id }.filterKeys { it.isNotEmpty() }
       } catch (err: UnauthorizedClientError) {
         emptyMap()
       } catch (err: InvalidGrantError) {
@@ -310,14 +311,14 @@ class AuthApiServiceImpl(
           saasAuth.serviceLogin()
         } catch (err: UnauthorizedClientError) {
           logMenuFailure(userId, err)
-          return
+          null
         } catch (err: InvalidGrantError) {
           logMenuFailure(userId, err)
-          return
+          null
         } catch (err: SaasUpstreamError) {
           logMenuFailure(userId, err)
-          return
-        }
+          null
+        } ?: return
     cacheMenus(userId, token.accessToken)
   }
 

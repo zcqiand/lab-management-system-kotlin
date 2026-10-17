@@ -12,6 +12,7 @@ import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.plugins.statuspages.StatusPagesConfig
 import io.ktor.server.resources.Resources
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
@@ -21,18 +22,18 @@ import io.xr.lab.impl.AuthApiServiceImpl
 import io.xr.lab.impl.BadRequestError
 import io.xr.lab.impl.ConfigUserDirectory
 import io.xr.lab.impl.HttpSaasAuthClient
-import io.xr.lab.impl.InvalidGrantError
 import io.xr.lab.impl.HttpSaasMeClient
 import io.xr.lab.impl.InvalidCredentialsError
+import io.xr.lab.impl.InvalidGrantError
+import io.xr.lab.impl.JwtIssuer
 import io.xr.lab.impl.MenusUnavailableError
 import io.xr.lab.impl.NotFoundError
-import io.xr.lab.impl.JwtIssuer
 import io.xr.lab.impl.SaasAuthClient
-import io.xr.lab.impl.UnauthorizedClientError
 import io.xr.lab.impl.SaasIdpUnavailableError
 import io.xr.lab.impl.SaasMeClient
 import io.xr.lab.impl.SaasUpstreamError
 import io.xr.lab.impl.SnapshotCache
+import io.xr.lab.impl.UnauthorizedClientError
 import io.xr.lab.shared.api.AuthApi
 import io.xr.lab.shared.infrastructure.AppDelegates
 import io.xr.lab.shared.infrastructure.BadParameterException
@@ -113,77 +114,93 @@ private fun Application.installCors(cfg: AppConfig) {
 /** 错误只走异常映射（ADR-0047 决策 1：impl 永不直接 respond，防双 respond 崩）。 */
 private fun Application.installErrorMapping() {
   install(StatusPages) {
-    exception<InvalidCredentialsError> { call, _ ->
-      call.respond(
-          HttpStatusCode.Unauthorized,
-          ErrorResponse(code = "INVALID_CREDENTIALS", message = "invalid credentials"),
-      )
-    }
-    // saas IdP 5xx/不可达 → 502（REQ-2026-023 五仓统一）
-    exception<SaasIdpUnavailableError> { call, cause ->
-      call.respond(
-          HttpStatusCode.BadGateway,
-          ErrorResponse(code = "SAAS_UNAVAILABLE", message = cause.message ?: "saas unavailable"),
-      )
-    }
-    exception<NotFoundError> { call, cause ->
-      call.respond(
-          HttpStatusCode.NotFound,
-          ErrorResponse(code = "NOT_FOUND", message = cause.message ?: "not found"),
-      )
-    }
-    // 菜单快照 miss → 503 可恢复临时态（fastapi MENUS_UNAVAILABLE 镜像）
-    exception<MenusUnavailableError> { call, cause ->
-      call.respond(
-          HttpStatusCode.ServiceUnavailable,
-          ErrorResponse(code = "MENUS_UNAVAILABLE", message = cause.message ?: "menus unavailable"),
-      )
-    }
-    exception<BadRequestError> { call, cause ->
-      call.respond(
-          HttpStatusCode.BadRequest,
-          ErrorResponse(code = "BAD_REQUEST", message = cause.message ?: "bad request"),
-      )
-    }
-    // 生成区 validate() 对契约约束违反抛 BadParameterException——形状并入 BAD_REQUEST
-    exception<BadParameterException> { call, cause ->
-      call.respond(
-          HttpStatusCode.BadRequest,
-          ErrorResponse(code = "BAD_REQUEST", message = cause.message ?: "bad request"),
-      )
-    }
-    exception<BadRequestException> { call, _ ->
-      call.respond(
-          HttpStatusCode.BadRequest,
-          ErrorResponse(code = "BAD_REQUEST", message = "malformed request body"),
-      )
-    }
-    // 出站归类的裸异常直接漏到映射层（refresh/SSO 链不二次包装）——fastapi errors.py ApiError
-    // 状态镜像：401→INVALID_CREDENTIALS 族、其他 4xx→400 INVALID_GRANT（detail 走 body 留痕）、
-    // 5xx/不可达→502 SAAS_UPSTREAM_ERROR
-    exception<UnauthorizedClientError> { call, cause ->
-      call.respond(
-          HttpStatusCode.Unauthorized,
-          ErrorResponse(code = "INVALID_CREDENTIALS", message = cause.message ?: "invalid credentials"),
-      )
-    }
-    exception<InvalidGrantError> { call, cause ->
-      call.respond(
-          HttpStatusCode.BadRequest,
-          ErrorResponse(code = "INVALID_GRANT", message = cause.message ?: "invalid grant"),
-      )
-    }
-    exception<SaasUpstreamError> { call, cause ->
-      call.respond(
-          HttpStatusCode.BadGateway,
-          ErrorResponse(code = "SAAS_UPSTREAM_ERROR", message = cause.message ?: "saas upstream error"),
-      )
-    }
+    installInfraHandlers()
+    installOutboundHandlers()
     exception<Throwable> { call, _ ->
       call.respond(
           HttpStatusCode.InternalServerError,
           ErrorResponse(code = "INTERNAL", message = "internal error"),
       )
     }
+  }
+}
+
+/** 基础异常族：凭据/不可达/未找到/菜单 503/请求体三态。 */
+private fun StatusPagesConfig.installInfraHandlers() {
+  exception<InvalidCredentialsError> { call, _ ->
+    call.respond(
+        HttpStatusCode.Unauthorized,
+        ErrorResponse(code = "INVALID_CREDENTIALS", message = "invalid credentials"),
+    )
+  }
+  // saas IdP 5xx/不可达 → 502（REQ-2026-023 五仓统一）
+  exception<SaasIdpUnavailableError> { call, cause ->
+    call.respond(
+        HttpStatusCode.BadGateway,
+        ErrorResponse(code = "SAAS_UNAVAILABLE", message = cause.message ?: "saas unavailable"),
+    )
+  }
+  exception<NotFoundError> { call, cause ->
+    call.respond(
+        HttpStatusCode.NotFound,
+        ErrorResponse(code = "NOT_FOUND", message = cause.message ?: "not found"),
+    )
+  }
+  // 菜单快照 miss → 503 可恢复临时态（fastapi MENUS_UNAVAILABLE 镜像）
+  exception<MenusUnavailableError> { call, cause ->
+    call.respond(
+        HttpStatusCode.ServiceUnavailable,
+        ErrorResponse(code = "MENUS_UNAVAILABLE", message = cause.message ?: "menus unavailable"),
+    )
+  }
+  exception<BadRequestError> { call, cause ->
+    call.respond(
+        HttpStatusCode.BadRequest,
+        ErrorResponse(code = "BAD_REQUEST", message = cause.message ?: "bad request"),
+    )
+  }
+  // 生成区 validate() 对契约约束违反抛 BadParameterException——形状并入 BAD_REQUEST
+  exception<BadParameterException> { call, cause ->
+    call.respond(
+        HttpStatusCode.BadRequest,
+        ErrorResponse(code = "BAD_REQUEST", message = cause.message ?: "bad request"),
+    )
+  }
+  exception<BadRequestException> { call, _ ->
+    call.respond(
+        HttpStatusCode.BadRequest,
+        ErrorResponse(code = "BAD_REQUEST", message = "malformed request body"),
+    )
+  }
+}
+
+/**
+ * 出站归类的裸异常直接漏到映射层（refresh/SSO 链不二次包装）——fastapi errors.py ApiError 状态镜像：401→INVALID_CREDENTIALS 族、其他
+ * 4xx→400 INVALID_GRANT（detail 走 body 留痕）、 5xx/不可达→502 SAAS_UPSTREAM_ERROR。
+ */
+private fun StatusPagesConfig.installOutboundHandlers() {
+  exception<UnauthorizedClientError> { call, cause ->
+    call.respond(
+        HttpStatusCode.Unauthorized,
+        ErrorResponse(
+            code = "INVALID_CREDENTIALS",
+            message = cause.message ?: "invalid credentials",
+        ),
+    )
+  }
+  exception<InvalidGrantError> { call, cause ->
+    call.respond(
+        HttpStatusCode.BadRequest,
+        ErrorResponse(code = "INVALID_GRANT", message = cause.message ?: "invalid grant"),
+    )
+  }
+  exception<SaasUpstreamError> { call, cause ->
+    call.respond(
+        HttpStatusCode.BadGateway,
+        ErrorResponse(
+            code = "SAAS_UPSTREAM_ERROR",
+            message = cause.message ?: "saas upstream error",
+        ),
+    )
   }
 }

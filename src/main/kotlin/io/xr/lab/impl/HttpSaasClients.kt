@@ -134,16 +134,15 @@ class HttpSaasAuthClient(private val cfg: AppConfig) : SaasAuthClient {
       refreshToken: String?,
       redirectUri: String?,
   ): SaasToken {
-    val body =
-        buildJsonObject {
-          put("grantType", grantType)
-          put("clientId", cfg.saasClientId)
-          put("clientSecret", cfg.saasClientSecret)
-          put("tenantId", cfg.saasDefaultTenantId)
-          if (code != null) put("code", code)
-          if (refreshToken != null) put("refreshToken", refreshToken)
-          if (redirectUri != null) put("redirectUri", redirectUri)
-        }
+    val body = buildJsonObject {
+      put("grantType", grantType)
+      put("clientId", cfg.saasClientId)
+      put("clientSecret", cfg.saasClientSecret)
+      put("tenantId", cfg.saasDefaultTenantId)
+      if (code != null) put("code", code)
+      if (refreshToken != null) put("refreshToken", refreshToken)
+      if (redirectUri != null) put("redirectUri", redirectUri)
+    }
         .toString()
     val payload = sendForJson(tokenRequest(cfg.saasBaseUrl, body), "oauth/token")
     val obj =
