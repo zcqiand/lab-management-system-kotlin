@@ -11,6 +11,7 @@ import io.xr.lab.shared.models.LoginResponse
 import io.xr.lab.shared.models.MenuNode
 import io.xr.lab.shared.models.MyTenant
 import io.xr.lab.shared.models.PermissionSet
+import io.xr.lab.shared.models.RefreshTokenRequest
 import io.xr.lab.shared.models.SwitchTenantRequest
 import org.slf4j.LoggerFactory
 
@@ -123,6 +124,47 @@ class AuthApiServiceImpl(
     return PermissionSet(permissions = DEMO_PERMISSIONS.toList())
   }
 
+  override suspend fun authRefresh(
+      refreshTokenRequest: RefreshTokenRequest,
+      call: RoutingCall,
+  ): LoginResponse {
+    val body = refreshTokenRequest
+    if (body.refreshToken.isEmpty()) throw InvalidCredentialsError("missing refresh_token")
+    val claims =
+        try {
+          jwt.verify(body.refreshToken)
+        } catch (err: InvalidCredentialsError) {
+          throw InvalidCredentialsError("invalid refresh_token: ${err.message}", err)
+        }
+    if (claims.get("typ") != "refresh") {
+      throw InvalidCredentialsError("invalid refresh_token: not a refresh token")
+    }
+    val saasRefresh = claims.get("saas_refresh_token") as? String
+    if (saasRefresh.isNullOrEmpty()) {
+      throw InvalidCredentialsError("invalid refresh_token: missing saas_refresh_token claim")
+    }
+    // saas 出站失败全包 401（前端触发重登）——whoami/listMyTenants 不包（fastapi 同款，出站 502 语义保留）
+    val token =
+        try {
+          saasAuth.token("refresh_token", refreshToken = saasRefresh)
+        } catch (err: UnauthorizedClientError) {
+          throw InvalidCredentialsError("saas refresh failed: ${err.message}", err)
+        } catch (err: InvalidGrantError) {
+          throw InvalidCredentialsError("saas refresh failed: ${err.message}", err)
+        } catch (err: SaasUpstreamError) {
+          throw InvalidCredentialsError("saas refresh failed: ${err.message}", err)
+        }
+    val saasUser = saasMe.whoami(token.accessToken)
+    val memberships = saasMe.listMyTenants(token.accessToken)
+    val labUser = upsertByEmail(saasUser)
+    // rotate-once：新 saas refresh 必须写回目录（Review Focus 3）
+    directory.setSaasRefreshToken(labUser.id, token.refreshToken)
+    cacheMenus(labUser.id, token.accessToken)
+    val tenants = tenantsFrom(memberships, fetchTenantNames(token.accessToken))
+    membershipCache.put(labUser.id, tenants)
+    return session(labUser, claims.get("tenant_id") as? String, tenants, token.refreshToken)
+  }
+
   private suspend fun doLogin(request: LoginRequest?): LoginResponse {
     val username = request?.username?.trim() ?: ""
     val password = request?.password ?: ""
@@ -133,7 +175,7 @@ class AuthApiServiceImpl(
     val saasLogin = proxySaasLogin(username, password)
     val saasUser = saasLogin.user
     // 步骤 3：租户富化——瞬时 accessToken 拉平台租户名；失败降级 code=name=tenantId
-    val nameById = fetchTenantNames(saasLogin)
+    val nameById = fetchTenantNames(saasLogin.accessToken)
     val tenants = tenantsFromLogin(saasLogin.availableTenants, nameById)
     // 步骤 4：CurrentUser 回退链（空串 falsy）
     val user =
@@ -177,15 +219,14 @@ class AuthApiServiceImpl(
       }
 
   /**
-   * 富化 best-effort：任何出站失败都降级空表（Review Focus 3），登录照常 200。吞异常是本函数 的语义本身（无日志框架，禁 println），降级行为由测试钉死。
+   * 富化 best-effort：任何出站失败都降级空表（Review Focus 3），登录照常 200。吞异常是本函数 的语义本身（随日志框架落
+   * warn 由 cacheMenus 链兑现），降级行为由测试钉死。
    */
   @Suppress("SwallowedException")
-  private suspend fun fetchTenantNames(
-      saasLogin: SaasLoginResponse
-  ): Map<String, SaasPlatformTenant> =
+  private suspend fun fetchTenantNames(accessToken: String): Map<String, SaasPlatformTenant> =
       try {
         saasMe
-            .listPlatformTenants(saasLogin.accessToken)
+            .listPlatformTenants(accessToken)
             .associateBy { it.id }
             .filterKeys { it.isNotEmpty() }
       } catch (err: UnauthorizedClientError) {
@@ -212,11 +253,28 @@ class AuthApiServiceImpl(
             )
           }
 
+  /** 登录链：服务账号 token 换菜单快照——try/catch 只罩 serviceLogin，拉取失败由 cacheMenus 罩。 */
   private suspend fun cacheMenusWithServiceAccount(userId: String) {
+    val token =
+        try {
+          saasAuth.serviceLogin()
+        } catch (err: UnauthorizedClientError) {
+          logMenuFailure(userId, err)
+          return
+        } catch (err: InvalidGrantError) {
+          logMenuFailure(userId, err)
+          return
+        } catch (err: SaasUpstreamError) {
+          logMenuFailure(userId, err)
+          return
+        }
+    cacheMenus(userId, token.accessToken)
+  }
+
+  /** 瞬时用户 token 窗口的菜单快照（refresh/SSO 链共用；失败只 warn 不阻塞）。 */
+  private suspend fun cacheMenus(userId: String, accessToken: String) {
     try {
-      val token = saasAuth.serviceLogin()
-      val snapshot = saasMe.listMyMenus(token.accessToken, LAB_APP_CODE)
-      menuCache.put(userId, mapSaasMenus(snapshot))
+      menuCache.put(userId, mapSaasMenus(saasMe.listMyMenus(accessToken, LAB_APP_CODE)))
     } catch (err: UnauthorizedClientError) {
       logMenuFailure(userId, err)
     } catch (err: InvalidGrantError) {
@@ -225,6 +283,28 @@ class AuthApiServiceImpl(
       logMenuFailure(userId, err)
     }
   }
+
+  /** email 键 upsert 自愈（新部署/重启目录空时兜住 SSO/refresh 链；角色镜像 springboot 固定 "viewer"）。 */
+  private fun upsertByEmail(saasUser: SaasCurrentUser): CurrentUser =
+      directory.findByEmail(saasUser.email)
+          ?: directory.upsert(saasUser.id, saasUser.email, saasUser.displayName, "viewer")
+
+  /** membership 行 → MyTenant（refresh/SSO 链；富化命中替换 code/name，miss 降级 tenantId）。 */
+  private fun tenantsFrom(
+      memberships: List<SaasTenantMembership>,
+      nameById: Map<String, SaasPlatformTenant>,
+  ): List<MyTenant> =
+      memberships
+          .filter { it.tenantId.isNotEmpty() }
+          .map { m ->
+            val enriched = nameById[m.tenantId]
+            MyTenant(
+                tenantId = m.tenantId,
+                code = enriched?.tenantKey?.takeIf { it.isNotEmpty() } ?: m.tenantId,
+                name = enriched?.name?.takeIf { it.isNotEmpty() } ?: m.tenantId,
+                roleIds = m.roleIds.toList(),
+            )
+          }
 
   /** best-effort 失败只 warn 不抛（Review Focus 3）；Phase 4 纯 no-op，本切片随日志框架兑现。 */
   private fun logMenuFailure(userId: String, err: RuntimeException) {
