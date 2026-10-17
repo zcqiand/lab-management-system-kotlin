@@ -36,10 +36,13 @@ private fun mapNode(src: SaasMenuNode): MenuNode {
   )
 }
 
-/** per-user 快照缓存（TTL 30min，miss 清除）。菜单/成员资格两个实例化用法； miss → Phase 5 menus 503 / me 401——本切片只写不读。 */
+/**
+ * per-user 快照缓存（TTL 30min，miss 清除）。菜单/成员资格两个实例化用法； miss → Phase 5 menus 503 / me 401——本切片只写不读。
+ * ConcurrentHashMap：ktor Netty 多 worker 并发读写同一用户（双标签页 refresh+SSO 交错），HashMap 有丢写窗口（终审 I1）。
+ */
 class SnapshotCache<T> private constructor(private val ttlSeconds: Long) {
 
-  private val snapshots = mutableMapOf<String, Pair<T, Instant>>()
+  private val snapshots = java.util.concurrent.ConcurrentHashMap<String, Pair<T, Instant>>()
 
   fun put(userId: String, value: T) {
     snapshots[userId] = value to Instant.now().plusSeconds(ttlSeconds)

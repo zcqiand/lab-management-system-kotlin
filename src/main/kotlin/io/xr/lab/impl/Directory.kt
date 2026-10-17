@@ -36,8 +36,8 @@ private val DEMO_TENANTS =
  */
 class ConfigUserDirectory {
 
-  private val upserted = mutableMapOf<String, CurrentUser>()
-  private val saasRefreshTokens = mutableMapOf<String, String>()
+  private val upserted = java.util.concurrent.ConcurrentHashMap<String, CurrentUser>()
+  private val saasRefreshTokens = java.util.concurrent.ConcurrentHashMap<String, String>()
 
   fun findById(userId: String?): CurrentUser? =
       when {
