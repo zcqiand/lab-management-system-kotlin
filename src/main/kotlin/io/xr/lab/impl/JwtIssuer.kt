@@ -1,6 +1,7 @@
 package io.xr.lab.impl
 
 import io.jsonwebtoken.Claims
+import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import java.util.Date
 import javax.crypto.SecretKey
@@ -53,8 +54,17 @@ class JwtIssuer(
         .compact()
   }
 
-  fun verify(token: String): Claims =
+  fun verify(token: String): Claims {
+    if (token.isEmpty()) throw InvalidCredentialsError("token is empty")
+    return try {
       Jwts.parser().verifyWith(key).requireIssuer(issuer).build().parseSignedClaims(token).payload
+    } catch (err: JwtException) {
+      throw InvalidCredentialsError(err.message ?: "invalid token", err)
+    } catch (err: IllegalArgumentException) {
+      // jjwt 对畸形 token 串抛 IllegalArgumentException——漏接即 500 裸栈
+      throw InvalidCredentialsError(err.message ?: "invalid token", err)
+    }
+  }
 
   private companion object {
 

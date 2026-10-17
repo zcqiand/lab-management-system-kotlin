@@ -23,6 +23,8 @@ import io.xr.lab.impl.ConfigUserDirectory
 import io.xr.lab.impl.HttpSaasAuthClient
 import io.xr.lab.impl.HttpSaasMeClient
 import io.xr.lab.impl.InvalidCredentialsError
+import io.xr.lab.impl.MenusUnavailableError
+import io.xr.lab.impl.NotFoundError
 import io.xr.lab.impl.JwtIssuer
 import io.xr.lab.impl.SaasAuthClient
 import io.xr.lab.impl.SaasIdpUnavailableError
@@ -111,6 +113,19 @@ private fun Application.installErrorMapping() {
       call.respond(
           HttpStatusCode.BadGateway,
           ErrorResponse(code = "SAAS_UNAVAILABLE", message = cause.message ?: "saas unavailable"),
+      )
+    }
+    exception<NotFoundError> { call, cause ->
+      call.respond(
+          HttpStatusCode.NotFound,
+          ErrorResponse(code = "NOT_FOUND", message = cause.message ?: "not found"),
+      )
+    }
+    // 菜单快照 miss → 503 可恢复临时态（fastapi MENUS_UNAVAILABLE 镜像）
+    exception<MenusUnavailableError> { call, cause ->
+      call.respond(
+          HttpStatusCode.ServiceUnavailable,
+          ErrorResponse(code = "MENUS_UNAVAILABLE", message = cause.message ?: "menus unavailable"),
       )
     }
     exception<BadRequestError> { call, cause ->

@@ -8,6 +8,7 @@ import io.xr.lab.shared.models.LoginRequest
 import io.xr.lab.shared.models.LoginResponse
 import io.xr.lab.shared.models.MenuNode
 import io.xr.lab.shared.models.MyTenant
+import org.slf4j.LoggerFactory
 
 private const val LAB_APP_CODE = "lab-management"
 private const val DEV_PLACEHOLDER_REFRESH = "dev-placeholder"
@@ -15,6 +16,8 @@ private const val FALLBACK_ROLE = "member"
 private const val FALLBACK_USER = "unknown"
 private const val FALLBACK_DISPLAY_NAME = "未知用户"
 private const val SAAS_STATUS_REMOVED = "removed"
+
+private val logger = LoggerFactory.getLogger("io.xr.lab.impl.AuthApiServiceImpl")
 
 /**
  * 首个非空值（空串 falsy 语义——saas displayName 可为空串，is-null 判断接不住， 家族记忆
@@ -151,12 +154,10 @@ class AuthApiServiceImpl(
     }
   }
 
-  /**
-   * best-effort 失败只降级不抛（Review Focus 3）。ktor 仓无日志框架依赖，禁 println 调试残留红线——降级语义由测试钉死（菜单失败仍 200）；Phase
-   * 5 引日志框架时补真日志。
-   */
-  @Suppress("UnusedParameter")
-  private fun logMenuFailure(userId: String, err: RuntimeException) = Unit
+  /** best-effort 失败只 warn 不抛（Review Focus 3）；Phase 4 纯 no-op，本切片随日志框架兑现。 */
+  private fun logMenuFailure(userId: String, err: RuntimeException) {
+    logger.warn("menu snapshot fetch failed for user {}: {}", userId, err.message)
+  }
 
   private fun session(
       user: CurrentUser,

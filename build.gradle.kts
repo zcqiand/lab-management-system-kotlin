@@ -32,6 +32,9 @@ dependencies {
   implementation("io.jsonwebtoken:jjwt-api:0.12.6")
   runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
   runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
+  // 日志框架（Phase 5 搭车修：logMenuFailure warn；ktor-bom 不含 slf4j，显式版本+version-lock 登记）
+  implementation("org.slf4j:slf4j-api:2.0.16")
+  runtimeOnly("org.slf4j:slf4j-simple:2.0.16")
   testImplementation(platform("org.junit:junit-bom:6.1.3"))
   testImplementation("org.junit.jupiter:junit-jupiter")
   // testApplication（ktor-conventions 测试姿态）：版本走上方 ktor-bom，禁裸写（saas 同款）

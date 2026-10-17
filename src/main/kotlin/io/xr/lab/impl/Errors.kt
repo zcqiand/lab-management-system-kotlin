@@ -19,3 +19,9 @@ class InvalidGrantError(message: String) : RuntimeException(message)
 
 class SaasUpstreamError(message: String, cause: Throwable? = null) :
     RuntimeException(message, cause)
+
+/** switch-tenant 目标不在归属集合 → 404（fastapi errors.py NotFoundError 镜像）。 */
+class NotFoundError(message: String) : RuntimeException(message)
+
+/** 菜单快照 miss（重启/TTL 过期/拉取失败）→ 503 可恢复临时态，前端回退静态菜单。 */
+class MenusUnavailableError(message: String) : RuntimeException(message)
