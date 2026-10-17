@@ -380,4 +380,33 @@ class AuthSessionTest {
         permissions,
     )
   }
+
+  // === me 空租户快照（M00.F01.I01，终审 I2 家族级修复）===
+
+  @Test
+  @Fn(["M00.F01.I01"])
+  fun `me empty membership snapshot is empty current tenant not 500`() {
+    // 零 active 租户用户登录（快照空列表 + token 无 tenant_id claim）→ me 200 空态
+    // （tenants=[] + currentTenantId=""，空即空禁 demo 兜底），非 NoSuchElementException → 500
+    val zeroTenantLogin: () -> SaasLoginResponse = {
+      SaasLoginResponse(
+          user = SaasLoginUser(id = "saas-u-2", username = "oscar", email = "oscar@lab"),
+          availableTenants = listOf(),
+          accessToken = "saas-at",
+          userId = "saas-u-2",
+          currentTenantId = null,
+      )
+    }
+    val (status, body) =
+        withApp(FakeSaasAuth(login = zeroTenantLogin), FakeSaasMe()) { client ->
+          val token = client.loginForToken()
+          client.getJson("/api/auth/me", token)
+        }
+    assertEquals(HttpStatusCode.OK, status)
+    assertEquals("", bodyField(body, "currentTenantId"))
+    assertEquals(
+        0,
+        Json.parseToJsonElement(body).jsonObject["tenants"]!!.jsonArray.size,
+    )
+  }
 }

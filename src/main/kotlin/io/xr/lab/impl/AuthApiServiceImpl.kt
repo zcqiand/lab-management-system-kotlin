@@ -90,7 +90,9 @@ class AuthApiServiceImpl(
       return CurrentUserSession(
           user = user,
           tenants = cached,
-          currentTenantId = claims.get("tenant_id") as? String ?: cached.first().tenantId,
+          // 空快照回退 ""（空即空，禁 demo 兜底；终审 I2 家族级修复——first() 空列表崩 500）
+          currentTenantId =
+              claims.get("tenant_id") as? String ?: cached.firstOrNull()?.tenantId ?: "",
       )
     }
     // SSO 用户（目录持 saas refresh）快照 miss → 401 提示自愈，禁 demo 目录兜底（Review Focus 1）
