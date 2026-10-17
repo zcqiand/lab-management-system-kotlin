@@ -10,6 +10,13 @@ object FakeNoopClients {
 
         override suspend fun serviceLogin(): SaasToken =
             throw SaasUpstreamError("infra test must not reach saas auth")
+
+        override suspend fun token(
+            grantType: String,
+            code: String?,
+            refreshToken: String?,
+            redirectUri: String?,
+        ): SaasToken = throw SaasUpstreamError("infra test must not reach saas auth")
       }
 
   val me: SaasMeClient =
@@ -19,5 +26,11 @@ object FakeNoopClients {
 
         override suspend fun listMyMenus(accessToken: String, appCode: String): List<SaasMenuNode> =
             emptyList()
+
+        override suspend fun whoami(accessToken: String): SaasCurrentUser =
+            throw SaasUpstreamError("infra test must not reach saas auth")
+
+        override suspend fun listMyTenants(accessToken: String): List<SaasTenantMembership> =
+            throw SaasUpstreamError("infra test must not reach saas auth")
       }
 }

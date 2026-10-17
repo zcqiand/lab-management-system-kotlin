@@ -10,6 +10,8 @@ import io.ktor.server.testing.testApplication
 import io.xr.lab.impl.InvalidGrantError
 import io.xr.lab.impl.JwtIssuer
 import io.xr.lab.impl.SaasAuthClient
+import io.xr.lab.impl.SaasCurrentUser
+import io.xr.lab.impl.SaasTenantMembership
 import io.xr.lab.impl.SaasAvailableTenant
 import io.xr.lab.impl.SaasLoginResponse
 import io.xr.lab.impl.SaasLoginUser
@@ -50,6 +52,13 @@ class AuthNativeLoginTest {
     override suspend fun userLogin(username: String, password: String): SaasLoginResponse = login()
 
     override suspend fun serviceLogin(): SaasToken = service()
+
+    override suspend fun token(
+        grantType: String,
+        code: String?,
+        refreshToken: String?,
+        redirectUri: String?,
+    ): SaasToken = throw SaasUpstreamError("no stub")
   }
 
   private class FakeSaasMe(
@@ -61,6 +70,12 @@ class AuthNativeLoginTest {
 
     override suspend fun listMyMenus(accessToken: String, appCode: String): List<SaasMenuNode> =
         menus()
+
+    override suspend fun whoami(accessToken: String): SaasCurrentUser =
+        throw SaasUpstreamError("no stub")
+
+    override suspend fun listMyTenants(accessToken: String): List<SaasTenantMembership> =
+        throw SaasUpstreamError("no stub")
   }
 
   private val happyLogin: () -> SaasLoginResponse = {

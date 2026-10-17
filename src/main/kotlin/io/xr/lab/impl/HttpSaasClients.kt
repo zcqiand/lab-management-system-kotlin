@@ -77,6 +77,12 @@ private fun loginRequest(base: String, body: String): HttpRequest = outboundRequ
   POST(HttpRequest.BodyPublishers.ofString(body))
 }
 
+private fun tokenRequest(base: String, body: String): HttpRequest = outboundRequest {
+  uri(URI.create("$base/api/v1/oauth/token"))
+  header("Content-Type", "application/json")
+  POST(HttpRequest.BodyPublishers.ofString(body))
+}
+
 private fun bearerGetRequest(base: String, path: String, accessToken: String): HttpRequest =
     outboundRequest {
       uri(URI.create(base + path))
@@ -121,6 +127,36 @@ class HttpSaasAuthClient(private val cfg: AppConfig) : SaasAuthClient {
     val refreshToken = obj["refreshToken"]?.jsonPrimitive?.contentOrNull ?: ""
     return SaasToken(accessToken = accessToken, refreshToken = refreshToken)
   }
+
+  override suspend fun token(
+      grantType: String,
+      code: String?,
+      refreshToken: String?,
+      redirectUri: String?,
+  ): SaasToken {
+    val body =
+        buildJsonObject {
+          put("grantType", grantType)
+          put("clientId", cfg.saasClientId)
+          put("clientSecret", cfg.saasClientSecret)
+          put("tenantId", cfg.saasDefaultTenantId)
+          if (code != null) put("code", code)
+          if (refreshToken != null) put("refreshToken", refreshToken)
+          if (redirectUri != null) put("redirectUri", redirectUri)
+        }
+        .toString()
+    val payload = sendForJson(tokenRequest(cfg.saasBaseUrl, body), "oauth/token")
+    val obj =
+        outboundJson.parseToJsonElement(payload) as? JsonObject
+            ?: throw SaasUpstreamError("saas oauth/token unexpected payload shape")
+    val accessToken =
+        obj["accessToken"]?.jsonPrimitive?.contentOrNull
+            ?: throw SaasUpstreamError("saas oauth/token missing accessToken")
+    return SaasToken(
+        accessToken = accessToken,
+        refreshToken = obj["refreshToken"]?.jsonPrimitive?.contentOrNull ?: "",
+    )
+  }
 }
 
 class HttpSaasMeClient(private val cfg: AppConfig) : SaasMeClient {
@@ -153,6 +189,28 @@ class HttpSaasMeClient(private val cfg: AppConfig) : SaasMeClient {
     return outboundJson.decodeFromString(
         kotlinx.serialization.builtins.ListSerializer(SaasMenuNode.serializer()),
         tree.toString(),
+    )
+  }
+
+  override suspend fun whoami(accessToken: String): SaasCurrentUser =
+      outboundJson.decodeFromString(
+          SaasCurrentUser.serializer(),
+          sendForJson(bearerGetRequest(cfg.saasBaseUrl, "/api/v1/me", accessToken), "me"),
+      )
+
+  override suspend fun listMyTenants(accessToken: String): List<SaasTenantMembership> {
+    val payload =
+        sendForJson(
+            bearerGetRequest(cfg.saasBaseUrl, "/api/v1/me/tenants", accessToken),
+            "me/tenants",
+        )
+    // fastapi _as_list 镜像：裸数组契约，非数组=形状异常翻 SaasUpstream
+    val rows =
+        outboundJson.parseToJsonElement(payload) as? JsonArray
+            ?: throw SaasUpstreamError("saas me/tenants unexpected payload shape")
+    return outboundJson.decodeFromString(
+        kotlinx.serialization.builtins.ListSerializer(SaasTenantMembership.serializer()),
+        rows.toString(),
     )
   }
 }
