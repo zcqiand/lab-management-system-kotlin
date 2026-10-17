@@ -2,6 +2,7 @@ package io.xr.lab.impl
 
 import io.jsonwebtoken.Claims
 import io.ktor.server.routing.RoutingCall
+import io.xr.harness.AppConfig
 import io.xr.lab.shared.api.AuthApiDelegate
 import io.xr.lab.shared.models.AuthLogoutRequest
 import io.xr.lab.shared.models.CurrentUser
@@ -10,9 +11,14 @@ import io.xr.lab.shared.models.LoginRequest
 import io.xr.lab.shared.models.LoginResponse
 import io.xr.lab.shared.models.MenuNode
 import io.xr.lab.shared.models.MyTenant
+import io.xr.lab.shared.models.OAuthResponseType
 import io.xr.lab.shared.models.PermissionSet
 import io.xr.lab.shared.models.RefreshTokenRequest
+import io.xr.lab.shared.models.SsoCallbackRequest
+import io.xr.lab.shared.models.SsoRedirect
 import io.xr.lab.shared.models.SwitchTenantRequest
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import org.slf4j.LoggerFactory
 
 private const val LAB_APP_CODE = "lab-management"
@@ -47,12 +53,16 @@ private val logger = LoggerFactory.getLogger("io.xr.lab.impl.AuthApiServiceImpl"
 private fun firstNonEmpty(vararg values: String?): String =
     values.firstOrNull { !it.isNullOrEmpty() } ?: ""
 
+/** Python quote_plus 同款（空格→+）；sso 跳板 URL 参数编码。 */
+private fun urlEncode(value: String): String =
+    URLEncoder.encode(value, StandardCharsets.UTF_8)
+
 /**
- * 登录/会话七 op（native-login + 已废弃 login 同链 + logout + me + switch-tenant + menus +
- * permissions）； 剩余 refresh/SSO 三 op 不 override = 接口默认 500（显式未实现，ADR-0047 决策 2， Phase
- * 5 T4/T5 收口）。 登录语义七步镜像 fastapi auth_impl.auth_login（spec §4）。
+ * 登录/会话全链 op（native-login + 已废弃 login 同链 + logout + me + switch-tenant + menus +
+ * permissions + refresh + SSO authorize/callback）。 登录语义镜像 fastapi auth_impl（spec §4）。
  */
 class AuthApiServiceImpl(
+    private val cfg: AppConfig,
     private val directory: ConfigUserDirectory,
     private val jwt: JwtIssuer,
     private val saasAuth: SaasAuthClient,
@@ -163,6 +173,46 @@ class AuthApiServiceImpl(
     val tenants = tenantsFrom(memberships, fetchTenantNames(token.accessToken))
     membershipCache.put(labUser.id, tenants)
     return session(labUser, claims.get("tenant_id") as? String, tenants, token.refreshToken)
+  }
+
+  override suspend fun authSsoAuthorize(
+      @Suppress("UnusedParameter") responseType: OAuthResponseType,
+      @Suppress("UnusedParameter") clientId: String,
+      redirectUri: String,
+      state: String,
+      call: RoutingCall,
+  ): SsoRedirect {
+    // service 只消费 redirect_uri + state（responseType/clientId 参数被忽略——AuthController 镜像，
+    // URL 里的 client_id 取 config 不取 query）。ADR-0019：redirect_uri 由前端发起，缺失 fail-fast 禁兜 env
+    if (redirectUri.isBlank()) throw BadRequestError("missing redirect_uri")
+    val authorizeUrl =
+        "${cfg.effectiveLoginUrl}/login" +
+            "?redirect_uri=${urlEncode(redirectUri)}" +
+            "&state=${urlEncode(state)}" +
+            "&client_id=${urlEncode(cfg.saasClientId)}"
+    return SsoRedirect(authorizeUrl = authorizeUrl, state = state)
+  }
+
+  override suspend fun authSsoCallback(
+      ssoCallbackRequest: SsoCallbackRequest,
+      call: RoutingCall,
+  ): LoginResponse {
+    // 契约 redirectUri 必填（validate() 已拦）；grantType 参数不消费，恒 authorization_code（fastapi 镜像）
+    val token =
+        saasAuth.token(
+            "authorization_code",
+            code = ssoCallbackRequest.code,
+            redirectUri = ssoCallbackRequest.redirectUri,
+        )
+    val saasUser = saasMe.whoami(token.accessToken)
+    val memberships = saasMe.listMyTenants(token.accessToken)
+    val labUser = upsertByEmail(saasUser)
+    // 瞬时 accessToken 窗口顺手拉齐快照 + rotate-once；失败只 warn 不阻塞登录
+    cacheMenus(labUser.id, token.accessToken)
+    directory.setSaasRefreshToken(labUser.id, token.refreshToken)
+    val tenants = tenantsFrom(memberships, fetchTenantNames(token.accessToken))
+    membershipCache.put(labUser.id, tenants)
+    return session(labUser, saasUser.currentTenantId, tenants, token.refreshToken)
   }
 
   private suspend fun doLogin(request: LoginRequest?): LoginResponse {

@@ -21,14 +21,17 @@ import io.xr.lab.impl.AuthApiServiceImpl
 import io.xr.lab.impl.BadRequestError
 import io.xr.lab.impl.ConfigUserDirectory
 import io.xr.lab.impl.HttpSaasAuthClient
+import io.xr.lab.impl.InvalidGrantError
 import io.xr.lab.impl.HttpSaasMeClient
 import io.xr.lab.impl.InvalidCredentialsError
 import io.xr.lab.impl.MenusUnavailableError
 import io.xr.lab.impl.NotFoundError
 import io.xr.lab.impl.JwtIssuer
 import io.xr.lab.impl.SaasAuthClient
+import io.xr.lab.impl.UnauthorizedClientError
 import io.xr.lab.impl.SaasIdpUnavailableError
 import io.xr.lab.impl.SaasMeClient
+import io.xr.lab.impl.SaasUpstreamError
 import io.xr.lab.impl.SnapshotCache
 import io.xr.lab.shared.api.AuthApi
 import io.xr.lab.shared.infrastructure.AppDelegates
@@ -62,7 +65,15 @@ fun Application.harnessModule(
   delegates(
       AppDelegates(
           authApiDelegate =
-              AuthApiServiceImpl(directory, jwt, saasAuth, saasMe, menuCache, membershipCache),
+              AuthApiServiceImpl(
+                  cfg,
+                  directory,
+                  jwt,
+                  saasAuth,
+                  saasMe,
+                  menuCache,
+                  membershipCache,
+              ),
       )
   )
   routing {
@@ -145,6 +156,27 @@ private fun Application.installErrorMapping() {
       call.respond(
           HttpStatusCode.BadRequest,
           ErrorResponse(code = "BAD_REQUEST", message = "malformed request body"),
+      )
+    }
+    // 出站归类的裸异常直接漏到映射层（refresh/SSO 链不二次包装）——fastapi errors.py ApiError
+    // 状态镜像：401→INVALID_CREDENTIALS 族、其他 4xx→400 INVALID_GRANT（detail 走 body 留痕）、
+    // 5xx/不可达→502 SAAS_UPSTREAM_ERROR
+    exception<UnauthorizedClientError> { call, cause ->
+      call.respond(
+          HttpStatusCode.Unauthorized,
+          ErrorResponse(code = "INVALID_CREDENTIALS", message = cause.message ?: "invalid credentials"),
+      )
+    }
+    exception<InvalidGrantError> { call, cause ->
+      call.respond(
+          HttpStatusCode.BadRequest,
+          ErrorResponse(code = "INVALID_GRANT", message = cause.message ?: "invalid grant"),
+      )
+    }
+    exception<SaasUpstreamError> { call, cause ->
+      call.respond(
+          HttpStatusCode.BadGateway,
+          ErrorResponse(code = "SAAS_UPSTREAM_ERROR", message = cause.message ?: "saas upstream error"),
       )
     }
     exception<Throwable> { call, _ ->
