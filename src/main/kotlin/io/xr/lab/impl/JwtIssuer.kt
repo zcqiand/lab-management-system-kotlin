@@ -41,7 +41,11 @@ class JwtIssuer(
   }
 
   fun issueRefresh(userId: String, saasRefreshToken: String): String {
-    require(saasRefreshToken.isNotEmpty()) { "saasRefreshToken required for refresh token" }
+    // 空 saas refresh → 400 BadRequestError（fastapi security.py:56 镜像；5.110③ M2 收口——
+    // 原 require() 走 IllegalArgumentException 落兜底 500 是 saas 契约违约边）
+    if (saasRefreshToken.isEmpty()) {
+      throw BadRequestError("saasRefreshToken required for refresh token")
+    }
     val epoch = System.currentTimeMillis() / MILLIS_PER_SECOND
     return Jwts.builder()
         .issuer(issuer)

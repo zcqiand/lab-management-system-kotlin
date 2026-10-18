@@ -127,10 +127,15 @@ private fun Application.installErrorMapping() {
 
 /** 基础异常族：凭据/不可达/未找到/菜单 503/请求体三态。 */
 private fun StatusPagesConfig.installInfraHandlers() {
-  exception<InvalidCredentialsError> { call, _ ->
+  // message 透传（5.110② M1 收口，saas 5.116① 同款）：fastapi/rails/springboot 全透传，
+  // "cache miss; refresh required" 自愈提示前端可辨；固定 "invalid credentials" 是超集漂移
+  exception<InvalidCredentialsError> { call, cause ->
     call.respond(
         HttpStatusCode.Unauthorized,
-        ErrorResponse(code = "INVALID_CREDENTIALS", message = "invalid credentials"),
+        ErrorResponse(
+            code = "INVALID_CREDENTIALS",
+            message = cause.message ?: "invalid credentials",
+        ),
     )
   }
   // saas IdP 5xx/不可达 → 502（REQ-2026-023 五仓统一）

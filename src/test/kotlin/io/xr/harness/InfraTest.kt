@@ -1,5 +1,6 @@
 package io.xr.harness
 
+import io.xr.lab.impl.BadRequestError
 import io.xr.lab.impl.JwtIssuer
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -35,12 +36,16 @@ class InfraTest {
   }
 
   @Test
-  fun `empty saas refresh rejected`() {
-    assertThrows<IllegalArgumentException> { jwt.issueRefresh("USER-A", "") }
+  fun `empty saas refresh rejected as bad request`() {
+    // 5.110③ M2 收口：fastapi security.py:56 空 saas_refresh_token → BadRequestError→400
+    // 镜像；原 require() 走 IllegalArgumentException 落兜底 500 是契约违约边
+    assertThrows<BadRequestError> { jwt.issueRefresh("USER-A", "") }
   }
 
   @Test
-  fun `appConfigFromEnv fails fast on missing key`() {
+  fun `effectiveLoginUrl falls back to saas base when sso login url empty`() {
+    // 5.110⑦ 拨正：原名 appConfigFromEnv fails fast on missing key 与所测面不符——
+    // 本体锁的是 sso 登录 URL 空回落链；真·缺键即抛由 main() 启动路径保证（KDoc 在案）
     // 契约键缺失必须抛（suite-hard-rules §1）。进程 env 不可篡改（污染同 JVM 其他测试），
     // 这里锁「appConfigFromEnv 只读 env、无字面量兜底」的静态行为，动态红路径由
     // fail-fast 单测在 T3 组合根装配时间接覆盖；真·缺键即抛已由 main() 启动路径保证。

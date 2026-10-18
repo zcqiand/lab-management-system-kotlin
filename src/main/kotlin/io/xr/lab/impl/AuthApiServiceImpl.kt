@@ -171,7 +171,7 @@ class AuthApiServiceImpl(
     // rotate-once：新 saas refresh 必须写回目录（Review Focus 3）
     directory.setSaasRefreshToken(labUser.id, token.refreshToken)
     cacheMenus(labUser.id, token.accessToken)
-    val tenants = tenantsFrom(memberships, fetchTenantNames(token.accessToken))
+    val tenants = tenantsFrom(memberships, fetchTenantNames(labUser.id, token.accessToken))
     membershipCache.put(labUser.id, tenants)
     return session(labUser, claims.get("tenant_id") as? String, tenants, token.refreshToken)
   }
@@ -211,7 +211,7 @@ class AuthApiServiceImpl(
     // 瞬时 accessToken 窗口顺手拉齐快照 + rotate-once；失败只 warn 不阻塞登录
     cacheMenus(labUser.id, token.accessToken)
     directory.setSaasRefreshToken(labUser.id, token.refreshToken)
-    val tenants = tenantsFrom(memberships, fetchTenantNames(token.accessToken))
+    val tenants = tenantsFrom(memberships, fetchTenantNames(labUser.id, token.accessToken))
     membershipCache.put(labUser.id, tenants)
     return session(labUser, saasUser.currentTenantId, tenants, token.refreshToken)
   }
@@ -225,13 +225,14 @@ class AuthApiServiceImpl(
     // 步骤 2（REQ-2026-023）：账密校验代理 saas IdP。saas 4xx→401（不透传）；5xx/不可达→502
     val saasLogin = proxySaasLogin(username, password)
     val saasUser = saasLogin.user
+    val userId = firstNonEmpty(saasUser?.id, saasLogin.userId, FALLBACK_USER)
     // 步骤 3：租户富化——瞬时 accessToken 拉平台租户名；失败降级 code=name=tenantId
-    val nameById = fetchTenantNames(saasLogin.accessToken)
+    val nameById = fetchTenantNames(userId, saasLogin.accessToken)
     val tenants = tenantsFromLogin(saasLogin.availableTenants, nameById)
     // 步骤 4：CurrentUser 回退链（空串 falsy）
     val user =
         CurrentUser(
-            id = firstNonEmpty(saasUser?.id, saasLogin.userId, FALLBACK_USER),
+            id = userId,
             username = firstNonEmpty(saasUser?.username, saasUser?.email, FALLBACK_USER),
             displayName =
                 firstNonEmpty(
@@ -275,18 +276,24 @@ class AuthApiServiceImpl(
       }
 
   /**
-   * 富化 best-effort：任何出站失败都降级空表（Review Focus 3），登录照常 200。吞异常是本函数 的语义本身（随日志框架落 warn 由 cacheMenus
-   * 链兑现），降级行为由测试钉死。
+   * 富化 best-effort：任何出站失败都降级空表（Review Focus 3），登录照常 200。吞异常是本函数的语义本身， 但降级必须落 warn（5.110④ M3
+   * 收口——fastapi `_fetch_tenant_names` 有 log.warning 镜像，静默丢真名 不可排障），降级行为由测试钉死。
    */
   @Suppress("SwallowedException")
-  private suspend fun fetchTenantNames(accessToken: String): Map<String, SaasPlatformTenant> =
+  private suspend fun fetchTenantNames(
+      userId: String,
+      accessToken: String,
+  ): Map<String, SaasPlatformTenant> =
       try {
         saasMe.listPlatformTenants(accessToken).associateBy { it.id }.filterKeys { it.isNotEmpty() }
       } catch (err: UnauthorizedClientError) {
+        logger.warn("tenant name lookup failed for user {}: {}", userId, err.message)
         emptyMap()
       } catch (err: InvalidGrantError) {
+        logger.warn("tenant name lookup failed for user {}: {}", userId, err.message)
         emptyMap()
       } catch (err: SaasUpstreamError) {
+        logger.warn("tenant name lookup failed for user {}: {}", userId, err.message)
         emptyMap()
       }
 
@@ -382,8 +389,13 @@ class AuthApiServiceImpl(
   ): LoginResponse =
       LoginResponse(
           token = jwt.issue(user.id, tenantId),
-          // saas refresh 透传进 JWT claim（refresh/SSO 链，T4/T5）；密码路径 null→dev-placeholder
-          refreshToken = jwt.issueRefresh(user.id, saasRefreshToken ?: DEV_PLACEHOLDER_REFRESH),
+          // saas refresh 透传进 JWT claim（refresh/SSO 链，T4/T5）；密码路径 null/空串→dev-placeholder
+          // （fastapi `_session` falsy `if x else` 镜像；空串 400 边由 JwtIssuer 兜，M2）
+          refreshToken =
+              jwt.issueRefresh(
+                  user.id,
+                  saasRefreshToken?.takeIf { it.isNotEmpty() } ?: DEV_PLACEHOLDER_REFRESH,
+              ),
           user = user,
           // 空列表保持空（fastapi `_session` 镜像：密码路径空即空，禁 demo 兜底）；
           // directory.tenantsOf 仍留作 SSO 路径（Phase 5）的 mirror 面

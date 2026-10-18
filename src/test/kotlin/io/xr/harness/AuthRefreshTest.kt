@@ -263,4 +263,40 @@ class AuthRefreshTest {
     assertEquals(HttpStatusCode.Unauthorized, status)
     assertTrue(body.contains("INVALID_CREDENTIALS"))
   }
+
+  /**
+   * spec §6.2 重放场景显式证据（5.110⑤ M4 收口）：rotate-once 后旧 refresh JWT 重放第二次——出站 saas token 实参
+   * **claim-driven 带旧值**（JWT 内嵌 old-rt），不是目录已 rotate 的新值 saas-rt-2。 行为本就如此（终审推定正确），此钉把推定翻成 HTTP
+   * 可观测证据。
+   */
+  @Test
+  @Fn(["M01.F05.I04"])
+  fun `refresh replay after rotate still sends old claim value outbound`() {
+    directory.upsert("u-sso", "alice@lab", "Alice", "viewer")
+    directory.setSaasRefreshToken("u-sso", "old-rt")
+    val saasAuth =
+        RecordingSaasAuth(
+            tokenResult = { SaasToken(accessToken = "saas-at-2", refreshToken = "saas-rt-2") }
+        )
+    val saasMe =
+        FakeSaasMe(
+            whoami = {
+              SaasCurrentUser(
+                  id = "u-sso",
+                  email = "alice@lab",
+                  displayName = "Alice",
+                  currentTenantId = "TENANT-001",
+              )
+            },
+        )
+    val oldRefresh = jwt.issueRefresh("u-sso", "old-rt")
+    withApp(saasAuth, saasMe) { client ->
+      val first = client.postJson("/api/auth/refresh", """{"refreshToken":"$oldRefresh"}""")
+      assertEquals(HttpStatusCode.OK, first.first)
+      val replay = client.postJson("/api/auth/refresh", """{"refreshToken":"$oldRefresh"}""")
+      assertEquals(HttpStatusCode.OK, replay.first)
+    }
+    assertEquals(2, saasAuth.tokenCalls)
+    assertEquals("old-rt", saasAuth.lastRefreshToken)
+  }
 }

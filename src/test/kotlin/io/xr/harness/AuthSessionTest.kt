@@ -207,14 +207,19 @@ class AuthSessionTest {
   @Fn(["M00.F01.I01"])
   fun `me sso user cache miss asks refresh not demo fallback`() {
     // SSO 用户（目录持 saas refresh）快照 miss → 401 提示自愈，禁 demo 目录兜底（Review Focus 1）。
-    // 401 体是契约固定形状（INVALID_CREDENTIALS/invalid credentials，映射器不透传内部文案）——
-    // 可观察判据 = 401（而非 200+demo 租户兜底），不落 "refresh required" 文案断言
+    // message 透传钉子（5.110② M1 收口，saas 5.116① 同款）：fastapi auth_impl:195 透传
+    // "cache miss; refresh required" 自愈提示，前端可辨——kotlin 收敛固定 "invalid credentials"
+    // 是超集漂移，401 判据 + 文案断言双钉
     directory.upsert("u-sso", "sso@lab", "SSO 用户", null)
     directory.setSaasRefreshToken("u-sso", "rt-sso")
     val token = jwt.issue("u-sso", null)
     val (status, body) = withApp(FakeSaasAuth(), FakeSaasMe()) { it.getJson("/api/auth/me", token) }
     assertEquals(HttpStatusCode.Unauthorized, status)
     assertTrue(body.contains("INVALID_CREDENTIALS"))
+    assertEquals(
+        "membership snapshot unavailable for user u-sso (cache miss); refresh required",
+        bodyField(body, "message"),
+    )
     assertTrue(!body.contains("TENANT-001"), "SSO 用户 miss 不得落 demo 租户: $body")
   }
 
