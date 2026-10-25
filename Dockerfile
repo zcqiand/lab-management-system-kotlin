@@ -28,8 +28,11 @@ COPY gradle ./gradle
 RUN chmod +x gradlew && ./gradlew --no-daemon --parallel help > /dev/null 2>&1 || true
 
 COPY src ./src
+# 注意：settings.gradle.kts 是 rootProject.name = rootDir.name —— 容器里 rootDir=WORKDIR
+# （/app），项目名跟随 WORKDIR 基名 = "app"（2026-10-25 首航 CI 指纹：cp 仓名路径必落空）。
+# install 目录名 = bin 启动脚本名 = "app"，与 WORKDIR 改名联动。
 RUN ./gradlew --no-daemon installDist \
- && cp -r build/install/lab-management-system-kotlin /app/dist
+ && cp -r build/install/app /app/dist
 
 # ---------- Stage 2: runtime ----------
 FROM eclipse-temurin:21-jre-jammy AS runtime
@@ -52,4 +55,4 @@ EXPOSE 5209
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
   CMD wget -q --spider http://127.0.0.1:5209/health || exit 1
 
-ENTRYPOINT ["/app/bin/lab-management-system-kotlin"]
+ENTRYPOINT ["/app/dist/bin/app"]
