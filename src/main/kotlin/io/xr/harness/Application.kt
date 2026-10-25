@@ -7,6 +7,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
+import io.ktor.server.http.content.staticResources
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
@@ -15,6 +16,7 @@ import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.plugins.statuspages.StatusPagesConfig
 import io.ktor.server.resources.Resources
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondRedirect
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
@@ -80,6 +82,17 @@ fun Application.harnessModule(
   routing {
     // 家族探活契约形状：GET /health → {"ok":true,"mode":"ktor"}
     get("/health") { call.respondText("""{"ok":true,"mode":"ktor"}""") }
+    // Swagger 文档面（REQ-2026-003，saas 同款）：基础设施端点，不进契约面/功能树
+    // （与 /health 同模式，springboot/aspnetcore「根路径跳文档」先例）。内容=shared
+    // 契约生成物（resources/api-docs/，gen-shared.sh 落盘），零手写注解零漂移。
+    get("/") { call.respondRedirect("/api-docs") }
+    staticResources("/api-docs", "api-docs")
+    // webjar 指纹 ×2（REQ-2026-003，saas 同款）：① basePackage 按 Java 包名点分，
+    // 版本号写进 basePackage 会被劈成 5/34/0 → 404；② 版本段也不能写进 remotePath——
+    // tailcard 只捕获 remotePath 之后的段。正确形态 = 路由挂前缀、版本走请求 URL
+    // （/swagger-ui/5.34.0/...，webjar 原生布局）。bump swagger-ui-dist 时同 commit
+    // 改 build.gradle 依赖与本注释、api-docs/index.html 两处引用。
+    staticResources("/swagger-ui", "META-INF/resources/webjars/swagger-ui-dist")
     AuthApi()
   }
 }

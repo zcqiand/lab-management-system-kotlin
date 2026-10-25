@@ -12,6 +12,7 @@
     "r2dbc-postgresql": "1.1.3.RELEASE",
     "jjwt": "0.12.6（api 显式 + impl/jackson runtimeOnly；lab 自签 HS256 access/refresh）",
     "jdk": "21",
-    "slf4j": "2.0.16（api + simple；logMenuFailure warn 兑现）"
+    "slf4j": "2.0.16（api + simple；logMenuFailure warn 兑现）",
+    "swagger-ui-dist": "5.34.0（org.webjars.npm webjar，BOM 外钉 exact；jar 内原生布局含 5.34.0/ 版本层，路由挂前缀、版本走请求 URL，REQ-2026-003）"
   }
 }

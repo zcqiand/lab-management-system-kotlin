@@ -35,6 +35,10 @@ dependencies {
   // 日志框架（Phase 5 搭车修：logMenuFailure warn；ktor-bom 不含 slf4j，显式版本+version-lock 登记）
   implementation("org.slf4j:slf4j-api:2.0.16")
   runtimeOnly("org.slf4j:slf4j-simple:2.0.16")
+  // Swagger 文档面（REQ-2026-003，saas 同款）：webjar 静态件挂 /swagger-ui。用 npm 版
+  // （org.webjars.npm）；BOM 外钉 exact 禁浮动。bump 时同 commit 改 Application.kt
+  // 路由注释与 api-docs/index.html 两处引用。
+  implementation("org.webjars.npm:swagger-ui-dist:5.34.0")
   testImplementation(platform("org.junit:junit-bom:6.1.3"))
   testImplementation("org.junit.jupiter:junit-jupiter")
   // testApplication（ktor-conventions 测试姿态）：版本走上方 ktor-bom，禁裸写（saas 同款）

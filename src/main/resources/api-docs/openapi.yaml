@@ -1,0 +1,6188 @@
+openapi: 3.0.0
+info:
+  title: (title)
+  version: 0.0.0
+tags:
+  - name: frontend-bind-meta
+  - name: auth
+  - name: contracts
+  - name: receipts
+  - name: samples
+  - name: test-records
+  - name: inspection-catalog
+  - name: technical-requirements
+  - name: summary
+  - name: inspection-dictionary
+  - name: report-names
+  - name: calculation-methods
+  - name: param-interfaces
+paths:
+  /api/_frontend-bind/snapshot:
+    get:
+      operationId: FrontendBindMeta_getFrontendBindSnapshot
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FrontendBindMeta.FrontendBindSnapshot'
+      tags:
+        - frontend-bind-meta
+  /api/auth/login:
+    post:
+      operationId: Auth_login
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+  /api/auth/logout:
+    post:
+      operationId: Auth_logout
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+              required:
+                - token
+  /api/auth/me:
+    get:
+      operationId: Auth_getCurrentUser
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CurrentUserSession'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - auth
+  /api/auth/menus:
+    get:
+      operationId: Auth_getMenus
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MenuNode'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - auth
+  /api/auth/native-login:
+    post:
+      operationId: Auth_nativeLogin
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+  /api/auth/permissions:
+    get:
+      operationId: Auth_getPermissions
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionSet'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - auth
+  /api/auth/refresh:
+    post:
+      operationId: Auth_refresh
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+  /api/auth/sso/authorize:
+    get:
+      operationId: Auth_ssoAuthorize
+      description: |2-
+          SSO 跳转端点（RFC 6749 §4.1.1 授权码流）。返回跳板 URL 而非 302：客户端取
+          authorizeUrl 做 top-level navigation。
+
+          state 由前端生成并原样透传，回跳时前端比对，防 CSRF；redirect_uri 须在后端
+          白名单内（https 域名之外，原生客户端允许自定义 scheme），白名单配置随部署
+          env，不入契约；client_secret 仅后端持有，不出现在本契约。
+      parameters:
+        - name: response_type
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/OAuthResponseType'
+          explode: false
+        - name: client_id
+          in: query
+          required: true
+          schema:
+            type: string
+          explode: false
+        - name: redirect_uri
+          in: query
+          required: true
+          schema:
+            type: string
+          explode: false
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SsoRedirect'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - auth
+  /api/auth/sso/callback:
+    post:
+      operationId: Auth_ssoCallback
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SsoCallbackRequest'
+  /api/auth/switch-tenant:
+    post:
+      operationId: Auth_switchTenant
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SwitchTenantRequest'
+  /api/calculation-methods:
+    get:
+      operationId: CalculationMethods_listCalculationMethods
+      parameters:
+        - name: inspectionObjectCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: inspectionParameterCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CalculationMethod'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - calculation-methods
+    post:
+      operationId: CalculationMethods_createCalculationMethod
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationMethod'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - calculation-methods
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCalculationMethodRequest'
+  /api/calculation-methods/{inspectionObjectCode}/{inspectionParameterCode}:
+    get:
+      operationId: CalculationMethods_getCalculationMethod
+      parameters:
+        - name: inspectionObjectCode
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: inspectionParameterCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationMethod'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - calculation-methods
+    put:
+      operationId: CalculationMethods_updateCalculationMethod
+      parameters:
+        - name: inspectionObjectCode
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: inspectionParameterCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalculationMethod'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - calculation-methods
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCalculationMethodRequest'
+    delete:
+      operationId: CalculationMethods_deleteCalculationMethod
+      parameters:
+        - name: inspectionObjectCode
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: inspectionParameterCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - calculation-methods
+  /api/catalog/brands:
+    get:
+      operationId: Catalog_listBrands
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: inspectionObjectCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InspectionBrand'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+    post:
+      operationId: Catalog_createBrand
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionBrand'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCatalogEntryRequest'
+  /api/catalog/brands/{code}:
+    put:
+      operationId: Catalog_updateBrand
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionBrand'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCatalogEntryRequest'
+    delete:
+      operationId: Catalog_deleteBrand
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+  /api/catalog/grades:
+    get:
+      operationId: Catalog_listGrades
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: inspectionObjectCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InspectionGrade'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+    post:
+      operationId: Catalog_createGrade
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionGrade'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCatalogEntryRequest'
+  /api/catalog/grades/{code}:
+    put:
+      operationId: Catalog_updateGrade
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionGrade'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCatalogEntryRequest'
+    delete:
+      operationId: Catalog_deleteGrade
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+  /api/catalog/models:
+    get:
+      operationId: Catalog_listModels
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: inspectionObjectCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InspectionModel'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+    post:
+      operationId: Catalog_createModel
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionModel'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCatalogEntryRequest'
+  /api/catalog/models/{code}:
+    put:
+      operationId: Catalog_updateModel
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionModel'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCatalogEntryRequest'
+    delete:
+      operationId: Catalog_deleteModel
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+  /api/catalog/specs:
+    get:
+      operationId: Catalog_listSpecs
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: inspectionObjectCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InspectionSpec'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+    post:
+      operationId: Catalog_createSpec
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionSpec'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCatalogEntryRequest'
+  /api/catalog/specs/{code}:
+    put:
+      operationId: Catalog_updateSpec
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionSpec'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCatalogEntryRequest'
+    delete:
+      operationId: Catalog_deleteSpec
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-catalog
+  /api/contracts:
+    get:
+      operationId: Contracts_listContracts
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ContractStatus'
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Contract'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - contracts
+    post:
+      operationId: Contracts_createContract
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contract'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - contracts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContractRequest'
+  /api/contracts/{id}:
+    get:
+      operationId: Contracts_getContract
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contract'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - contracts
+    put:
+      operationId: Contracts_updateContract
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contract'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - contracts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateContractRequest'
+    delete:
+      operationId: Contracts_deleteContract
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - contracts
+  /api/inspection/links/object-parameter:
+    post:
+      operationId: InspectionDictionary_linkObjectParameter
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObjectParameterLink'
+    delete:
+      operationId: InspectionDictionary_unlinkObjectParameter
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inspectionObjectCode:
+                  type: string
+                inspectionParameterCode:
+                  type: string
+              required:
+                - inspectionObjectCode
+                - inspectionParameterCode
+    get:
+      operationId: InspectionDictionary_listObjectParameterLinks
+      parameters:
+        - name: inspectionObjectCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: inspectionParameterCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ObjectParameterLink'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+  /api/inspection/links/object-standard:
+    post:
+      operationId: InspectionDictionary_linkObjectStandard
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObjectStandardLink'
+    delete:
+      operationId: InspectionDictionary_unlinkObjectStandard
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inspectionObjectCode:
+                  type: string
+                inspectionStandardCode:
+                  type: string
+                role:
+                  $ref: '#/components/schemas/InspectionStandardRole'
+              required:
+                - inspectionObjectCode
+                - inspectionStandardCode
+                - role
+    get:
+      operationId: InspectionDictionary_listObjectStandardLinks
+      parameters:
+        - name: inspectionObjectCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: role
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/InspectionStandardRole'
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ObjectStandardLink'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+  /api/inspection/links/specialty-object:
+    post:
+      operationId: InspectionDictionary_linkSpecialtyObject
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpecialtyObjectLink'
+    delete:
+      operationId: InspectionDictionary_unlinkSpecialtyObject
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpecialtyObjectLink'
+    get:
+      operationId: InspectionDictionary_listSpecialtyObjectLinks
+      parameters:
+        - name: inspectionSpecialtyCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SpecialtyObjectLink'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+  /api/inspection/links/standard-parameter:
+    post:
+      operationId: InspectionDictionary_linkStandardParameter
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StandardParameterLink'
+    delete:
+      operationId: InspectionDictionary_unlinkStandardParameter
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StandardParameterLink'
+    get:
+      operationId: InspectionDictionary_listStandardParameterLinks
+      parameters:
+        - name: inspectionStandardCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: inspectionParameterCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/StandardParameterLink'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+  /api/inspection/objects:
+    get:
+      operationId: InspectionDictionary_listObjects
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: inspectionSpecialtyCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InspectionObject'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+    post:
+      operationId: InspectionDictionary_createObject
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionObject'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInspectionObjectRequest'
+  /api/inspection/objects/{code}:
+    put:
+      operationId: InspectionDictionary_updateObject
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionObject'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInspectionObjectRequest'
+    delete:
+      operationId: InspectionDictionary_deleteObject
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+  /api/inspection/parameters:
+    get:
+      operationId: InspectionDictionary_listParameters
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: sourceType
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/InspectionParameterSourceType'
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InspectionParameter'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+    post:
+      operationId: InspectionDictionary_createParameter
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionParameter'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInspectionParameterRequest'
+  /api/inspection/parameters/{code}:
+    put:
+      operationId: InspectionDictionary_updateParameter
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionParameter'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInspectionParameterRequest'
+    delete:
+      operationId: InspectionDictionary_deleteParameter
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+  /api/inspection/specialties:
+    get:
+      operationId: InspectionDictionary_listSpecialties
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InspectionSpecialty'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+    post:
+      operationId: InspectionDictionary_createSpecialty
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionSpecialty'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInspectionSpecialtyRequest'
+  /api/inspection/specialties/{code}:
+    put:
+      operationId: InspectionDictionary_updateSpecialty
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionSpecialty'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInspectionSpecialtyRequest'
+    delete:
+      operationId: InspectionDictionary_deleteSpecialty
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+  /api/inspection/standards:
+    get:
+      operationId: InspectionDictionary_listStandards
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/InspectionStandardStatus'
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InspectionStandard'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+    post:
+      operationId: InspectionDictionary_createStandard
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionStandard'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInspectionStandardRequest'
+  /api/inspection/standards/{code}:
+    put:
+      operationId: InspectionDictionary_updateStandard
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionStandard'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInspectionStandardRequest'
+    delete:
+      operationId: InspectionDictionary_deleteStandard
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - inspection-dictionary
+  /api/param-interfaces:
+    get:
+      operationId: ParamInterfaces_listParamInterfaces
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ParamInterface'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - param-interfaces
+    post:
+      operationId: ParamInterfaces_createParamInterface
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParamInterface'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - param-interfaces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateParamInterfaceRequest'
+  /api/param-interfaces/links:
+    post:
+      operationId: ParamInterfaces_linkParamInterface
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - param-interfaces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParamInterfaceLink'
+    delete:
+      operationId: ParamInterfaces_unlinkParamInterface
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - param-interfaces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inspectionParameterCode:
+                  type: string
+                paramInterfaceCode:
+                  type: string
+              required:
+                - inspectionParameterCode
+                - paramInterfaceCode
+    get:
+      operationId: ParamInterfaces_listParamInterfaceLinks
+      parameters:
+        - name: inspectionParameterCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: paramInterfaceCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ParamInterfaceLink'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - param-interfaces
+  /api/param-interfaces/{code}:
+    get:
+      operationId: ParamInterfaces_getParamInterface
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParamInterface'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - param-interfaces
+    put:
+      operationId: ParamInterfaces_updateParamInterface
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParamInterface'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - param-interfaces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateParamInterfaceRequest'
+    delete:
+      operationId: ParamInterfaces_deleteParamInterface
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - param-interfaces
+  /api/receipts:
+    get:
+      operationId: Receipts_listReceipts
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: contractId
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: flowStatus
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/FlowStatus'
+          explode: false
+        - name: filter
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SampleReceipt'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+    post:
+      operationId: Receipts_createReceipt
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleReceipt'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSampleReceiptRequest'
+  /api/receipts/approve/act:
+    post:
+      operationId: Receipts_actFlowApprove
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlowActionResult'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowActionRequest'
+  /api/receipts/archived/act:
+    post:
+      operationId: Receipts_actFlowArchived
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlowActionResult'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowActionRequest'
+  /api/receipts/assigning/act:
+    post:
+      operationId: Receipts_actFlowAssigning
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlowActionResult'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowActionRequest'
+  /api/receipts/data-entry/act:
+    post:
+      operationId: Receipts_actFlowDataEntry
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlowActionResult'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowActionRequest'
+  /api/receipts/issuance/act:
+    post:
+      operationId: Receipts_actFlowIssuance
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlowActionResult'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowActionRequest'
+  /api/receipts/receiving/act:
+    x-fuzz: skip
+    post:
+      operationId: Receipts_actFlowReceiving
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlowActionResult'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowActionRequest'
+  /api/receipts/review/act:
+    post:
+      operationId: Receipts_actFlowReview
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlowActionResult'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlowActionRequest'
+  /api/receipts/{id}:
+    get:
+      operationId: Receipts_getReceipt
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleReceipt'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+    put:
+      operationId: Receipts_updateReceipt
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleReceipt'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSampleReceiptRequest'
+    delete:
+      operationId: Receipts_deleteReceipt
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+  /api/receipts/{id}/history:
+    get:
+      operationId: Receipts_getReceiptHistory
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FlowHistoryEntry'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+  /api/receipts/{id}/task:
+    put:
+      operationId: Receipts_assignTask
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SampleReceipt'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - receipts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignTaskRequest'
+  /api/report-names:
+    get:
+      operationId: ReportNames_listReportNames
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/InspectionReportName'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+    post:
+      operationId: ReportNames_createReportName
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionReportName'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInspectionReportNameRequest'
+  /api/report-names/links/object:
+    post:
+      operationId: ReportNames_linkObjectReportName
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObjectReportNameLink'
+    delete:
+      operationId: ReportNames_unlinkObjectReportName
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                inspectionObjectCode:
+                  type: string
+                reportNameCode:
+                  type: string
+              required:
+                - inspectionObjectCode
+                - reportNameCode
+    get:
+      operationId: ReportNames_listObjectReportNameLinks
+      parameters:
+        - name: inspectionObjectCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: reportNameCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ObjectReportNameLink'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+  /api/report-names/links/parameter:
+    post:
+      operationId: ReportNames_linkReportNameParameter
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportNameParameterLink'
+    delete:
+      operationId: ReportNames_unlinkReportNameParameter
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reportNameCode:
+                  type: string
+                inspectionParameterCode:
+                  type: string
+              required:
+                - reportNameCode
+                - inspectionParameterCode
+    get:
+      operationId: ReportNames_listReportNameParameterLinks
+      parameters:
+        - name: reportNameCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: inspectionParameterCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReportNameParameterLink'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+  /api/report-names/links/standard:
+    post:
+      operationId: ReportNames_linkReportNameStandard
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReportNameStandardLink'
+    delete:
+      operationId: ReportNames_unlinkReportNameStandard
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reportNameCode:
+                  type: string
+                inspectionStandardCode:
+                  type: string
+                role:
+                  $ref: '#/components/schemas/InspectionStandardRole'
+              required:
+                - reportNameCode
+                - inspectionStandardCode
+                - role
+    get:
+      operationId: ReportNames_listReportNameStandardLinks
+      parameters:
+        - name: reportNameCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: role
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/InspectionStandardRole'
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReportNameStandardLink'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+  /api/report-names/{code}:
+    get:
+      operationId: ReportNames_getReportName
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionReportName'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+    put:
+      operationId: ReportNames_updateReportName
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InspectionReportName'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInspectionReportNameRequest'
+    delete:
+      operationId: ReportNames_deleteReportName
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - report-names
+  /api/samples:
+    get:
+      operationId: Samples_listSamples
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: receiptId
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: keyword
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Sample'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - samples
+    post:
+      operationId: Samples_createSample
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sample'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - samples
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSampleRequest'
+  /api/samples/{id}:
+    get:
+      operationId: Samples_getSample
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sample'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - samples
+    put:
+      operationId: Samples_updateSample
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sample'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - samples
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSampleRequest'
+    delete:
+      operationId: Samples_deleteSample
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - samples
+  /api/samples/{id}/ext:
+    put:
+      operationId: Samples_updateSampleExt
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sample'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - samples
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSampleExtRequest'
+  /api/summary:
+    get:
+      operationId: Summary_getReportSummary
+      parameters:
+        - name: categoryCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: dateFrom
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: dateTo
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SummaryData'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - summary
+  /api/summary/stats:
+    get:
+      operationId: Summary_getDashboardStats
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardStats'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - summary
+  /api/technical-requirements:
+    get:
+      operationId: TechnicalRequirements_listTechnicalRequirements
+      parameters:
+        - name: inspectionObjectCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: inspectionParameterCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: judgmentStandardCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: verificationStatus
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/RequirementVerificationStatus'
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TechnicalRequirement'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - technical-requirements
+    post:
+      operationId: TechnicalRequirements_createTechnicalRequirement
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechnicalRequirement'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - technical-requirements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTechnicalRequirementRequest'
+  /api/technical-requirements/{inspectionObjectCode}/{inspectionParameterCode}/{judgmentStandardCode}:
+    get:
+      operationId: TechnicalRequirements_getTechnicalRequirement
+      parameters:
+        - name: inspectionObjectCode
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: inspectionParameterCode
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: judgmentStandardCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechnicalRequirement'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - technical-requirements
+    put:
+      operationId: TechnicalRequirements_updateTechnicalRequirement
+      parameters:
+        - name: inspectionObjectCode
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: inspectionParameterCode
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: judgmentStandardCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TechnicalRequirement'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - technical-requirements
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTechnicalRequirementRequest'
+    delete:
+      operationId: TechnicalRequirements_deleteTechnicalRequirement
+      parameters:
+        - name: inspectionObjectCode
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: inspectionParameterCode
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: judgmentStandardCode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - technical-requirements
+  /api/test-records:
+    get:
+      operationId: TestRecords_listTestRecords
+      parameters:
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+          explode: false
+        - name: sampleId
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: parameterCode
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - items
+                  - page
+                  - pageSize
+                  - total
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TestRecord'
+                  page:
+                    type: integer
+                    format: int32
+                    example: 1
+                  pageSize:
+                    type: integer
+                    format: int32
+                    example: 20
+                  total:
+                    type: integer
+                    format: int64
+                    example: 0
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - test-records
+    post:
+      operationId: TestRecords_createTestRecord
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestRecord'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - test-records
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTestRecordRequest'
+  /api/test-records/{id}:
+    get:
+      operationId: TestRecords_getTestRecord
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestRecord'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - test-records
+    put:
+      operationId: TestRecords_updateTestRecord
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestRecord'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - test-records
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTestRecordRequest'
+    delete:
+      operationId: TestRecords_deleteTestRecord
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - test-records
+  /api/test-records/{id}/verdict:
+    patch:
+      operationId: TestRecords_setVerdict
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestRecord'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - test-records
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                verdict:
+                  type: string
+              required:
+                - verdict
+components:
+  schemas:
+    AssignTaskRequest:
+      type: object
+      properties:
+        assigneeId:
+          type: string
+        assigneeName:
+          type: string
+        plannedTestDate:
+          type: string
+    AuthContext:
+      type: object
+      required:
+        - state
+      properties:
+        state:
+          allOf:
+            - $ref: '#/components/schemas/AuthState'
+          description: 当前 auth 状态
+      description: AuthContext 数据契约。方法(login/logout/refresh/switchTenant/hasPermission/onChange)由消费方实现,TS 签名见 .state/decision-log.md §2.2
+    AuthHeaderKind:
+      type: string
+      enum:
+        - Authorization
+        - X-Auth-Token
+      description: 已废弃 (ADR-0014)
+    AuthState:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/AuthStateIdle'
+        - $ref: '#/components/schemas/AuthStateAnonymous'
+        - $ref: '#/components/schemas/AuthStateAwaiting_tenant'
+        - $ref: '#/components/schemas/AuthStateAuthenticated'
+      discriminator:
+        propertyName: kind
+        mapping:
+          idle: '#/components/schemas/AuthStateIdle'
+          anonymous: '#/components/schemas/AuthStateAnonymous'
+          awaiting_tenant: '#/components/schemas/AuthStateAwaiting_tenant'
+          authenticated: '#/components/schemas/AuthStateAuthenticated'
+      description: 'auth 状态机 4 态。Vue: pinia store / React: Context;两侧实现可同构'
+    AuthStateAnonymous:
+      type: object
+      required:
+        - kind
+        - value
+      properties:
+        kind:
+          type: string
+          enum:
+            - anonymous
+        value:
+          type: object
+          properties:
+            kind:
+              type: string
+              enum:
+                - anonymous
+          required:
+            - kind
+    AuthStateAuthenticated:
+      type: object
+      required:
+        - kind
+        - value
+      properties:
+        kind:
+          type: string
+          enum:
+            - authenticated
+        value:
+          type: object
+          properties:
+            kind:
+              type: string
+              enum:
+                - authenticated
+            user:
+              $ref: '#/components/schemas/CurrentUser'
+            tenant:
+              $ref: '#/components/schemas/MyTenant'
+            permissions:
+              type: array
+              items:
+                type: string
+            tokenExpiresAt:
+              type: integer
+              format: int64
+              description: unix ms
+          required:
+            - kind
+            - user
+            - tenant
+            - permissions
+            - tokenExpiresAt
+    AuthStateAwaiting_tenant:
+      type: object
+      required:
+        - kind
+        - value
+      properties:
+        kind:
+          type: string
+          enum:
+            - awaiting_tenant
+        value:
+          type: object
+          properties:
+            kind:
+              type: string
+              enum:
+                - awaiting_tenant
+            user:
+              $ref: '#/components/schemas/CurrentUser'
+            tenants:
+              type: array
+              items:
+                $ref: '#/components/schemas/MyTenant'
+          required:
+            - kind
+            - user
+            - tenants
+    AuthStateIdle:
+      type: object
+      required:
+        - kind
+        - value
+      properties:
+        kind:
+          type: string
+          enum:
+            - idle
+        value:
+          type: object
+          properties:
+            kind:
+              type: string
+              enum:
+                - idle
+          required:
+            - kind
+    BackendConfig:
+      type: object
+      required:
+        - id
+        - label
+        - baseUrl
+        - authHeader
+        - features
+      properties:
+        id:
+          allOf:
+            - $ref: '#/components/schemas/BackendId'
+          description: 槽位标识,必须是 BackendId 之一
+        label:
+          type: string
+          description: 显示名(MSW Mock / Next.js API / Spring Boot / ASP.NET Core)
+        baseUrl:
+          type: string
+          description: baseUrl 的展示值,例如 'http://localhost:5201/api'
+        authHeader:
+          allOf:
+            - $ref: '#/components/schemas/AuthHeaderKind'
+          description: token 头:Bearer 走 Authorization,部分老后端用 X-Auth-Token
+        ssoCallbackPath:
+          type: string
+          description: SSO 回调路径(仅启用 SSO 的后端填写)
+        features:
+          allOf:
+            - $ref: '#/components/schemas/BackendFeatures'
+          description: 能力矩阵
+      description: 已废弃 (ADR-0014):用 VITE_API_BASE_URL / NEXT_PUBLIC_API_BASE_URL 替代;4-backend 运行时切换配置
+    BackendFeatures:
+      type: object
+      required:
+        - sso
+        - realDb
+      properties:
+        sso:
+          type: boolean
+          description: 是否启用 SSO 跳转(nextjs=true / springboot/aspnetcore 视实现)
+        realDb:
+          type: boolean
+          description: 是否对接真实数据库(vs mock seed)
+      description: 已废弃 (ADR-0014);后端能力矩阵
+    BackendId:
+      type: string
+      enum:
+        - nextjs
+        - springboot
+        - aspnetcore
+      description: 已废弃 (ADR-0014);3 个槽位,id 锁定避免拼写漂移。msw 成员 2026-09-17 随 msw 仓剔除删除
+    BackendRegistry:
+      type: object
+      required:
+        - active
+        - available
+      properties:
+        active:
+          allOf:
+            - $ref: '#/components/schemas/BackendId'
+          description: 当前激活后端
+        available:
+          type: array
+          items:
+            $ref: '#/components/schemas/BackendConfig'
+          description: 可切换列表(通常包含全部 4 个槽位)
+      description: 已废弃 (ADR-0014);运行时注册表:当前激活 + 可切列表
+    CalculationAlgorithmType:
+      type: string
+      enum:
+        - simple_avg
+        - compressive_strength
+        - flexural_strength
+        - steel_tensile
+        - formula
+        - manual
+        - auto_calc_ratio
+    CalculationMethod:
+      type: object
+      required:
+        - inspectionObjectCode
+        - inspectionParameterCode
+        - algorithmType
+        - specimenCount
+        - sortOrder
+        - createdAt
+        - updatedAt
+      properties:
+        inspectionObjectCode:
+          type: string
+        inspectionParameterCode:
+          type: string
+        testingStandardCode:
+          type: string
+        reportNameCode:
+          type: string
+        algorithmType:
+          $ref: '#/components/schemas/CalculationAlgorithmType'
+        specimenCount:
+          type: integer
+          format: int32
+        formula:
+          type: string
+        conditions:
+          type: string
+        roundingRule:
+          type: string
+        remark:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    Contract:
+      type: object
+      required:
+        - id
+        - tenantId
+        - contractCode
+        - clientUnit
+        - projectName
+        - constructionUnit
+        - witnessUnit
+        - witness
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        contractCode:
+          type: string
+        clientUnit:
+          type: string
+        projectName:
+          type: string
+        projectLocation:
+          type: string
+        constructionUnit:
+          type: string
+        inspectionSpecialtyCode:
+          type: string
+        buildingUnit:
+          type: string
+        supervisorUnit:
+          type: string
+        inspectionPerson:
+          type: string
+        inspectionPhone:
+          type: string
+        witnessUnit:
+          type: string
+        witness:
+          type: string
+        witnessPhone:
+          type: string
+        contactPerson:
+          type: string
+        contactPhone:
+          type: string
+        entrustedDate:
+          type: string
+        status:
+          $ref: '#/components/schemas/ContractStatus'
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    ContractStatus:
+      type: string
+      enum:
+        - active
+        - archived
+    CreateCalculationMethodRequest:
+      type: object
+      required:
+        - inspectionObjectCode
+        - inspectionParameterCode
+      properties:
+        inspectionObjectCode:
+          type: string
+        inspectionParameterCode:
+          type: string
+        testingStandardCode:
+          type: string
+        reportNameCode:
+          type: string
+        algorithmType:
+          $ref: '#/components/schemas/CalculationAlgorithmType'
+        specimenCount:
+          type: integer
+          format: int32
+        formula:
+          type: string
+        conditions:
+          type: string
+        roundingRule:
+          type: string
+        remark:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+    CreateCatalogEntryRequest:
+      type: object
+      required:
+        - code
+        - name
+      properties:
+        code:
+          type: string
+        inspectionObjectCode:
+          type: string
+        name:
+          type: string
+        remark:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+    CreateContractRequest:
+      type: object
+      required:
+        - contractCode
+        - clientUnit
+        - projectName
+        - constructionUnit
+        - witnessUnit
+        - witness
+      properties:
+        contractCode:
+          type: string
+        clientUnit:
+          type: string
+        projectName:
+          type: string
+        projectLocation:
+          type: string
+        constructionUnit:
+          type: string
+        inspectionSpecialtyCode:
+          type: string
+        buildingUnit:
+          type: string
+        supervisorUnit:
+          type: string
+        inspectionPerson:
+          type: string
+        inspectionPhone:
+          type: string
+        witnessUnit:
+          type: string
+        witness:
+          type: string
+        witnessPhone:
+          type: string
+        contactPerson:
+          type: string
+        contactPhone:
+          type: string
+        entrustedDate:
+          type: string
+        status:
+          $ref: '#/components/schemas/ContractStatus'
+    CreateInspectionObjectRequest:
+      type: object
+      required:
+        - code
+        - inspectionSpecialtyCode
+        - sourceProjectNo
+        - sourceProjectName
+        - name
+      properties:
+        code:
+          type: string
+        inspectionSpecialtyCode:
+          type: string
+        sourceProjectNo:
+          type: string
+        sourceProjectName:
+          type: string
+        name:
+          type: string
+        isOptionalForQualification:
+          type: boolean
+        isOfficial:
+          type: boolean
+        enabled:
+          type: boolean
+        sortOrder:
+          type: integer
+          format: int32
+    CreateInspectionParameterRequest:
+      type: object
+      required:
+        - code
+        - name
+        - rawName
+        - canonicalName
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        rawName:
+          type: string
+        canonicalName:
+          type: string
+        methodText:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        unit:
+          type: string
+        sourceType:
+          $ref: '#/components/schemas/InspectionParameterSourceType'
+        sortOrder:
+          type: integer
+          format: int32
+    CreateInspectionReportNameRequest:
+      type: object
+      required:
+        - code
+        - name
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        fullName:
+          type: string
+        templatePath:
+          type: string
+        summaryName:
+          type: string
+        extFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtFieldDef'
+        description:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+    CreateInspectionSpecialtyRequest:
+      type: object
+      required:
+        - code
+        - officialNo
+        - name
+      properties:
+        code:
+          type: string
+        officialNo:
+          type: string
+        name:
+          type: string
+        isOfficial:
+          type: boolean
+        enabled:
+          type: boolean
+        sortOrder:
+          type: integer
+          format: int32
+    CreateInspectionStandardRequest:
+      type: object
+      required:
+        - code
+        - name
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        version:
+          type: string
+        status:
+          $ref: '#/components/schemas/InspectionStandardStatus'
+        sourceDocumentId:
+          type: string
+        sourceHash:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+    CreateParamInterfaceRequest:
+      type: object
+      required:
+        - code
+        - componentPath
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        componentPath:
+          type: string
+        description:
+          type: string
+        isOfficial:
+          type: boolean
+        sortOrder:
+          type: integer
+          format: int32
+        config:
+          type: object
+          additionalProperties: {}
+    CreateSampleReceiptRequest:
+      type: object
+      required:
+        - contractId
+        - commissionCode
+        - commissionDate
+        - categoryCode
+        - receivedBy
+        - sampleSource
+        - testCategory
+      properties:
+        contractId:
+          type: string
+        commissionCode:
+          type: string
+        commissionDate:
+          type: string
+        commissionRegisterCode:
+          type: string
+        commissionRegisterDate:
+          type: string
+        categoryCode:
+          type: string
+        projectName:
+          type: string
+        clientUnit:
+          type: string
+        buildingUnit:
+          type: string
+        supervisorUnit:
+          type: string
+        constructionUnit:
+          type: string
+        witnessUnit:
+          type: string
+        samplingLocation:
+          type: string
+        witness:
+          type: string
+        witnessPhone:
+          type: string
+        inspector:
+          type: string
+        inspectorPhone:
+          type: string
+        receivedBy:
+          type: string
+        sampleSource:
+          type: string
+        testCategory:
+          type: string
+        testEnvironment:
+          type: string
+        mainEquipment:
+          type: string
+        testOperator:
+          type: string
+        testStartDate:
+          type: string
+        testEndDate:
+          type: string
+        originalRecordNo:
+          type: string
+        remark:
+          type: string
+        judgmentBasis:
+          type: array
+          items:
+            type: string
+        testingBasis:
+          type: array
+          items:
+            type: string
+        testParameters:
+          type: array
+          items:
+            type: string
+    CreateSampleRequest:
+      type: object
+      required:
+        - receiptId
+        - sampleCode
+      properties:
+        receiptId:
+          type: string
+        sampleCode:
+          type: string
+        sampleName:
+          type: string
+        model:
+          type: string
+        specification:
+          type: string
+        grade:
+          type: string
+        brand:
+          type: string
+        manufacturer:
+          type: string
+        structuralPart:
+          type: string
+        representQuantity:
+          type: string
+        sampleQuantity:
+          type: string
+        batchNumber:
+          type: string
+        supplyUnit:
+          type: string
+        arrivalDate:
+          type: string
+        samplingDate:
+          type: string
+        curingCondition:
+          type: string
+        age:
+          type: string
+        ext:
+          type: object
+          additionalProperties:
+            type: string
+        remark:
+          type: string
+    CreateTechnicalRequirementRequest:
+      type: object
+      required:
+        - inspectionObjectCode
+        - inspectionParameterCode
+        - judgmentStandardCode
+      properties:
+        inspectionObjectCode:
+          type: string
+        inspectionParameterCode:
+          type: string
+        judgmentStandardCode:
+          type: string
+        conditions:
+          type: string
+        valueType:
+          $ref: '#/components/schemas/RequirementValueType'
+        minValue:
+          type: integer
+          format: int32
+        maxValue:
+          type: integer
+          format: int32
+        targetValue:
+          type: string
+        expression:
+          type: string
+        unit:
+          type: string
+        comparison:
+          $ref: '#/components/schemas/RequirementComparison'
+        judgmentMode:
+          $ref: '#/components/schemas/RequirementJudgmentMode'
+        verificationStatus:
+          $ref: '#/components/schemas/RequirementVerificationStatus'
+        clause:
+          type: string
+        sourcePage:
+          type: integer
+          format: int32
+        sourceHash:
+          type: string
+        brand:
+          type: string
+        model:
+          type: string
+        grade:
+          type: string
+        spec:
+          type: string
+        sieve:
+          type: string
+        remark:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+    CreateTestRecordRequest:
+      type: object
+      required:
+        - sampleId
+        - parameterCode
+        - requirement
+        - result
+      properties:
+        sampleId:
+          type: string
+        parameterCode:
+          type: string
+        standardCode:
+          type: string
+        requirementCode:
+          type: string
+        requirement:
+          type: string
+        result:
+          type: string
+        verdict:
+          type: string
+    CurrentUser:
+      type: object
+      required:
+        - id
+        - username
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        displayName:
+          type: string
+        roleCode:
+          type: string
+    CurrentUserSession:
+      type: object
+      required:
+        - user
+        - tenants
+      properties:
+        user:
+          $ref: '#/components/schemas/CurrentUser'
+        tenants:
+          type: array
+          items:
+            $ref: '#/components/schemas/MyTenant'
+        currentTenantId:
+          type: string
+    DashboardStats:
+      type: object
+      required:
+        - contractCount
+        - receiptCount
+        - sampleCount
+        - reportCountByStatus
+        - pendingTaskCount
+        - todayTestCount
+        - qualifiedRateByMaterial
+        - reportOutputByStatus
+        - funnelByStage
+      properties:
+        contractCount:
+          type: integer
+          format: int32
+        receiptCount:
+          type: integer
+          format: int32
+        sampleCount:
+          type: integer
+          format: int32
+        reportCountByStatus:
+          type: object
+          properties:
+            draft:
+              type: integer
+              format: int32
+            reviewing:
+              type: integer
+              format: int32
+            issued:
+              type: integer
+              format: int32
+          required:
+            - draft
+            - reviewing
+            - issued
+        pendingTaskCount:
+          type: integer
+          format: int32
+        todayTestCount:
+          type: integer
+          format: int32
+        qualifiedRateByMaterial:
+          type: object
+          properties:
+            concrete:
+              $ref: '#/components/schemas/MaterialQualifiedRate'
+            rebar:
+              $ref: '#/components/schemas/MaterialQualifiedRate'
+            sand:
+              $ref: '#/components/schemas/MaterialQualifiedRate'
+          required:
+            - concrete
+            - rebar
+            - sand
+        reportOutputByStatus:
+          type: object
+          properties:
+            generated:
+              type: integer
+              format: int32
+            pending:
+              type: integer
+              format: int32
+            issued:
+              type: integer
+              format: int32
+          required:
+            - generated
+            - pending
+            - issued
+        funnelByStage:
+          type: object
+          properties:
+            pending_collect:
+              type: integer
+              format: int32
+            received:
+              type: integer
+              format: int32
+            testing:
+              type: integer
+              format: int32
+            reporting:
+              type: integer
+              format: int32
+            reviewing:
+              type: integer
+              format: int32
+            issued:
+              type: integer
+              format: int32
+          required:
+            - pending_collect
+            - received
+            - testing
+            - reporting
+            - reviewing
+            - issued
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          example: BAD_REQUEST
+        message:
+          type: string
+        details:
+          type: object
+          additionalProperties: {}
+    ExtFieldDef:
+      type: object
+      required:
+        - key
+        - label
+        - type
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+        type:
+          $ref: '#/components/schemas/ExtFieldDefType'
+        required:
+          type: boolean
+        options:
+          type: array
+          items:
+            type: string
+        tag:
+          type: string
+        source:
+          $ref: '#/components/schemas/ExtFieldDefSource'
+    ExtFieldDefSource:
+      type: string
+      enum:
+        - sample
+        - receipt
+    ExtFieldDefType:
+      type: string
+      enum:
+        - text
+        - number
+        - date
+        - select
+    FlowAction:
+      type: string
+      enum:
+        - submit
+        - return
+        - withdraw
+    FlowActionRequest:
+      type: object
+      required:
+        - ids
+        - action
+        - operator
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+        action:
+          $ref: '#/components/schemas/FlowAction'
+        operator:
+          type: string
+        reason:
+          type: string
+    FlowActionResult:
+      type: object
+      required:
+        - id
+        - ok
+      properties:
+        id:
+          type: string
+        ok:
+          type: boolean
+        message:
+          type: string
+        flowStatus:
+          $ref: '#/components/schemas/FlowStatus'
+    FlowHistoryEntry:
+      type: object
+      required:
+        - action
+        - from
+        - to
+        - operator
+        - at
+      properties:
+        action:
+          $ref: '#/components/schemas/FlowAction'
+        from:
+          $ref: '#/components/schemas/FlowStatus'
+        to:
+          $ref: '#/components/schemas/FlowStatus'
+        operator:
+          type: string
+        at:
+          type: string
+        reason:
+          type: string
+    FlowStatus:
+      type: string
+      enum:
+        - receiving
+        - task_assignment
+        - data_entry
+        - review
+        - approval
+        - issuance
+        - archived
+        - completed
+    FrontendBindMeta.FrontendBindSnapshot:
+      type: object
+      required:
+        - registry
+        - authContext
+        - tokenKeys
+      properties:
+        registry:
+          allOf:
+            - $ref: '#/components/schemas/BackendRegistry'
+          description: 已废弃 (ADR-0014);保留以维持 BackendRegistry schema 在 openapi.yaml 里的可达性
+        authContext:
+          $ref: '#/components/schemas/AuthContext'
+        tokenKeys:
+          $ref: '#/components/schemas/TokenStorageKeys'
+    InspectionBrand:
+      type: object
+      required:
+        - code
+        - tenantId
+        - name
+        - sortOrder
+        - createdAt
+        - updatedAt
+      properties:
+        code:
+          type: string
+        tenantId:
+          type: string
+        inspectionObjectCode:
+          type: string
+        name:
+          type: string
+        remark:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    InspectionGrade:
+      type: object
+      required:
+        - code
+        - tenantId
+        - name
+        - sortOrder
+        - createdAt
+        - updatedAt
+      properties:
+        code:
+          type: string
+        tenantId:
+          type: string
+        inspectionObjectCode:
+          type: string
+        name:
+          type: string
+        remark:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    InspectionModel:
+      type: object
+      required:
+        - code
+        - tenantId
+        - name
+        - sortOrder
+        - createdAt
+        - updatedAt
+      properties:
+        code:
+          type: string
+        tenantId:
+          type: string
+        inspectionObjectCode:
+          type: string
+        name:
+          type: string
+        remark:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    InspectionObject:
+      type: object
+      required:
+        - code
+        - inspectionSpecialtyCode
+        - sourceProjectNo
+        - sourceProjectName
+        - name
+        - isOptionalForQualification
+        - isOfficial
+        - enabled
+        - sortOrder
+        - createdAt
+        - updatedAt
+      properties:
+        code:
+          type: string
+        inspectionSpecialtyCode:
+          type: string
+        sourceProjectNo:
+          type: string
+        sourceProjectName:
+          type: string
+        name:
+          type: string
+        isOptionalForQualification:
+          type: boolean
+        isOfficial:
+          type: boolean
+        enabled:
+          type: boolean
+        sortOrder:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    InspectionParameter:
+      type: object
+      required:
+        - code
+        - name
+        - rawName
+        - canonicalName
+        - aliases
+        - sourceType
+        - sortOrder
+        - createdAt
+        - updatedAt
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        rawName:
+          type: string
+        canonicalName:
+          type: string
+        methodText:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        unit:
+          type: string
+        sourceType:
+          $ref: '#/components/schemas/InspectionParameterSourceType'
+        sortOrder:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    InspectionParameterSourceType:
+      type: string
+      enum:
+        - official
+        - custom
+    InspectionReportName:
+      type: object
+      required:
+        - code
+        - name
+        - sortOrder
+        - createdAt
+        - updatedAt
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        fullName:
+          type: string
+        templatePath:
+          type: string
+        summaryName:
+          type: string
+        extFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtFieldDef'
+        description:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    InspectionSpec:
+      type: object
+      required:
+        - code
+        - tenantId
+        - name
+        - sortOrder
+        - createdAt
+        - updatedAt
+      properties:
+        code:
+          type: string
+        tenantId:
+          type: string
+        inspectionObjectCode:
+          type: string
+        name:
+          type: string
+        remark:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    InspectionSpecialty:
+      type: object
+      required:
+        - code
+        - officialNo
+        - name
+        - isOfficial
+        - enabled
+        - sortOrder
+        - createdAt
+        - updatedAt
+      properties:
+        code:
+          type: string
+        officialNo:
+          type: string
+        name:
+          type: string
+        isOfficial:
+          type: boolean
+        enabled:
+          type: boolean
+        sortOrder:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    InspectionStandard:
+      type: object
+      required:
+        - code
+        - name
+        - status
+        - sortOrder
+        - createdAt
+        - updatedAt
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        version:
+          type: string
+        status:
+          $ref: '#/components/schemas/InspectionStandardStatus'
+        sourceDocumentId:
+          type: string
+        sourceHash:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    InspectionStandardRole:
+      type: string
+      enum:
+        - TESTING
+        - JUDGMENT
+    InspectionStandardStatus:
+      type: string
+      enum:
+        - active
+        - superseded
+        - draft
+    LoginRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      required:
+        - token
+        - user
+        - tenants
+      properties:
+        token:
+          type: string
+        refreshToken:
+          type: string
+        user:
+          $ref: '#/components/schemas/CurrentUser'
+        tenants:
+          type: array
+          items:
+            $ref: '#/components/schemas/MyTenant'
+    MaterialQualifiedRate:
+      type: object
+      required:
+        - total
+        - pass
+        - rate
+      properties:
+        total:
+          type: integer
+          format: int32
+        pass:
+          type: integer
+          format: int32
+        rate:
+          type: number
+          format: double
+    MenuNode:
+      type: object
+      required:
+        - id
+        - label
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        path:
+          type: string
+        icon:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/MenuNode'
+    MyTenant:
+      type: object
+      required:
+        - tenantId
+        - code
+        - name
+        - roleIds
+      properties:
+        tenantId:
+          type: string
+        code:
+          type: string
+        name:
+          type: string
+        roleIds:
+          type: array
+          items:
+            type: string
+    OAuthGrantType:
+      type: string
+      enum:
+        - authorization_code
+    OAuthResponseType:
+      type: string
+      enum:
+        - code
+    ObjectParameterLink:
+      type: object
+      required:
+        - inspectionObjectCode
+        - inspectionParameterCode
+        - qualificationLevel
+      properties:
+        inspectionObjectCode:
+          type: string
+        inspectionParameterCode:
+          type: string
+        qualificationLevel:
+          $ref: '#/components/schemas/QualificationLevel'
+        sourcePage:
+          type: integer
+          format: int32
+        remark:
+          type: string
+    ObjectReportNameLink:
+      type: object
+      required:
+        - inspectionObjectCode
+        - reportNameCode
+      properties:
+        inspectionObjectCode:
+          type: string
+        reportNameCode:
+          type: string
+        remark:
+          type: string
+    ObjectStandardLink:
+      type: object
+      required:
+        - inspectionObjectCode
+        - inspectionStandardCode
+        - role
+      properties:
+        inspectionObjectCode:
+          type: string
+        inspectionStandardCode:
+          type: string
+        role:
+          $ref: '#/components/schemas/InspectionStandardRole'
+        remark:
+          type: string
+    ParamInterface:
+      type: object
+      required:
+        - code
+        - componentPath
+        - sortOrder
+        - createdAt
+        - updatedAt
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        componentPath:
+          type: string
+        description:
+          type: string
+        isOfficial:
+          type: boolean
+        sortOrder:
+          type: integer
+          format: int32
+        config:
+          type: object
+          additionalProperties: {}
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    ParamInterfaceLink:
+      type: object
+      required:
+        - inspectionParameterCode
+        - paramInterfaceCode
+      properties:
+        inspectionParameterCode:
+          type: string
+        paramInterfaceCode:
+          type: string
+        reportNameCode:
+          type: string
+        config:
+          type: object
+          additionalProperties: {}
+    PermissionSet:
+      type: object
+      required:
+        - permissions
+      properties:
+        permissions:
+          type: array
+          items:
+            type: string
+    QualificationLevel:
+      type: string
+      enum:
+        - QUALIFIED
+        - RESTRICTED
+    ReceiptResult:
+      type: string
+      enum:
+        - pass
+        - fail
+        - ''
+    RefreshTokenRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+    ReportNameParameterLink:
+      type: object
+      required:
+        - reportNameCode
+        - inspectionParameterCode
+      properties:
+        reportNameCode:
+          type: string
+        inspectionParameterCode:
+          type: string
+        remark:
+          type: string
+    ReportNameStandardLink:
+      type: object
+      required:
+        - reportNameCode
+        - inspectionStandardCode
+        - role
+      properties:
+        reportNameCode:
+          type: string
+        inspectionStandardCode:
+          type: string
+        role:
+          $ref: '#/components/schemas/InspectionStandardRole'
+        remark:
+          type: string
+    RequirementComparison:
+      type: string
+      enum:
+        - ≥
+        - ≤
+        - =
+        - range
+        - eq
+    RequirementJudgmentMode:
+      type: string
+      enum:
+        - automatic
+        - manual
+    RequirementValueType:
+      type: string
+      enum:
+        - numeric
+        - string
+        - range
+        - formula
+        - manual
+    RequirementVerificationStatus:
+      type: string
+      enum:
+        - draft
+        - reviewed
+        - verified
+        - rejected
+    Sample:
+      type: object
+      required:
+        - id
+        - tenantId
+        - receiptId
+        - sampleCode
+        - ext
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        receiptId:
+          type: string
+        sampleCode:
+          type: string
+        sampleName:
+          type: string
+        model:
+          type: string
+        specification:
+          type: string
+        grade:
+          type: string
+        brand:
+          type: string
+        manufacturer:
+          type: string
+        structuralPart:
+          type: string
+        representQuantity:
+          type: string
+        sampleQuantity:
+          type: string
+        batchNumber:
+          type: string
+        supplyUnit:
+          type: string
+        arrivalDate:
+          type: string
+        samplingDate:
+          type: string
+        curingCondition:
+          type: string
+        age:
+          type: string
+        ext:
+          type: object
+          additionalProperties:
+            type: string
+        remark:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    SampleReceipt:
+      type: object
+      required:
+        - id
+        - tenantId
+        - contractId
+        - commissionCode
+        - commissionDate
+        - categoryCode
+        - receivedBy
+        - sampleSource
+        - testCategory
+        - flowStatus
+        - flowHistory
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        contractId:
+          type: string
+        commissionCode:
+          type: string
+        commissionDate:
+          type: string
+        commissionRegisterCode:
+          type: string
+        commissionRegisterDate:
+          type: string
+        categoryCode:
+          type: string
+        projectName:
+          type: string
+        clientUnit:
+          type: string
+        buildingUnit:
+          type: string
+        supervisorUnit:
+          type: string
+        constructionUnit:
+          type: string
+        witnessUnit:
+          type: string
+        samplingLocation:
+          type: string
+        witness:
+          type: string
+        witnessPhone:
+          type: string
+        inspector:
+          type: string
+        inspectorPhone:
+          type: string
+        receivedBy:
+          type: string
+        sampleSource:
+          type: string
+        testCategory:
+          type: string
+        testEnvironment:
+          type: string
+        mainEquipment:
+          type: string
+        testOperator:
+          type: string
+        testStartDate:
+          type: string
+        testEndDate:
+          type: string
+        originalRecordNo:
+          type: string
+        remark:
+          type: string
+        judgmentBasis:
+          type: array
+          items:
+            type: string
+        testingBasis:
+          type: array
+          items:
+            type: string
+        testParameters:
+          type: array
+          items:
+            type: string
+        flowStatus:
+          $ref: '#/components/schemas/FlowStatus'
+        flowHistory:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlowHistoryEntry'
+        lastSubmittedBy:
+          type: string
+        assigneeId:
+          type: string
+        assigneeName:
+          type: string
+        plannedTestDate:
+          type: string
+        reportCode:
+          type: string
+        reportDate:
+          type: string
+        conclusion:
+          type: string
+        result:
+          $ref: '#/components/schemas/ReceiptResult'
+        issuedAt:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    SpecialtyObjectLink:
+      type: object
+      required:
+        - inspectionSpecialtyCode
+        - inspectionObjectCode
+      properties:
+        inspectionSpecialtyCode:
+          type: string
+        inspectionObjectCode:
+          type: string
+        remark:
+          type: string
+    SsoCallbackRequest:
+      type: object
+      required:
+        - grant_type
+        - code
+        - redirect_uri
+        - state
+      properties:
+        grant_type:
+          $ref: '#/components/schemas/OAuthGrantType'
+        code:
+          type: string
+        redirect_uri:
+          type: string
+        state:
+          type: string
+    SsoRedirect:
+      type: object
+      required:
+        - authorizeUrl
+        - state
+      properties:
+        authorizeUrl:
+          type: string
+        state:
+          type: string
+    StandardParameterLink:
+      type: object
+      required:
+        - inspectionStandardCode
+        - inspectionParameterCode
+      properties:
+        inspectionStandardCode:
+          type: string
+        inspectionParameterCode:
+          type: string
+    SummaryColumn:
+      type: object
+      required:
+        - key
+        - label
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+    SummaryData:
+      type: object
+      required:
+        - summaryName
+        - columns
+        - rows
+      properties:
+        summaryName:
+          type: string
+        columns:
+          type: array
+          items:
+            $ref: '#/components/schemas/SummaryColumn'
+        rows:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              type: string
+    SwitchTenantRequest:
+      type: object
+      required:
+        - tenantId
+      properties:
+        tenantId:
+          type: string
+    TechnicalRequirement:
+      type: object
+      required:
+        - tenantId
+        - inspectionObjectCode
+        - inspectionParameterCode
+        - judgmentStandardCode
+        - valueType
+        - comparison
+        - judgmentMode
+        - verificationStatus
+        - sortOrder
+        - createdAt
+        - updatedAt
+      properties:
+        tenantId:
+          type: string
+        inspectionObjectCode:
+          type: string
+        inspectionParameterCode:
+          type: string
+        judgmentStandardCode:
+          type: string
+        conditions:
+          type: string
+        valueType:
+          $ref: '#/components/schemas/RequirementValueType'
+        minValue:
+          type: integer
+          format: int32
+        maxValue:
+          type: integer
+          format: int32
+        targetValue:
+          type: string
+        expression:
+          type: string
+        unit:
+          type: string
+        comparison:
+          $ref: '#/components/schemas/RequirementComparison'
+        judgmentMode:
+          $ref: '#/components/schemas/RequirementJudgmentMode'
+        verificationStatus:
+          $ref: '#/components/schemas/RequirementVerificationStatus'
+        clause:
+          type: string
+        sourcePage:
+          type: integer
+          format: int32
+        sourceHash:
+          type: string
+        brand:
+          type: string
+        model:
+          type: string
+        grade:
+          type: string
+        spec:
+          type: string
+        sieve:
+          type: string
+        remark:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    TestRecord:
+      type: object
+      required:
+        - id
+        - tenantId
+        - sampleId
+        - parameterCode
+        - requirement
+        - result
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        tenantId:
+          type: string
+        sampleId:
+          type: string
+        parameterCode:
+          type: string
+        standardCode:
+          type: string
+        requirementCode:
+          type: string
+        requirement:
+          type: string
+        result:
+          type: string
+        verdict:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+    TokenStorageKeys:
+      type: object
+      required:
+        - accessToken
+        - refreshToken
+        - activeTenantId
+        - permissionsCache
+      properties:
+        accessToken:
+          type: string
+          enum:
+            - lab.accessToken
+          description: Bearer token
+        refreshToken:
+          type: string
+          enum:
+            - lab.refreshToken
+          description: refresh token(与 accessToken 分存,便于隔离 XSS 影响面)
+        activeTenantId:
+          type: string
+          enum:
+            - lab.activeTenantId
+          description: 当前选中租户 ID(authenticated 态缓存)
+        permissionsCache:
+          type: string
+          enum:
+            - lab.permissions
+          description: permissions 缓存(避免每次路由跳转都打 /auth/permissions)
+      description: 前端持久化 key 命名约定;后端契约不感知,但前端实现必须遵守
+    UpdateCalculationMethodRequest:
+      type: object
+      properties:
+        testingStandardCode:
+          type: string
+        reportNameCode:
+          type: string
+        algorithmType:
+          $ref: '#/components/schemas/CalculationAlgorithmType'
+        specimenCount:
+          type: integer
+          format: int32
+        formula:
+          type: string
+        conditions:
+          type: string
+        roundingRule:
+          type: string
+        remark:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+    UpdateCatalogEntryRequest:
+      type: object
+      properties:
+        inspectionObjectCode:
+          type: string
+        name:
+          type: string
+        remark:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+    UpdateContractRequest:
+      type: object
+      properties:
+        contractCode:
+          type: string
+        clientUnit:
+          type: string
+        projectName:
+          type: string
+        projectLocation:
+          type: string
+        constructionUnit:
+          type: string
+        inspectionSpecialtyCode:
+          type: string
+        buildingUnit:
+          type: string
+        supervisorUnit:
+          type: string
+        inspectionPerson:
+          type: string
+        inspectionPhone:
+          type: string
+        witnessUnit:
+          type: string
+        witness:
+          type: string
+        witnessPhone:
+          type: string
+        contactPerson:
+          type: string
+        contactPhone:
+          type: string
+        entrustedDate:
+          type: string
+        status:
+          $ref: '#/components/schemas/ContractStatus'
+    UpdateInspectionObjectRequest:
+      type: object
+      properties:
+        inspectionSpecialtyCode:
+          type: string
+        sourceProjectNo:
+          type: string
+        sourceProjectName:
+          type: string
+        name:
+          type: string
+        isOptionalForQualification:
+          type: boolean
+        isOfficial:
+          type: boolean
+        enabled:
+          type: boolean
+        sortOrder:
+          type: integer
+          format: int32
+    UpdateInspectionParameterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        rawName:
+          type: string
+        canonicalName:
+          type: string
+        methodText:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        unit:
+          type: string
+        sourceType:
+          $ref: '#/components/schemas/InspectionParameterSourceType'
+        sortOrder:
+          type: integer
+          format: int32
+    UpdateInspectionReportNameRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        fullName:
+          type: string
+        templatePath:
+          type: string
+        summaryName:
+          type: string
+        extFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExtFieldDef'
+        description:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+    UpdateInspectionSpecialtyRequest:
+      type: object
+      properties:
+        officialNo:
+          type: string
+        name:
+          type: string
+        isOfficial:
+          type: boolean
+        enabled:
+          type: boolean
+        sortOrder:
+          type: integer
+          format: int32
+    UpdateInspectionStandardRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        version:
+          type: string
+        status:
+          $ref: '#/components/schemas/InspectionStandardStatus'
+        sourceDocumentId:
+          type: string
+        sourceHash:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+    UpdateParamInterfaceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        componentPath:
+          type: string
+        description:
+          type: string
+        isOfficial:
+          type: boolean
+        sortOrder:
+          type: integer
+          format: int32
+        config:
+          type: object
+          additionalProperties: {}
+    UpdateSampleExtRequest:
+      type: object
+      required:
+        - ext
+      properties:
+        ext:
+          type: object
+          additionalProperties:
+            type: string
+    UpdateSampleReceiptRequest:
+      type: object
+      properties:
+        contractId:
+          type: string
+        commissionCode:
+          type: string
+        commissionDate:
+          type: string
+        commissionRegisterCode:
+          type: string
+        commissionRegisterDate:
+          type: string
+        categoryCode:
+          type: string
+        projectName:
+          type: string
+        clientUnit:
+          type: string
+        buildingUnit:
+          type: string
+        supervisorUnit:
+          type: string
+        constructionUnit:
+          type: string
+        witnessUnit:
+          type: string
+        samplingLocation:
+          type: string
+        witness:
+          type: string
+        witnessPhone:
+          type: string
+        inspector:
+          type: string
+        inspectorPhone:
+          type: string
+        receivedBy:
+          type: string
+        sampleSource:
+          type: string
+        testCategory:
+          type: string
+        testEnvironment:
+          type: string
+        mainEquipment:
+          type: string
+        testOperator:
+          type: string
+        testStartDate:
+          type: string
+        testEndDate:
+          type: string
+        originalRecordNo:
+          type: string
+        remark:
+          type: string
+        judgmentBasis:
+          type: array
+          items:
+            type: string
+        testingBasis:
+          type: array
+          items:
+            type: string
+        testParameters:
+          type: array
+          items:
+            type: string
+    UpdateSampleRequest:
+      type: object
+      properties:
+        receiptId:
+          type: string
+        sampleCode:
+          type: string
+        sampleName:
+          type: string
+        model:
+          type: string
+        specification:
+          type: string
+        grade:
+          type: string
+        brand:
+          type: string
+        manufacturer:
+          type: string
+        structuralPart:
+          type: string
+        representQuantity:
+          type: string
+        sampleQuantity:
+          type: string
+        batchNumber:
+          type: string
+        supplyUnit:
+          type: string
+        arrivalDate:
+          type: string
+        samplingDate:
+          type: string
+        curingCondition:
+          type: string
+        age:
+          type: string
+        ext:
+          type: object
+          additionalProperties:
+            type: string
+        remark:
+          type: string
+    UpdateTechnicalRequirementRequest:
+      type: object
+      properties:
+        conditions:
+          type: string
+        valueType:
+          $ref: '#/components/schemas/RequirementValueType'
+        minValue:
+          type: integer
+          format: int32
+        maxValue:
+          type: integer
+          format: int32
+        targetValue:
+          type: string
+        expression:
+          type: string
+        unit:
+          type: string
+        comparison:
+          $ref: '#/components/schemas/RequirementComparison'
+        judgmentMode:
+          $ref: '#/components/schemas/RequirementJudgmentMode'
+        verificationStatus:
+          $ref: '#/components/schemas/RequirementVerificationStatus'
+        clause:
+          type: string
+        sourcePage:
+          type: integer
+          format: int32
+        sourceHash:
+          type: string
+        brand:
+          type: string
+        model:
+          type: string
+        grade:
+          type: string
+        spec:
+          type: string
+        sieve:
+          type: string
+        remark:
+          type: string
+        sortOrder:
+          type: integer
+          format: int32
+    UpdateTestRecordRequest:
+      type: object
+      properties:
+        sampleId:
+          type: string
+        parameterCode:
+          type: string
+        standardCode:
+          type: string
+        requirementCode:
+          type: string
+        requirement:
+          type: string
+        result:
+          type: string
+        verdict:
+          type: string
+servers:
+  - url: https://api.example.com
+    description: Production
+    variables: {}
