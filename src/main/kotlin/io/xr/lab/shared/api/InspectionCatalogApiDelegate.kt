@@ -96,7 +96,7 @@ interface InspectionCatalogApiDelegate {
     suspend fun catalogDeleteSpec( code: kotlin.String, call:RoutingCall) : Unit = throw APINotImplementedException("API operation catalogDeleteSpec has not been implemented yet.")
     /**
      * 
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page 
      * @param pageSize 
      * @param inspectionObjectCode 
@@ -107,7 +107,7 @@ interface InspectionCatalogApiDelegate {
     suspend fun catalogListBrands( page: kotlin.Int?,  pageSize: kotlin.Int?,  inspectionObjectCode: kotlin.String?,  keyword: kotlin.String?, call:RoutingCall) : CatalogListBrands200Response = throw APINotImplementedException("API operation catalogListBrands has not been implemented yet.")
     /**
      * 
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page 
      * @param pageSize 
      * @param inspectionObjectCode 
@@ -118,7 +118,7 @@ interface InspectionCatalogApiDelegate {
     suspend fun catalogListGrades( page: kotlin.Int?,  pageSize: kotlin.Int?,  inspectionObjectCode: kotlin.String?,  keyword: kotlin.String?, call:RoutingCall) : CatalogListGrades200Response = throw APINotImplementedException("API operation catalogListGrades has not been implemented yet.")
     /**
      * 
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page 
      * @param pageSize 
      * @param inspectionObjectCode 
@@ -129,7 +129,7 @@ interface InspectionCatalogApiDelegate {
     suspend fun catalogListModels( page: kotlin.Int?,  pageSize: kotlin.Int?,  inspectionObjectCode: kotlin.String?,  keyword: kotlin.String?, call:RoutingCall) : CatalogListModels200Response = throw APINotImplementedException("API operation catalogListModels has not been implemented yet.")
     /**
      * 
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page 
      * @param pageSize 
      * @param inspectionObjectCode 

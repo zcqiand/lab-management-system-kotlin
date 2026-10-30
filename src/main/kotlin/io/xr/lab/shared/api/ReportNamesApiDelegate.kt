@@ -111,7 +111,7 @@ interface ReportNamesApiDelegate {
     suspend fun reportNamesListReportNameStandardLinks( reportNameCode: kotlin.String?,  role: InspectionStandardRole?, call:RoutingCall) : ReportNamesListReportNameStandardLinks200Response = throw APINotImplementedException("API operation reportNamesListReportNameStandardLinks has not been implemented yet.")
     /**
      * 
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page 
      * @param pageSize 
      * @param keyword 

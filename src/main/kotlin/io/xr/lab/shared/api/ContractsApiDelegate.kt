@@ -51,7 +51,7 @@ interface ContractsApiDelegate {
     suspend fun contractsGetContract( id: kotlin.String, call:RoutingCall) : Contract = throw APINotImplementedException("API operation contractsGetContract has not been implemented yet.")
     /**
      * 
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page 
      * @param pageSize 
      * @param keyword 

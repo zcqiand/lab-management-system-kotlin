@@ -165,7 +165,7 @@ interface InspectionDictionaryApiDelegate {
     suspend fun inspectionDictionaryListObjectStandardLinks( inspectionObjectCode: kotlin.String?,  role: InspectionStandardRole?, call:RoutingCall) : InspectionDictionaryListObjectStandardLinks200Response = throw APINotImplementedException("API operation inspectionDictionaryListObjectStandardLinks has not been implemented yet.")
     /**
      * 
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page 
      * @param pageSize 
      * @param inspectionSpecialtyCode 
@@ -176,7 +176,7 @@ interface InspectionDictionaryApiDelegate {
     suspend fun inspectionDictionaryListObjects( page: kotlin.Int?,  pageSize: kotlin.Int?,  inspectionSpecialtyCode: kotlin.String?,  keyword: kotlin.String?, call:RoutingCall) : InspectionDictionaryListObjects200Response = throw APINotImplementedException("API operation inspectionDictionaryListObjects has not been implemented yet.")
     /**
      * 
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page 
      * @param pageSize 
      * @param keyword 
@@ -187,7 +187,7 @@ interface InspectionDictionaryApiDelegate {
     suspend fun inspectionDictionaryListParameters( page: kotlin.Int?,  pageSize: kotlin.Int?,  keyword: kotlin.String?,  sourceType: InspectionParameterSourceType?, call:RoutingCall) : InspectionDictionaryListParameters200Response = throw APINotImplementedException("API operation inspectionDictionaryListParameters has not been implemented yet.")
     /**
      * 
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page 
      * @param pageSize 
      * @param keyword 
@@ -214,7 +214,7 @@ interface InspectionDictionaryApiDelegate {
     suspend fun inspectionDictionaryListStandardParameterLinks( inspectionStandardCode: kotlin.String?,  inspectionParameterCode: kotlin.String?, call:RoutingCall) : InspectionDictionaryListStandardParameterLinks200Response = throw APINotImplementedException("API operation inspectionDictionaryListStandardParameterLinks has not been implemented yet.")
     /**
      * 
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page 
      * @param pageSize 
      * @param keyword 

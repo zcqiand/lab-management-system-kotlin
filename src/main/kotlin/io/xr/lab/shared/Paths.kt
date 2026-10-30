@@ -135,7 +135,7 @@ object Paths {
     @Resource("/api/contracts/{id}") class contractsGetContract(val id: kotlin.String)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param keyword  (optional)
@@ -204,7 +204,7 @@ object Paths {
     @Resource("/api/catalog/specs/{code}") class catalogDeleteSpec(val code: kotlin.String)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param inspectionObjectCode  (optional)
@@ -213,7 +213,7 @@ object Paths {
     @Resource("/api/catalog/brands") class catalogListBrands(val page: kotlin.Int? = null, val pageSize: kotlin.Int? = null, val inspectionObjectCode: kotlin.String? = null, val keyword: kotlin.String? = null)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param inspectionObjectCode  (optional)
@@ -222,7 +222,7 @@ object Paths {
     @Resource("/api/catalog/grades") class catalogListGrades(val page: kotlin.Int? = null, val pageSize: kotlin.Int? = null, val inspectionObjectCode: kotlin.String? = null, val keyword: kotlin.String? = null)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param inspectionObjectCode  (optional)
@@ -231,7 +231,7 @@ object Paths {
     @Resource("/api/catalog/models") class catalogListModels(val page: kotlin.Int? = null, val pageSize: kotlin.Int? = null, val inspectionObjectCode: kotlin.String? = null, val keyword: kotlin.String? = null)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param inspectionObjectCode  (optional)
@@ -354,7 +354,7 @@ object Paths {
     @Resource("/api/inspection/links/object-standard") class inspectionDictionaryListObjectStandardLinks(val inspectionObjectCode: kotlin.String? = null, val role: InspectionStandardRole? = null)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param inspectionSpecialtyCode  (optional)
@@ -363,7 +363,7 @@ object Paths {
     @Resource("/api/inspection/objects") class inspectionDictionaryListObjects(val page: kotlin.Int? = null, val pageSize: kotlin.Int? = null, val inspectionSpecialtyCode: kotlin.String? = null, val keyword: kotlin.String? = null)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param keyword  (optional)
@@ -372,7 +372,7 @@ object Paths {
     @Resource("/api/inspection/parameters") class inspectionDictionaryListParameters(val page: kotlin.Int? = null, val pageSize: kotlin.Int? = null, val keyword: kotlin.String? = null, val sourceType: InspectionParameterSourceType? = null)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param keyword  (optional)
@@ -393,7 +393,7 @@ object Paths {
     @Resource("/api/inspection/links/standard-parameter") class inspectionDictionaryListStandardParameterLinks(val inspectionStandardCode: kotlin.String? = null, val inspectionParameterCode: kotlin.String? = null)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param keyword  (optional)
@@ -485,7 +485,7 @@ object Paths {
     @Resource("/api/param-interfaces/links") class paramInterfacesListParamInterfaceLinks(val inspectionParameterCode: kotlin.String? = null, val paramInterfaceCode: kotlin.String? = null)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param keyword  (optional)
@@ -579,7 +579,7 @@ object Paths {
     @Resource("/api/receipts/{id}/history") class receiptsGetReceiptHistory(val id: kotlin.String)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param keyword  (optional)
@@ -654,7 +654,7 @@ object Paths {
     @Resource("/api/report-names/links/standard") class reportNamesListReportNameStandardLinks(val reportNameCode: kotlin.String? = null, val role: InspectionStandardRole? = null)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param keyword  (optional)
@@ -705,7 +705,7 @@ object Paths {
     @Resource("/api/samples/{id}") class samplesGetSample(val id: kotlin.String)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param receiptId  (optional)
@@ -799,7 +799,7 @@ object Paths {
     @Resource("/api/test-records/{id}") class testRecordsGetTestRecord(val id: kotlin.String)
 
     /**
-     * 
+     * 分页：当前实现仅回显不切片，参照实现返回全量，无分页语义（pageSize 同）。
      * @param page  (optional)
      * @param pageSize  (optional)
      * @param sampleId  (optional)

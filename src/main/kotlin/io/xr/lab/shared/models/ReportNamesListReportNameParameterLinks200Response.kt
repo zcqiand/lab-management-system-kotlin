@@ -18,14 +18,16 @@ import io.xr.lab.shared.infrastructure.BadParameterException
 /**
  * 
  * @param items 
- * @param page 
- * @param pageSize 
+ * @param page 当前实现仅回显，不切片：参照实现返回全量，无分页语义。
+ * @param pageSize 当前实现仅回显，不切片。
  * @param total 
  */
 @Serializable
 data class ReportNamesListReportNameParameterLinks200Response(
     val items: kotlin.collections.List<ReportNameParameterLink>,
+    /* 当前实现仅回显，不切片：参照实现返回全量，无分页语义。 */
     val page: kotlin.Int,
+    /* 当前实现仅回显，不切片。 */
     val pageSize: kotlin.Int,
     val total: kotlin.Long
 )
