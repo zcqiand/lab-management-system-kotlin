@@ -1,0 +1,174 @@
+{
+  "_schema": "code-suite-handoff v1",
+  "_note": "写书的事实底，非逐字引用源。book 引用该 tag 的终态文件(带 source=)；此清单供作者对账建造顺序。",
+  "project": "lab-management-system-kotlin",
+  "tag": "v0.2.1-20261025",
+  "stack": "ktor",
+  "gate_proof": {
+    "tag": "v0.2.1-20261025",
+    "checked_at": "2026-10-31T07:01:36+00:00",
+    "verified": true,
+    "all_green": true,
+    "method": "gate.py --all",
+    "gate_command": "D:\\qiand-life\\1-projects\\xr-code-suite\\scripts\\gate.py -p lab-management-system-kotlin"
+  },
+  "function_tree": [
+    {
+      "fn_id": "M00.F01.I01",
+      "name": "当前会话",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M00.F02.I01",
+      "name": "选租户换发",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F01.I01",
+      "name": "（待填）",
+      "type": null,
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M01.F04.I01",
+      "name": "动态菜单",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F04.I02",
+      "name": "权限集",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F04.I03",
+      "name": "路由守卫（未登录/无权限拦截）",
+      "type": "标签页",
+      "status": "开发中"
+    },
+    {
+      "fn_id": "M01.F04.I04",
+      "name": "动态菜单（lab 侧边栏）",
+      "type": "标签页",
+      "status": "开发中"
+    },
+    {
+      "fn_id": "M01.F05.I01",
+      "name": "密码登录",
+      "type": null,
+      "status": "已废弃"
+    },
+    {
+      "fn_id": "M01.F05.I02",
+      "name": "SSO 跳转",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F05.I03",
+      "name": "SSO 回调",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F05.I04",
+      "name": "刷新 token",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F05.I05",
+      "name": "登出",
+      "type": "接口",
+      "status": "已上线"
+    },
+    {
+      "fn_id": "M01.F05.I06",
+      "name": "原生登录",
+      "type": "接口",
+      "status": "已上线"
+    }
+  ],
+  "trace": [
+    {
+      "fn_id": "M00.F01.I01",
+      "tests": [
+        "src/test/kotlin/io/xr/harness/AuthSessionTest.kt::me password user cache miss falls back to directory()",
+        "src/test/kotlin/io/xr/harness/AuthSessionTest.kt::me claim tenant wins over directory default()",
+        "src/test/kotlin/io/xr/harness/AuthSessionTest.kt::me empty membership snapshot is empty current tenant not 500()",
+        "src/test/kotlin/io/xr/harness/AuthSessionTest.kt::me sso user cache miss asks refresh not demo fallback()",
+        "src/test/kotlin/io/xr/harness/AuthSessionTest.kt::me unknown sub is 401()",
+        "src/test/kotlin/io/xr/harness/AuthSessionTest.kt::me snapshot hit prefers tenant_id claim()"
+      ]
+    },
+    {
+      "fn_id": "M00.F02.I01",
+      "tests": [
+        "src/test/kotlin/io/xr/harness/AuthSessionTest.kt::switch tenant reissues with target claim()",
+        "src/test/kotlin/io/xr/harness/AuthSessionTest.kt::switch tenant outside membership is 404()"
+      ]
+    },
+    {
+      "fn_id": "M01.F04.I01",
+      "tests": [
+        "src/test/kotlin/io/xr/harness/AuthSessionTest.kt::menus hit returns snapshot()",
+        "src/test/kotlin/io/xr/harness/AuthSessionTest.kt::menus cache miss is 503 menus unavailable()"
+      ]
+    },
+    {
+      "fn_id": "M01.F04.I02",
+      "tests": [
+        "src/test/kotlin/io/xr/harness/AuthSessionTest.kt::permissions returns admin full set()"
+      ]
+    },
+    {
+      "fn_id": "M01.F05.I02",
+      "tests": [
+        "src/test/kotlin/io/xr/harness/AuthSsoTest.kt::authorize builds jump url with config client id()",
+        "src/test/kotlin/io/xr/harness/AuthSsoTest.kt::authorize blank redirect_uri is 400 not env fallback()"
+      ]
+    },
+    {
+      "fn_id": "M01.F05.I03",
+      "tests": [
+        "src/test/kotlin/io/xr/harness/AuthSsoTest.kt::callback token failure classifies per outbound rules()",
+        "src/test/kotlin/io/xr/harness/AuthSsoTest.kt::callback second visit rotates again not duplicates()",
+        "src/test/kotlin/io/xr/harness/AuthSsoTest.kt::callback happy upserts by email rotates and sessions whoami tenant()"
+      ]
+    },
+    {
+      "fn_id": "M01.F05.I04",
+      "tests": [
+        "src/test/kotlin/io/xr/harness/AuthRefreshTest.kt::refresh replay after rotate still sends old claim value outbound()",
+        "src/test/kotlin/io/xr/harness/AuthRefreshTest.kt::refresh happy rotates and reissues()",
+        "src/test/kotlin/io/xr/harness/AuthRefreshTest.kt::refresh form jwt without saas claim is 401()",
+        "src/test/kotlin/io/xr/harness/AuthRefreshTest.kt::saas refresh failure wraps to 401 not 502()",
+        "src/test/kotlin/io/xr/harness/AuthRefreshTest.kt::empty body refresh token is 401()",
+        "src/test/kotlin/io/xr/harness/AuthRefreshTest.kt::access token masquerading as refresh is 401 without saas call()"
+      ]
+    },
+    {
+      "fn_id": "M01.F05.I05",
+      "tests": [
+        "src/test/kotlin/io/xr/harness/AuthNativeLoginTest.kt::logoutIsNoOpSuccess()"
+      ]
+    },
+    {
+      "fn_id": "M01.F05.I06",
+      "tests": [
+        "src/test/kotlin/io/xr/harness/AuthNativeLoginTest.kt::saasUnreachableIs502()",
+        "src/test/kotlin/io/xr/harness/AuthNativeLoginTest.kt::saasUnauthorizedIs401SameSemantics()",
+        "src/test/kotlin/io/xr/harness/AuthNativeLoginTest.kt::enrichmentMissDegradesToTenantId()",
+        "src/test/kotlin/io/xr/harness/AuthNativeLoginTest.kt::displayNameFallsThroughEmptyChainToUnknown()",
+        "src/test/kotlin/io/xr/harness/AuthNativeLoginTest.kt::blankUsernameOrPasswordIs400()",
+        "src/test/kotlin/io/xr/harness/AuthNativeLoginTest.kt::nativeLoginHappyPathReturnsContractShape()",
+        "src/test/kotlin/io/xr/harness/AuthNativeLoginTest.kt::menuSnapshotFailureDoesNotBlockLogin()",
+        "src/test/kotlin/io/xr/harness/AuthNativeLoginTest.kt::wrongPasswordIs401WithoutSaasCodePassthrough()"
+      ]
+    }
+  ],
+  "source_index": []
+}

@@ -33,6 +33,17 @@ gradle run              # 本地起服务（mainClass io.xr.harness.ApplicationK
 | :--- | :--- | :--- |
 | （待补） | | |
 
+### 书一《Kotlin 从入门到项目实践》（卷四）
+
+- 书稿定位：xr-know-020，第 28、29、30、31 章正文代码块挂本仓 `source=` 锚点
+- 配套版本：`v0.2.1-20261025`（registry 冻结 tag，代码以此为准）
+
+| 章 | 章题 | 对应源文件 |
+| :--- | :--- | :--- |
+| 28 | 项目一启动：实验室管理系统需求与架构 | `src/main/kotlin/io/xr/harness/Application.kt` + `src/main/kotlin/io/xr/lab/shared/api/AuthApi.kt` + `src/main/kotlin/io/xr/lab/impl/AuthApiServiceImpl.kt` + `src/main/kotlin/io/xr/lab/impl/Errors.kt` + `src/test/kotlin/io/xr/harness/AuthSessionTest.kt` |
+| 29 | 项目一：数据模型与仓储层 | `src/main/kotlin/io/xr/lab/impl/Directory.kt` + `src/main/kotlin/io/xr/lab/impl/SnapshotCaches.kt` + `src/main/kotlin/io/xr/lab/impl/JwtIssuer.kt` + `src/main/kotlin/io/xr/lab/impl/AuthApiServiceImpl.kt` + `src/test/kotlin/io/xr/harness/AuthSessionTest.kt` |
+| 30 | 项目一：检测业务模块与流程引擎 | `src/main/kotlin/io/xr/lab/impl/AuthApiServiceImpl.kt` + `src/main/kotlin/io/xr/lab/impl/Security.kt` + `src/main/kotlin/io/xr/lab/impl/SnapshotCaches.kt` + `src/main/kotlin/io/xr/harness/Application.kt` + `src/test/kotlin/io/xr/harness/AuthSessionTest.kt` |
+| 31 | 项目一：测试防线、门控与部署收官 | `src/test/kotlin/io/xr/harness/AuthNativeLoginTest.kt` + `src/test/kotlin/io/xr/harness/AuthSsoTest.kt` + `src/test/kotlin/io/xr/harness/AuthRefreshTest.kt` + `src/main/kotlin/io/xr/lab/impl/AuthApiServiceImpl.kt` + `src/main/kotlin/io/xr/lab/impl/HttpSaasClients.kt` + `src/main/kotlin/io/xr/harness/AppConfig.kt` |
 ## 快速链接
 
 - [CLAUDE.md](CLAUDE.md) — 开发约定与编码规范
